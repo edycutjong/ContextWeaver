@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Deep Space Radial Background -->
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+    
+    <!-- Ultra-vibrant Neon Gradients -->
+    <linearGradient id="neon-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    
+    <linearGradient id="neon-purple" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e879f9"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+    
+    <linearGradient id="neon-pink" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#be185d"/>
+    </linearGradient>
+
+    <!-- Multi-layered Glow Filter for intense bloom -->
+    <filter id="super-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur1"/>
+      <feGaussianBlur stdDeviation="24" result="blur2"/>
+      <feGaussianBlur stdDeviation="40" result="blur3"/>
+      <feMerge>
+        <feMergeNode in="blur3"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Base App Icon Squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  
+  <g transform="translate(256, 256)">
+    
+    <!-- Ambient Background Glow Orbs -->
+    <circle cx="-60" cy="-60" r="120" fill="url(#neon-cyan)" opacity="0.25" filter="url(#super-glow)"/>
+    <circle cx="60" cy="60" r="120" fill="url(#neon-purple)" opacity="0.25" filter="url(#super-glow)"/>
+    
+    <!-- Outer Routing/Weaving Orbital Rings -->
+    <!-- Ring 1 (Cyan) -->
+    <g transform="rotate(25)" filter="url(#shadow)">
+      <ellipse cx="0" cy="0" rx="180" ry="55" fill="none" stroke="url(#neon-cyan)" stroke-width="12" opacity="0.8" filter="url(#super-glow)"/>
+      <ellipse cx="0" cy="0" rx="180" ry="55" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.9"/>
+      <circle cx="-180" cy="0" r="8" fill="#ffffff" filter="url(#super-glow)"/>
+      <circle cx="180" cy="0" r="8" fill="#ffffff" filter="url(#super-glow)"/>
+    </g>
+    
+    <!-- Ring 2 (Purple) -->
+    <g transform="rotate(-50)" filter="url(#shadow)">
+      <ellipse cx="0" cy="0" rx="180" ry="55" fill="none" stroke="url(#neon-purple)" stroke-width="12" opacity="0.8" filter="url(#super-glow)"/>
+      <ellipse cx="0" cy="0" rx="180" ry="55" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.9"/>
+      <circle cx="-180" cy="0" r="8" fill="#ffffff" filter="url(#super-glow)"/>
+      <circle cx="180" cy="0" r="8" fill="#ffffff" filter="url(#super-glow)"/>
+    </g>
+
+    <!-- Ring 3 (Pink) -->
+    <g transform="rotate(100)" filter="url(#shadow)">
+      <ellipse cx="0" cy="0" rx="180" ry="55" fill="none" stroke="url(#neon-pink)" stroke-width="12" opacity="0.8" filter="url(#super-glow)"/>
+      <ellipse cx="0" cy="0" rx="180" ry="55" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.9"/>
+      <circle cx="-180" cy="0" r="8" fill="#ffffff" filter="url(#super-glow)"/>
+      <circle cx="180" cy="0" r="8" fill="#ffffff" filter="url(#super-glow)"/>
+    </g>
+
+    <!-- Central AI "ContextWeaver" Core (8-Pointed Star) -->
+    <g filter="url(#shadow)">
+      <!-- Primary 4-Pointed Star -->
+      <path d="M 0 -140 C 15 -15, 15 -15, 140 0 C 15 15, 15 15, 0 140 C -15 15, -15 15, -140 0 C -15 -15, -15 -15, 0 -140 Z" fill="url(#neon-cyan)"/>
+      <path d="M 0 -140 C 15 -15, 15 -15, 140 0 C 15 15, 15 15, 0 140 C -15 15, -15 15, -140 0 C -15 -15, -15 -15, 0 -140 Z" fill="url(#neon-cyan)" filter="url(#super-glow)"/>
+
+      <!-- Secondary 4-Pointed Star (Rotated) -->
+      <g transform="rotate(45)">
+        <path d="M 0 -100 C 10 -10, 10 -10, 100 0 C 10 10, 10 10, 0 100 C -10 10, -10 10, -100 0 C -10 -10, -10 -10, 0 -100 Z" fill="url(#neon-purple)"/>
+        <path d="M 0 -100 C 10 -10, 10 -10, 100 0 C 10 10, 10 10, 0 100 C -10 10, -10 10, -100 0 C -10 -10, -10 -10, 0 -100 Z" fill="url(#neon-purple)" filter="url(#super-glow)"/>
+      </g>
+    </g>
+
+    <!-- Ultra-bright Center Node -->
+    <circle cx="0" cy="0" r="24" fill="#ffffff" filter="url(#super-glow)"/>
+    <circle cx="0" cy="0" r="14" fill="#ffffff"/>
+  </g>
+
+  <!-- Premium Apple-style Glass Reflection -->
+  <path d="M 0 112 C 0 50, 50 0, 112 0 L 400 0 C 462 0, 512 50, 512 112 L 512 256 C 256 160, 0 300, 0 256 Z" fill="#ffffff" opacity="0.04"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.12"/>
+  
+  <!-- Subtle inner glowing rim -->
+  <rect width="508" height="508" x="2" y="2" rx="110" fill="none" stroke="url(#neon-cyan)" stroke-width="4" opacity="0.3" filter="url(#super-glow)"/>
+</svg>
