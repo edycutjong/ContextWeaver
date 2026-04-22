@@ -28,3 +28,6 @@ yarn-error.log*
 
 # Project specific
 .chroma/
+
+# Assets
+docs/assets/*

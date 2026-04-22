@@ -1,4 +1,4 @@
-.PHONY: install dev backend frontend clean
+.PHONY: install dev backend frontend clean docker-up docker-down docker-build
 
 # Install dependencies for both backend and frontend
 install:
@@ -25,3 +25,20 @@ clean:
 	rm -rf backend/venv
 	rm -rf frontend/node_modules
 	rm -rf frontend/.next
+
+# --- Docker Commands ---
+
+# Run the complete stack via Docker Compose
+docker-up:
+	@echo "Starting ContextWeaver with Docker Compose..."
+	docker compose up
+
+# Build and run the complete stack via Docker Compose
+docker-build:
+	@echo "Building and starting ContextWeaver with Docker Compose..."
+	docker compose up --build
+
+# Tear down the complete stack
+docker-down:
+	@echo "Stopping ContextWeaver Docker Compose..."
+	docker compose down
