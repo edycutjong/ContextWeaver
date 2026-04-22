@@ -133,9 +133,11 @@ describe('Dashboard', () => {
     fireEvent.click(exportBtn);
     expect(global.URL.createObjectURL).toHaveBeenCalled();
     
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     act(() => {
       mockEventSource.onerror(new Error('Network error'));
     });
+    consoleSpy.mockRestore();
     
     jest.useRealTimers();
   });

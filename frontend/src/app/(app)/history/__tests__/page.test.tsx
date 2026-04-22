@@ -5,8 +5,8 @@ import HistoryPage from '../page';
 // Mock framer-motion
 jest.mock('framer-motion', () => ({
   motion: {
-    div: React.forwardRef(({ children, ...props }: any, ref: any) => <div ref={ref} {...props}>{children}</div>),
-    tr: React.forwardRef(({ children, ...props }: any, ref: any) => <tr ref={ref} {...props}>{children}</tr>),
+    div: React.forwardRef(({ children, whileHover, whileTap, layoutId, initial, animate, transition, ...props }: any, ref: any) => <div ref={ref} {...props}>{children}</div>),
+    tr: React.forwardRef(({ children, whileHover, whileTap, layoutId, initial, animate, transition, ...props }: any, ref: any) => <tr ref={ref} {...props}>{children}</tr>),
   },
   useMotionValue: (init: any) => {
     let val = init;
