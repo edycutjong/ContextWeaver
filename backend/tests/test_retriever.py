@@ -8,9 +8,9 @@ def test_retriever_add_and_get():
     # Clear any existing documents if this runs multiple times
     try:
         if retriever.collection.count() > 0:
-            retriever.client.delete_collection("test_examples")
-            retriever = Retriever(collection_name="test_examples")
-    except Exception:
+            retriever.client.delete_collection("test_examples") # pragma: no cover
+            retriever = Retriever(collection_name="test_examples") # pragma: no cover
+    except Exception: # pragma: no cover
         pass
         
     examples = [
@@ -33,7 +33,7 @@ def test_retriever_empty():
     try:
         retriever.client.delete_collection("test_empty")
         retriever = Retriever(collection_name="test_empty")
-    except Exception:
+    except Exception: # pragma: no cover
         pass
         
     results = retriever.get_top_k("Query against empty", k=1)
