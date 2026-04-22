@@ -1,10 +1,20 @@
 import uuid
 import chromadb
 from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
+from chromadb.config import Settings
+
+# Monkey-patch chromadb telemetry to avoid positional argument errors
+try:
+    from chromadb.telemetry.product.posthog import Posthog
+    def mock_capture(*args, **kwargs):
+        pass
+    Posthog.capture = mock_capture
+except ImportError:
+    pass
 
 class Retriever:
     def __init__(self, collection_name: str = "icl_examples"):
-        self.client = chromadb.Client()
+        self.client = chromadb.Client(Settings(anonymized_telemetry=False))
         self.embedding_function = DefaultEmbeddingFunction() # Uses all-MiniLM-L6-v2
         self.collection = self.client.get_or_create_collection(
             name=collection_name, 

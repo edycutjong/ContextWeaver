@@ -4,3 +4,4 @@ chromadb==0.4.24
 sentence-transformers==2.5.1
 langchain-text-splitters==0.0.1
 pydantic==2.6.3
+numpy<2.0.0

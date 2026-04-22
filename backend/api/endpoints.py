@@ -64,7 +64,9 @@ async def stream_annotation(job_id: str, text: str = "Default document text for 
             yield f"data: {json.dumps({'step': 'retrieve_complete', 'chunk_idx': i, 'examples': examples})}\n\n"
             
             # 3. Compose Prompt
+            yield f"data: {json.dumps({'step': 'building_prompt', 'chunk_idx': i, 'message': f'Building prompt for chunk {i}...'})}\n\n"
             prompt = annotator.build_prompt(chunk, examples)
+            await asyncio.sleep(0.3)
             
             # 4. Annotate
             yield f"data: {json.dumps({'step': 'annotating', 'chunk_idx': i, 'message': f'Annotating chunk {i}...'})}\n\n"
