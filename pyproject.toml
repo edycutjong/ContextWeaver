@@ -1,0 +1,3 @@
+[tool.mypy]
+mypy_path = "backend"
+explicit_package_bases = true
