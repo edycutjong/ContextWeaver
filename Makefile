@@ -26,7 +26,7 @@ test: test-backend test-frontend
 # Run backend unit tests with coverage
 test-backend:
 	@echo "Running backend tests..."
-	cd backend && source venv/bin/activate && pytest --cov=api --cov=core
+	cd backend && source venv/bin/activate && PYTHONPATH=. pytest --cov=api --cov=core
 
 # Run frontend unit tests with coverage
 test-frontend:
