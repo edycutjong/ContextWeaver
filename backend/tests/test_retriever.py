@@ -38,3 +38,5 @@ def test_retriever_empty():
         
     results = retriever.get_top_k("Query against empty", k=1)
     assert len(results) == 0
+
+

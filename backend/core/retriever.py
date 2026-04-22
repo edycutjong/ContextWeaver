@@ -9,7 +9,7 @@ try:
     def mock_capture(*args, **kwargs):
         pass
     Posthog.capture = mock_capture
-except ImportError:
+except ImportError: # pragma: no cover
     pass
 
 class Retriever:

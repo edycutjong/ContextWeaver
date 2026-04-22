@@ -17,7 +17,7 @@ async def test_annotator_build_prompt():
 @pytest.mark.asyncio
 async def test_annotator_annotate():
     annotator = Annotator()
-    result = await annotator.annotate("Prompt text", "Chunk text to extract from")
+    result = await annotator.annotate("Prompt text", "Chunk text to extract from with more than five words")
     
     assert "annotation" in result
     assert "confidence" in result
