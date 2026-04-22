@@ -1,81 +1,216 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import {
-  ReactFlow,
-  Controls,
-  Background,
-  useNodesState,
-  useEdgesState,
-  Node,
-  Edge,
-  MarkerType,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
-const initialNodes: Node[] = [
-  { id: 'doc', position: { x: 50, y: 150 }, data: { label: '📄 Document' }, type: 'input' },
-  { id: 'chunker', position: { x: 250, y: 150 }, data: { label: '✂️ Chunker' } },
-  { id: 'vectordb', position: { x: 450, y: 50 }, data: { label: '🗄️ ChromaDB' } },
-  { id: 'prompt', position: { x: 450, y: 250 }, data: { label: '📝 Prompt Builder' } },
-  { id: 'qwen', position: { x: 650, y: 150 }, data: { label: '🧠 Qwen3-4B' } },
-  { id: 'results', position: { x: 850, y: 150 }, data: { label: '📊 Results' }, type: 'output' },
+export interface NodeData {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+}
+
+export interface EdgeData {
+  source: string;
+  target: string;
+}
+
+const defaultSteps: NodeData[] = [
+  { id: 'doc', label: '📄 Document', x: 0, y: 100 },
+  { id: 'chunker', label: '✂️ Chunker', x: 200, y: 100 },
+  { id: 'vectordb', label: '🗄️ ChromaDB', x: 400, y: 0 },
+  { id: 'prompt', label: '📝 Prompt Builder', x: 400, y: 200 },
+  { id: 'qwen', label: '🧠 Qwen3-4B', x: 600, y: 100 },
+  { id: 'results', label: '📊 Results', x: 800, y: 100 },
 ];
 
-const initialEdges: Edge[] = [
-  { id: 'e1', source: 'doc', target: 'chunker', animated: true },
-  { id: 'e2', source: 'chunker', target: 'vectordb', animated: true },
-  { id: 'e3', source: 'chunker', target: 'prompt', animated: true },
-  { id: 'e4', source: 'vectordb', target: 'prompt', animated: true, label: 'Retrieve top-3' },
-  { id: 'e5', source: 'prompt', target: 'qwen', animated: true },
-  { id: 'e6', source: 'qwen', target: 'results', animated: true },
+const defaultEdges: EdgeData[] = [
+  { source: 'doc', target: 'chunker' },
+  { source: 'chunker', target: 'vectordb' },
+  { source: 'chunker', target: 'prompt' },
+  { source: 'vectordb', target: 'prompt' },
+  { source: 'prompt', target: 'qwen' },
+  { source: 'qwen', target: 'results' },
 ];
 
-export default function PipelineGraph({ currentStep }: { currentStep: string }) {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+export interface PipelineGraphProps {
+  currentStep: string;
+  nodes?: NodeData[];
+  edges?: EdgeData[];
+  isNodeActive?: (nodeId: string, currentStep: string) => boolean;
+}
 
-  // Update node styles based on current step
+export default function PipelineGraph({ 
+  currentStep, 
+  nodes = defaultSteps, 
+  edges = defaultEdges,
+  isNodeActive = (nodeId, step) => {
+    if (step === 'init' && nodeId === 'doc') return true;
+    if ((step === 'chunking' || step === 'chunk_complete') && nodeId === 'chunker') return true;
+    if ((step === 'retrieving' || step === 'retrieve_complete') && nodeId === 'vectordb') return true;
+    if ((step === 'annotating' || step === 'annotate_complete') && (nodeId === 'prompt' || nodeId === 'qwen')) return true;
+    if (step === 'merging' && nodeId === 'results') return true;
+    if (step === 'done') return true;
+    return false;
+  }
+}: PipelineGraphProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Need to wait for mount to render lines correctly to avoid hydration mismatch
+  const [mounted, setMounted] = useState(false);
+  const [, setRenderTick] = useState(0);
+
+  const positions = useRef<{ [key: string]: { x: number, y: number } }>(
+    nodes.reduce((acc, node) => {
+      acc[node.id] = { x: node.x, y: node.y };
+      return acc;
+    }, {} as Record<string, { x: number, y: number }>)
+  );
+
   useEffect(() => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        let isActive = false;
-        if (currentStep === 'init' && node.id === 'doc') isActive = true;
-        if (currentStep === 'chunking' && (node.id === 'doc' || node.id === 'chunker')) isActive = true;
-        if (currentStep === 'retrieving' && node.id === 'vectordb') isActive = true;
-        if (currentStep === 'annotating' && (node.id === 'prompt' || node.id === 'qwen')) isActive = true;
-        if (currentStep === 'merging' || currentStep === 'done') isActive = true;
+    let changed = false;
+    nodes.forEach(node => {
+      if (!positions.current[node.id]) {
+        positions.current[node.id] = { x: node.x, y: node.y };
+        changed = true;
+      }
+    });
+    if (changed) {
+      setRenderTick(t => t + 1);
+    }
+  }, [nodes]);
 
-        return {
-          ...node,
-          style: {
-            ...node.style,
-            background: isActive ? '#06b6d4' : '#1e293b',
-            color: '#fff',
-            border: isActive ? '2px solid #22d3ee' : '1px solid #334155',
-            boxShadow: isActive ? '0 0 15px rgba(6, 182, 212, 0.5)' : 'none',
-            borderRadius: '8px',
-            padding: '10px 20px',
-            transition: 'all 0.3s ease',
-          },
-        };
-      })
-    );
-  }, [currentStep, setNodes]);
+  useEffect(() => setMounted(true), []);
 
   return (
-    <div style={{ width: '100%', height: '400px' }} className="border border-slate-700 rounded-xl overflow-hidden bg-slate-900">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        fitView
-        colorMode="dark"
-      >
-        <Background color="#334155" gap={16} />
-        <Controls />
-      </ReactFlow>
+    <div 
+      ref={containerRef}
+      className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm relative overflow-hidden"
+    >
+      {/* Background grid pattern */}
+      <div 
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#334155 1px, transparent 1px)',
+          backgroundSize: '20px 20px'
+        }}
+      />
+      
+      {/* SVG for edges */}
+      {mounted && (
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
+          <defs>
+            <filter id="particle-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {edges.map((edge, i) => {
+            const sourcePos = positions.current[edge.source];
+            const targetPos = positions.current[edge.target];
+            if (!sourcePos || !targetPos) return null;
+
+            const nodeWidth = 140;
+            const nodeHeight = 50;
+            const x1 = sourcePos.x + nodeWidth / 2 + 50;
+            const y1 = sourcePos.y + nodeHeight / 2 + 50;
+            const x2 = targetPos.x + nodeWidth / 2 + 50;
+            const y2 = targetPos.y + nodeHeight / 2 + 50;
+
+            const cx = (x1 + x2) / 2;
+            const d = `M ${x1} ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`;
+            const edgeId = `edge-${edge.source}-${edge.target}`;
+            const active = isNodeActive(edge.source, currentStep) || isNodeActive(edge.target, currentStep);
+
+            return (
+              <motion.path
+                key={edgeId}
+                id={edgeId}
+                d={d}
+                fill="none"
+                stroke={active ? "#06b6d4" : "#334155"}
+                strokeWidth={active ? 3 : 2}
+                className="transition-colors duration-500"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1, delay: i * 0.1 }}
+              />
+            );
+          })}
+
+          {/* Flowing particles along active edges */}
+          {edges.map((edge) => {
+            const active = isNodeActive(edge.source, currentStep) || isNodeActive(edge.target, currentStep);
+            if (!active) return null;
+            const edgeId = `edge-${edge.source}-${edge.target}`;
+            return [0, 0.6, 1.2].map((offset, pi) => (
+              <circle
+                key={`particle-${edgeId}-${pi}`}
+                r="4"
+                fill="#22d3ee"
+                filter="url(#particle-glow)"
+                opacity="0.9"
+              >
+                <animateMotion
+                  dur="1.8s"
+                  begin={`${offset}s`}
+                  repeatCount="indefinite"
+                >
+                  <mpath href={`#${edgeId}`} />
+                </animateMotion>
+              </circle>
+            ));
+          })}
+        </svg>
+      )}
+
+      {/* Nodes */}
+      <div className="absolute inset-0 p-[50px] z-10 pointer-events-none">
+        {nodes.map((node) => {
+          const active = isNodeActive(node.id, currentStep);
+          return (
+            <motion.div
+              key={node.id}
+              drag
+              dragConstraints={containerRef}
+              dragElastic={0}
+              dragMomentum={false}
+              initial={{ x: node.x, y: node.y }}
+              onUpdate={(latest) => {
+                if (latest.x !== undefined && latest.y !== undefined) {
+                  const lx = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x as string);
+                  const ly = typeof latest.y === 'number' ? latest.y : parseFloat(latest.y as string);
+                  if (!isNaN(lx) && !isNaN(ly)) {
+                    positions.current[node.id] = { x: lx, y: ly };
+                    setRenderTick(t => t + 1);
+                  }
+                }
+              }}
+              className={`absolute cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${
+                active 
+                  ? 'bg-cyan-950/90 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.5)]' 
+                  : 'bg-slate-800/90 border-slate-600 text-slate-300'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="font-medium text-sm whitespace-nowrap">{node.label}</span>
+              {active && (
+                <motion.div 
+                  layoutId={`active-indicator-${node.id}`}
+                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(6,182,212,1)]" 
+                />
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
   );
 }
+
+

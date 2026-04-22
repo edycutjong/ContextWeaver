@@ -30,3 +30,27 @@ body {
     transform: translateX(100%);
   }
 }
+
+@keyframes aurora {
+  0%, 100% { transform: translate(0%, 0%) scale(1); opacity: 0.6; }
+  33%       { transform: translate(5%, -8%) scale(1.05); opacity: 0.8; }
+  66%       { transform: translate(-4%, 6%) scale(0.95); opacity: 0.5; }
+}
+
+.aurora-blob {
+  animation: aurora var(--aurora-duration, 18s) ease-in-out infinite;
+  animation-delay: var(--aurora-delay, 0s);
+  will-change: transform;
+  pointer-events: none;
+}
+
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes border-spin {
+  to { --border-angle: 360deg; }
+}
+
