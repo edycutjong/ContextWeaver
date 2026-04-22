@@ -1,9 +1,9 @@
-.PHONY: install dev backend frontend clean docker-up docker-down docker-build
+.PHONY: install dev backend frontend clean docker-up docker-down docker-build test test-backend test-frontend
 
 # Install dependencies for both backend and frontend
 install:
 	@echo "Installing backend dependencies..."
-	cd backend && python3 -m venv venv && source venv/bin/activate && pip install fastapi uvicorn chromadb sentence-transformers langchain-text-splitters pydantic
+	cd backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt
 	@echo "Installing frontend dependencies..."
 	cd frontend && npm install
 
@@ -19,6 +19,19 @@ backend:
 # Run frontend only
 frontend:
 	cd frontend && npm run dev
+
+# Run tests for both backend and frontend
+test: test-backend test-frontend
+
+# Run backend unit tests with coverage
+test-backend:
+	@echo "Running backend tests..."
+	cd backend && source venv/bin/activate && pytest --cov=api --cov=core
+
+# Run frontend unit tests with coverage
+test-frontend:
+	@echo "Running frontend tests..."
+	cd frontend && npm run test:coverage
 
 # Clean up environments
 clean:
