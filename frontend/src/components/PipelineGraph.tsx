@@ -3,14 +3,14 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Scissors, Database, FileEdit, BarChart, LucideIcon } from 'lucide-react';
-import { ChromaIcon, QwenIcon } from '@/components/CustomIcons';
+import { QwenIcon } from '@/components/CustomIcons';
 
 export interface NodeData {
   id: string;
   label: string;
   x: number;
   y: number;
-  icon?: LucideIcon | React.ComponentType<any>;
+  icon?: LucideIcon | React.ComponentType<{ className?: string }>;
 }
 
 export interface EdgeData {

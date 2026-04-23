@@ -4,7 +4,7 @@ import React, { useRef, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { QwenIcon } from "@/components/CustomIcons";
-import { Zap, Shield, ZapIcon, Cpu, FileText, Scissors, Database, Brain, BarChart, Workflow } from "lucide-react";
+import { ZapIcon, Cpu, FileText, Scissors, Database, BarChart, Workflow } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const PREVIEW_STEPS = [

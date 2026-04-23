@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Database, Cpu, Save, Sparkles, Lock } from "lucide-react";
+import { Database, Cpu, Save, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 function SliderField({

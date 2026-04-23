@@ -7,7 +7,7 @@ import ChunkInspector from '@/components/ChunkInspector';
 import ConfidenceHeatmap from '@/components/ConfidenceHeatmap';
 import { NodeData, EdgeData } from '@/components/PipelineGraph';
 import {
-  FileText, Scissors, Database, FileEdit, Brain, BarChart, Search, Calculator, Bot, ClipboardList, TrafficCone, UserSearch, Code2, CheckSquare, Combine, Target, PenTool, Scale, Sparkles, Inbox, Compass, Activity, Dumbbell, Waves,
+  FileText, Scissors, Database, FileEdit, BarChart, Search, Calculator, Bot, ClipboardList, TrafficCone, UserSearch, Code2, CheckSquare, Combine, Target, PenTool, Scale, Sparkles, Inbox, Compass, Activity, Dumbbell, Waves,
   CheckCircle2, XCircle, AlertTriangle, Loader2
 } from "lucide-react";
 import { ChromaIcon, QwenIcon } from '@/components/CustomIcons';
@@ -426,11 +426,8 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* Main Content Area */}
-          <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            {/* Left Column: Visualizations */}
-            <div className="lg:col-span-2 space-y-6">
+          {/* Top Section: Pipeline Graph & Metrics */}
+          <div className="space-y-6">
 
               {/* Pipeline graph with animated shimmer ring when running */}
               <div className="relative rounded-xl">
@@ -489,13 +486,13 @@ export default function Dashboard() {
                 )}
               </AnimatePresence>
 
-              {(pipelineStep !== 'idle' || processedChunks.length > 0) && (
-                <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
-              )}
             </div>
 
-            {/* Right Column: Logs & Results */}
-            <div className="flex flex-col space-y-6 h-full relative z-20">
+            {/* Bottom Section: Split Pane */}
+            <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+              
+              {/* Left Column: Logs & Results */}
+              <div className="flex flex-col space-y-6 h-full relative z-20">
 
               {/* Live Logs */}
               <div className="bg-slate-950 border border-slate-700 rounded-xl flex flex-col h-96 relative overflow-hidden">
@@ -639,6 +636,13 @@ export default function Dashboard() {
                     ) : 'Export JSON'}
                   </span>
                 </button>
+              </div>
+
+              {/* Right Column: Confidence Heatmap */}
+              <div className="space-y-6">
+                {(pipelineStep !== 'idle' || processedChunks.length > 0) && (
+                  <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
+                )}
               </div>
             </div>
           </div>
