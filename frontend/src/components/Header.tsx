@@ -73,24 +73,26 @@ export default function Header() {
         </Link>
 
         {/* Center Nav Pill */}
-        <div className="nav-pill-container hidden md:block">
-          <nav className="nav-pill-track">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`nav-pill-item ${isActive ? 'nav-pill-active' : ''}`}
-                >
-                  <item.icon className="h-3.5 w-3.5" />
-                  {item.label}
-                  {isActive && <span className="nav-active-dot" />}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+        {pathname !== '/' && (
+          <div className="nav-pill-container hidden md:block">
+            <nav className="nav-pill-track">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`nav-pill-item ${isActive ? 'nav-pill-active' : ''}`}
+                  >
+                    <item.icon className="h-3.5 w-3.5" />
+                    {item.label}
+                    {isActive && <span className="nav-active-dot" />}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        )}
 
         {/* GitHub CTA */}
         <a
