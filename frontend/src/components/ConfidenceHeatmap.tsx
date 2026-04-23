@@ -25,11 +25,12 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
   if (!chunks || chunks.length === 0) return null;
 
   return (
-    <div className="bg-slate-900 border border-slate-700 rounded-xl p-4">
-      <h3 className="text-white font-semibold mb-4 flex items-center">
+    <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 flex flex-col h-full">
+      <h3 className="text-white font-semibold mb-4 flex items-center shrink-0">
         <span className="mr-2">🔥</span> Confidence Heatmap
       </h3>
-      <div className="grid grid-cols-10 gap-2">
+      <div className="flex-1 pr-2 pb-2">
+        <div className="grid grid-cols-10 gap-2 pb-2">
         <AnimatePresence>
           {chunks.map((chunk, i) => {
             const confidence = chunk.confidence || chunk.result?.confidence || 0;
@@ -59,7 +60,7 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
               <motion.button
                 key={`chunk-${i}`}
                 onClick={() => onSelectChunk(chunk)}
-                className={`w-full aspect-square rounded ${bgColor} hover:ring-2 ring-white transition-colors group relative`}
+                className={`w-full aspect-square rounded ${bgColor} hover:ring-2 ring-white transition-colors group relative hover:z-50`}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
@@ -68,7 +69,7 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
                 whileTap={{ scale: 0.9 }}
               >
                 <span
-                  className={`opacity-0 group-hover:opacity-100 absolute ${tooltipPosition} left-1/2 -translate-x-1/2 bg-slate-950/95 backdrop-blur-sm border ${borderTint} text-xs text-white px-2 py-1 rounded-md pointer-events-none z-10 whitespace-nowrap shadow-lg transition-opacity`}
+                  className={`opacity-0 group-hover:opacity-100 absolute ${tooltipPosition} left-1/2 -translate-x-1/2 bg-slate-950/95 backdrop-blur-sm border ${borderTint} text-xs text-white px-2 py-1 rounded-md pointer-events-none z-100 whitespace-nowrap shadow-lg transition-opacity`}
                 >
                   Chunk {i + 1}: {confidence ? `${(confidence * 100).toFixed(0)}%` : 'Processing...'}
                 </span>
@@ -80,9 +81,10 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
             <div key={`empty-${i}`} className="w-full aspect-square rounded bg-slate-800/30 border border-slate-700/30" />
           ))}
         </AnimatePresence>
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-slate-500">
+      <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-slate-500 shrink-0 border-t border-slate-800 pt-3">
         <span className="uppercase tracking-wider font-medium">Legend</span>
         {LEGEND.map((item) => (
           <div key={item.label} className="flex items-center gap-1.5">
