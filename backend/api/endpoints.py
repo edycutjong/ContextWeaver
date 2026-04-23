@@ -34,7 +34,13 @@ async def start_annotation(req: DocumentRequest):
     return {"job_id": "job_123", "status": "started"}
 
 @router.get("/api/stream/{job_id}")
-async def stream_annotation(job_id: str, text: str = "Default document text for testing purposes. It should be long enough to chunk."):
+async def stream_annotation(
+    job_id: str, 
+    text: str = "Default document text for testing purposes. It should be long enough to chunk.",
+    chunk_size: int = 200,
+    chunk_overlap: int = 20,
+    top_k: int = 3
+):
     """
     Stream Server-Sent Events (SSE) detailing the pipeline progress.
     In a real app, `text` would be fetched via `job_id`. We pass it in query for demo simplicity if needed,
@@ -49,8 +55,8 @@ async def stream_annotation(job_id: str, text: str = "Default document text for 
         await asyncio.sleep(0.5)
         
         # 1. Chunking
-        yield f"data: {json.dumps({'step': 'chunking', 'message': 'Chunking document...'})}\n\n"
-        chunks = chunk_document(text, chunk_size=200, chunk_overlap=20)
+        yield f"data: {json.dumps({'step': 'chunking', 'message': f'Chunking document (size: {chunk_size}, overlap: {chunk_overlap})...'})}\n\n"
+        chunks = chunk_document(text, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         yield f"data: {json.dumps({'step': 'chunk_complete', 'chunks': chunks})}\n\n"
         await asyncio.sleep(0.5)
         
@@ -59,8 +65,8 @@ async def stream_annotation(job_id: str, text: str = "Default document text for 
         # Process each chunk
         for i, chunk in enumerate(chunks):
             # 2. Retrieve
-            yield f"data: {json.dumps({'step': 'retrieving', 'chunk_idx': i, 'message': f'Retrieving examples for chunk {i}...'})}\n\n"
-            examples = retriever.get_top_k(chunk, k=3)
+            yield f"data: {json.dumps({'step': 'retrieving', 'chunk_idx': i, 'message': f'Retrieving top {top_k} examples for chunk {i}...'})}\n\n"
+            examples = retriever.get_top_k(chunk, k=top_k)
             yield f"data: {json.dumps({'step': 'retrieve_complete', 'chunk_idx': i, 'examples': examples})}\n\n"
             
             # 3. Compose Prompt

@@ -13,11 +13,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'contextweaver': {
     nodes: [
       { id: 'doc', label: '📄 Document', x: 0, y: 100 },
-      { id: 'chunker', label: '✂️ Chunker', x: 150, y: 100 },
-      { id: 'vectordb', label: '🗄️ ChromaDB', x: 300, y: 0 },
-      { id: 'prompt', label: '📝 Prompt Builder', x: 300, y: 200 },
-      { id: 'qwen', label: '🧠 Qwen3-4B', x: 450, y: 100 },
-      { id: 'results', label: '📊 Results', x: 600, y: 100 },
+      { id: 'chunker', label: '✂️ Chunker', x: 180, y: 100 },
+      { id: 'vectordb', label: '🗄️ ChromaDB', x: 360, y: 0 },
+      { id: 'prompt', label: '📝 Prompt Builder', x: 360, y: 200 },
+      { id: 'qwen', label: '🧠 Qwen3-4B', x: 540, y: 100 },
+      { id: 'results', label: '📊 Results', x: 720, y: 100 },
     ],
     edges: [
       { source: 'doc', target: 'chunker' },
@@ -40,10 +40,10 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'standard-rag': {
     nodes: [
       { id: 'query', label: '🔍 User Query', x: 0, y: 100 },
-      { id: 'embed', label: '🧮 Embeddings', x: 150, y: 100 },
-      { id: 'vectordb', label: '🗄️ Vector DB', x: 300, y: 100 },
-      { id: 'llm', label: '🤖 LLM', x: 450, y: 100 },
-      { id: 'output', label: '📝 Output', x: 600, y: 100 },
+      { id: 'embed', label: '🧮 Embeddings', x: 180, y: 100 },
+      { id: 'vectordb', label: '🗄️ Vector DB', x: 360, y: 100 },
+      { id: 'llm', label: '🤖 LLM', x: 540, y: 100 },
+      { id: 'output', label: '📝 Output', x: 720, y: 100 },
     ],
     edges: [
       { source: 'query', target: 'embed' },
@@ -63,12 +63,12 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'multi-agent': {
     nodes: [
       { id: 'task', label: '📋 Task', x: 0, y: 100 },
-      { id: 'router', label: '🚦 Router Agent', x: 150, y: 100 },
-      { id: 'agent1', label: '🕵️ Researcher', x: 300, y: 0 },
-      { id: 'agent2', label: '🧑‍💻 Coder', x: 300, y: 100 },
-      { id: 'agent3', label: '🧐 Reviewer', x: 300, y: 200 },
-      { id: 'merger', label: '🔄 Synthesizer', x: 450, y: 100 },
-      { id: 'results', label: '🎯 Final Output', x: 600, y: 100 },
+      { id: 'router', label: '🚦 Router Agent', x: 180, y: 100 },
+      { id: 'agent1', label: '🕵️ Researcher', x: 360, y: 0 },
+      { id: 'agent2', label: '🧑‍💻 Coder', x: 360, y: 100 },
+      { id: 'agent3', label: '🧐 Reviewer', x: 360, y: 200 },
+      { id: 'merger', label: '🔄 Synthesizer', x: 540, y: 100 },
+      { id: 'results', label: '🎯 Final Output', x: 720, y: 100 },
     ],
     edges: [
       { source: 'task', target: 'router' },
@@ -92,9 +92,9 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'evaluator-optimizer': {
     nodes: [
       { id: 'task', label: '📋 Task', x: 0, y: 100 },
-      { id: 'generator', label: '🏗️ Generator', x: 200, y: 100 },
-      { id: 'evaluator', label: '⚖️ Evaluator', x: 400, y: 100 },
-      { id: 'results', label: '✨ Results', x: 600, y: 100 },
+      { id: 'generator', label: '🏗️ Generator', x: 220, y: 100 },
+      { id: 'evaluator', label: '⚖️ Evaluator', x: 440, y: 100 },
+      { id: 'results', label: '✨ Results', x: 660, y: 100 },
     ],
     edges: [
       { source: 'task', target: 'generator' },
@@ -114,11 +114,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'routing-agent': {
     nodes: [
       { id: 'input', label: '📥 Input', x: 0, y: 100 },
-      { id: 'classifier', label: '🧭 Classifier', x: 150, y: 100 },
-      { id: 'expert_a', label: '🏃 Expert A', x: 350, y: 0 },
-      { id: 'expert_b', label: '🏋️ Expert B', x: 350, y: 100 },
-      { id: 'expert_c', label: '🏊 Expert C', x: 350, y: 200 },
-      { id: 'results', label: '📊 Results', x: 550, y: 100 },
+      { id: 'classifier', label: '🧭 Classifier', x: 180, y: 100 },
+      { id: 'expert_a', label: '🏃 Expert A', x: 400, y: 0 },
+      { id: 'expert_b', label: '🏋️ Expert B', x: 400, y: 100 },
+      { id: 'expert_c', label: '🏊 Expert C', x: 400, y: 200 },
+      { id: 'results', label: '📊 Results', x: 620, y: 100 },
     ],
     edges: [
       { source: 'input', target: 'classifier' },
@@ -175,6 +175,7 @@ export default function Dashboard() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedChunk, setSelectedChunk] = useState<any | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
   // Typewriter state
   const [displayedLogs, setDisplayedLogs] = useState<string[]>([]);
@@ -182,6 +183,21 @@ export default function Dashboard() {
   const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const logsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Reset state when graph tab changes
+  useEffect(() => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+    setPipelineStep('idle');
+    setLogMessages([]);
+    setDisplayedLogs([]);
+    setProcessedChunks([]);
+    setFinalResult(null);
+    setSelectedChunk(null);
+    setIsRunning(false);
+  }, [selectedGraph]);
 
   useEffect(() => {
     if (logsContainerRef.current) {
@@ -229,7 +245,21 @@ export default function Dashboard() {
     setProcessedChunks([]);
     setFinalResult(null);
 
-    const eventSource = new EventSource('http://localhost:8000/api/stream/123');
+    let queryParams = "";
+    const savedSettings = localStorage.getItem('contextweaver_settings');
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        const params = new URLSearchParams();
+        if (parsed.chunkSize) params.append('chunk_size', parsed.chunkSize.toString());
+        if (parsed.chunkOverlap) params.append('chunk_overlap', parsed.chunkOverlap.toString());
+        if (parsed.topK) params.append('top_k', parsed.topK.toString());
+        queryParams = `?${params.toString()}`;
+      } catch (e) {}
+    }
+
+    const eventSource = new EventSource(`http://localhost:8000/api/stream/123${queryParams}`);
+    eventSourceRef.current = eventSource;
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -280,11 +310,17 @@ export default function Dashboard() {
   };
 
   const handleExport = () => {
-    const blob = new Blob([JSON.stringify(finalResult, null, 2)], { type: 'application/json' });
+    const exportData = {
+      pipeline: selectedGraph,
+      timestamp: new Date().toISOString(),
+      summary: finalResult,
+      chunks: processedChunks,
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'contextweaver-results.json';
+    a.download = `contextweaver-results-${selectedGraph}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

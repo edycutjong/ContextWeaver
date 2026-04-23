@@ -8,16 +8,17 @@ function SliderField({
   label,
   min,
   max,
-  defaultValue,
+  value,
+  onChange,
   unit,
 }: {
   label: string;
   min: number;
   max: number;
-  defaultValue: number;
+  value: number;
+  onChange: (val: number) => void;
   unit: string;
 }) {
-  const [value, setValue] = useState(defaultValue);
   const pct = ((value - min) / (max - min)) * 100;
 
   return (
@@ -46,7 +47,7 @@ function SliderField({
           min={min}
           max={max}
           value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
+          onChange={(e) => onChange(Number(e.target.value))}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         />
         <div
@@ -64,10 +65,25 @@ function SliderField({
 }
 
 export default function SettingsPage() {
-  const [topK, setTopK] = useState(5);
+  const [topK, setTopK] = useState(3);
+  const [chunkSize, setChunkSize] = useState(200);
+  const [chunkOverlap, setChunkOverlap] = useState(20);
   const [saved, setSaved] = useState(false);
 
+  React.useEffect(() => {
+    const savedSettings = localStorage.getItem('contextweaver_settings');
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        if (parsed.topK) setTopK(parsed.topK);
+        if (parsed.chunkSize) setChunkSize(parsed.chunkSize);
+        if (parsed.chunkOverlap) setChunkOverlap(parsed.chunkOverlap);
+      } catch (e) {}
+    }
+  }, []);
+
   function handleSave() {
+    localStorage.setItem('contextweaver_settings', JSON.stringify({ topK, chunkSize, chunkOverlap }));
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -101,8 +117,8 @@ export default function SettingsPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 relative z-10">
-            <SliderField label="Chunk Size" min={256} max={2048} defaultValue={1024} unit="tokens" />
-            <SliderField label="Chunk Overlap" min={0} max={500} defaultValue={128} unit="tokens" />
+            <SliderField label="Chunk Size" min={256} max={2048} value={chunkSize} onChange={setChunkSize} unit="tokens" />
+            <SliderField label="Chunk Overlap" min={0} max={500} value={chunkOverlap} onChange={setChunkOverlap} unit="tokens" />
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-300 mb-3">Top-K Retrieval</label>

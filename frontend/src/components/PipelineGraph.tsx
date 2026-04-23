@@ -67,18 +67,13 @@ export default function PipelineGraph({
   });
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPositions(prev => {
-      const nextPos = { ...prev };
-      let changed = false;
-      nodes.forEach(node => {
-        if (!nextPos[node.id]) {
-          nextPos[node.id] = { x: node.x, y: node.y };
-          changed = true;
-        }
-      });
-      return changed ? nextPos : prev;
-    });
+    // Reset positions whenever nodes array changes to ensure fresh layout
+    setPositions(
+      nodes.reduce((acc, node) => {
+        acc[node.id] = { x: node.x, y: node.y };
+        return acc;
+      }, {} as Record<string, { x: number, y: number }>)
+    );
   }, [nodes]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -88,7 +83,7 @@ export default function PipelineGraph({
     <div className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm overflow-x-auto overflow-y-hidden">
       <div 
         ref={containerRef}
-        className="min-w-[850px] h-full relative"
+        className="min-w-[1100px] h-full relative"
       >
         {/* Background grid pattern */}
         <div 
