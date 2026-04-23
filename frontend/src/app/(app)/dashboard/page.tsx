@@ -278,6 +278,10 @@ export default function Dashboard() {
     const eventSource = new EventSource(`http://localhost:8000/api/stream/123${queryParams}`);
     eventSourceRef.current = eventSource;
 
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
+
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
       setPipelineStep(data.step);
