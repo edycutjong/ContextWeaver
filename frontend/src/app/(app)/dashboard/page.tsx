@@ -6,18 +6,21 @@ import PipelineGraph from '@/components/PipelineGraph';
 import ChunkInspector from '@/components/ChunkInspector';
 import ConfidenceHeatmap from '@/components/ConfidenceHeatmap';
 import { NodeData, EdgeData } from '@/components/PipelineGraph';
+import {
+  FileText, Scissors, Database, FileEdit, Brain, BarChart, Search, Calculator, Bot, ClipboardList, TrafficCone, UserSearch, Code2, CheckSquare, Combine, Target, PenTool, Scale, Sparkles, Inbox, Compass, Activity, Dumbbell, Waves
+} from "lucide-react";
 
 type GraphType = 'contextweaver' | 'standard-rag' | 'multi-agent' | 'evaluator-optimizer' | 'routing-agent';
 
 const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeActive: (nodeId: string, step: string) => boolean }> = {
   'contextweaver': {
     nodes: [
-      { id: 'doc', label: '📄 Document', x: 0, y: 100 },
-      { id: 'chunker', label: '✂️ Chunker', x: 140, y: 100 },
-      { id: 'vectordb', label: '🗄️ ChromaDB', x: 280, y: 0 },
-      { id: 'prompt', label: '📝 Prompt Builder', x: 280, y: 200 },
-      { id: 'qwen', label: '🧠 Qwen3-4B', x: 420, y: 100 },
-      { id: 'results', label: '📊 Results', x: 560, y: 100 },
+      { id: 'doc', label: 'Document', x: 0, y: 100, icon: FileText },
+      { id: 'chunker', label: 'Chunker', x: 140, y: 100, icon: Scissors },
+      { id: 'vectordb', label: 'ChromaDB', x: 280, y: 0, icon: Database },
+      { id: 'prompt', label: 'Prompt Builder', x: 280, y: 200, icon: FileEdit },
+      { id: 'qwen', label: 'Qwen3-4B', x: 420, y: 100, icon: Brain },
+      { id: 'results', label: 'Results', x: 560, y: 100, icon: BarChart },
     ],
     edges: [
       { source: 'doc', target: 'chunker' },
@@ -39,11 +42,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'standard-rag': {
     nodes: [
-      { id: 'query', label: '🔍 User Query', x: 0, y: 100 },
-      { id: 'embed', label: '🧮 Embeddings', x: 140, y: 100 },
-      { id: 'vectordb', label: '🗄️ Vector DB', x: 280, y: 100 },
-      { id: 'llm', label: '🤖 LLM', x: 420, y: 100 },
-      { id: 'output', label: '📝 Output', x: 560, y: 100 },
+      { id: 'query', label: 'User Query', x: 0, y: 100, icon: Search },
+      { id: 'embed', label: 'Embeddings', x: 140, y: 100, icon: Calculator },
+      { id: 'vectordb', label: 'Vector DB', x: 280, y: 100, icon: Database },
+      { id: 'llm', label: 'LLM', x: 420, y: 100, icon: Bot },
+      { id: 'output', label: 'Output', x: 560, y: 100, icon: FileText },
     ],
     edges: [
       { source: 'query', target: 'embed' },
@@ -62,13 +65,13 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'multi-agent': {
     nodes: [
-      { id: 'task', label: '📋 Task', x: 0, y: 100 },
-      { id: 'router', label: '🚦 Router Agent', x: 140, y: 100 },
-      { id: 'agent1', label: '🕵️ Researcher', x: 280, y: 0 },
-      { id: 'agent2', label: '🧑‍💻 Coder', x: 280, y: 100 },
-      { id: 'agent3', label: '🧐 Reviewer', x: 280, y: 200 },
-      { id: 'merger', label: '🔄 Synthesizer', x: 420, y: 100 },
-      { id: 'results', label: '🎯 Final Output', x: 560, y: 100 },
+      { id: 'task', label: 'Task', x: 0, y: 100, icon: ClipboardList },
+      { id: 'router', label: 'Router Agent', x: 140, y: 100, icon: TrafficCone },
+      { id: 'agent1', label: 'Researcher', x: 280, y: 0, icon: UserSearch },
+      { id: 'agent2', label: 'Coder', x: 280, y: 100, icon: Code2 },
+      { id: 'agent3', label: 'Reviewer', x: 280, y: 200, icon: CheckSquare },
+      { id: 'merger', label: 'Synthesizer', x: 420, y: 100, icon: Combine },
+      { id: 'results', label: 'Final Output', x: 560, y: 100, icon: Target },
     ],
     edges: [
       { source: 'task', target: 'router' },
@@ -91,10 +94,10 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'evaluator-optimizer': {
     nodes: [
-      { id: 'task', label: '📋 Task', x: 0, y: 100 },
-      { id: 'generator', label: '🏗️ Generator', x: 180, y: 100 },
-      { id: 'evaluator', label: '⚖️ Evaluator', x: 360, y: 100 },
-      { id: 'results', label: '✨ Results', x: 540, y: 100 },
+      { id: 'task', label: 'Task', x: 0, y: 100, icon: ClipboardList },
+      { id: 'generator', label: 'Generator', x: 180, y: 100, icon: PenTool },
+      { id: 'evaluator', label: 'Evaluator', x: 360, y: 100, icon: Scale },
+      { id: 'results', label: 'Results', x: 540, y: 100, icon: Sparkles },
     ],
     edges: [
       { source: 'task', target: 'generator' },
@@ -113,12 +116,12 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'routing-agent': {
     nodes: [
-      { id: 'input', label: '📥 Input', x: 0, y: 100 },
-      { id: 'classifier', label: '🧭 Classifier', x: 140, y: 100 },
-      { id: 'expert_a', label: '🏃 Expert A', x: 320, y: 0 },
-      { id: 'expert_b', label: '🏋️ Expert B', x: 320, y: 100 },
-      { id: 'expert_c', label: '🏊 Expert C', x: 320, y: 200 },
-      { id: 'results', label: '📊 Results', x: 500, y: 100 },
+      { id: 'input', label: 'Input', x: 0, y: 100, icon: Inbox },
+      { id: 'classifier', label: 'Classifier', x: 140, y: 100, icon: Compass },
+      { id: 'expert_a', label: 'Expert A', x: 320, y: 0, icon: Activity },
+      { id: 'expert_b', label: 'Expert B', x: 320, y: 100, icon: Dumbbell },
+      { id: 'expert_c', label: 'Expert C', x: 320, y: 200, icon: Waves },
+      { id: 'results', label: 'Results', x: 500, y: 100, icon: BarChart },
     ],
     edges: [
       { source: 'input', target: 'classifier' },

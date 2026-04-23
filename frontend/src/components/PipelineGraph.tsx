@@ -2,12 +2,14 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FileText, Scissors, Database, FileEdit, Brain, BarChart, LucideIcon } from 'lucide-react';
 
 export interface NodeData {
   id: string;
   label: string;
   x: number;
   y: number;
+  icon?: LucideIcon;
 }
 
 export interface EdgeData {
@@ -16,12 +18,12 @@ export interface EdgeData {
 }
 
 const defaultSteps: NodeData[] = [
-  { id: 'doc', label: '📄 Document', x: 0, y: 100 },
-  { id: 'chunker', label: '✂️ Chunker', x: 150, y: 100 },
-  { id: 'vectordb', label: '🗄️ ChromaDB', x: 300, y: 0 },
-  { id: 'prompt', label: '📝 Prompt Builder', x: 300, y: 200 },
-  { id: 'qwen', label: '🧠 Qwen3-4B', x: 450, y: 100 },
-  { id: 'results', label: '📊 Results', x: 600, y: 100 },
+  { id: 'doc', label: 'Document', x: 0, y: 100, icon: FileText },
+  { id: 'chunker', label: 'Chunker', x: 150, y: 100, icon: Scissors },
+  { id: 'vectordb', label: 'ChromaDB', x: 300, y: 0, icon: Database },
+  { id: 'prompt', label: 'Prompt Builder', x: 300, y: 200, icon: FileEdit },
+  { id: 'qwen', label: 'Qwen3-4B', x: 450, y: 100, icon: Brain },
+  { id: 'results', label: 'Results', x: 600, y: 100, icon: BarChart },
 ];
 
 const defaultEdges: EdgeData[] = [
@@ -208,7 +210,10 @@ export default function PipelineGraph({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <span className="font-medium text-sm whitespace-nowrap">{node.label}</span>
+              <span className="font-medium text-sm whitespace-nowrap flex items-center gap-1.5">
+                {node.icon && <node.icon className="w-4 h-4" />}
+                {node.label}
+              </span>
               {active && (
                 <>
                   <motion.div
