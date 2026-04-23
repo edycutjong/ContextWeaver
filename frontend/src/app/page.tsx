@@ -56,14 +56,15 @@ function PipelinePreview() {
                   className="relative z-20 flex flex-col items-center justify-center my-2 sm:my-0"
                 >
                   {/* Orbit ring for active node */}
-                  {active && (
-                    <motion.div
-                      className="absolute inset-0 rounded-xl border-2 border-cyan-400"
-                      initial={{ opacity: 0.8, scale: 1 }}
-                      animate={{ opacity: 0, scale: 1.5 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "easeOut" }}
-                    />
-                  )}
+                  <motion.div
+                    className="absolute inset-0 rounded-xl border-2 border-cyan-400 pointer-events-none"
+                    initial={{ opacity: 0, scale: 1 }}
+                    animate={{ 
+                      opacity: active ? [0.8, 0] : 0, 
+                      scale: active ? [1, 1.5] : 1 
+                    }}
+                    transition={{ duration: 2, ease: "easeOut" }}
+                  />
                   <motion.div
                     animate={{
                       boxShadow: active 
