@@ -70,11 +70,15 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
                 <span
                   className={`opacity-0 group-hover:opacity-100 absolute ${tooltipPosition} left-1/2 -translate-x-1/2 bg-slate-950/95 backdrop-blur-sm border ${borderTint} text-xs text-white px-2 py-1 rounded-md pointer-events-none z-10 whitespace-nowrap shadow-lg transition-opacity`}
                 >
-                  Chunk {i}: {confidence ? `${(confidence * 100).toFixed(0)}%` : 'Processing...'}
+                  Chunk {i + 1}: {confidence ? `${(confidence * 100).toFixed(0)}%` : 'Processing...'}
                 </span>
               </motion.button>
             );
           })}
+          {/* Placeholders to maintain grid height and prevent layout shift up/down */}
+          {Array.from({ length: Math.max(0, Math.max(30, Math.ceil(chunks.length / 10) * 10) - chunks.length) }).map((_, i) => (
+            <div key={`empty-${i}`} className="w-full aspect-square rounded bg-slate-800/30 border border-slate-700/30" />
+          ))}
         </AnimatePresence>
       </div>
 
