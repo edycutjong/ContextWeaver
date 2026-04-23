@@ -18,11 +18,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'contextweaver': {
     nodes: [
       { id: 'doc', label: 'Document', x: 0, y: 100, icon: FileText },
-      { id: 'chunker', label: 'Chunker', x: 140, y: 100, icon: Scissors },
-      { id: 'vectordb', label: 'ChromaDB', x: 280, y: 0, icon: ChromaIcon },
-      { id: 'prompt', label: 'Prompt Builder', x: 280, y: 200, icon: FileEdit },
-      { id: 'qwen', label: 'Qwen3-4B', x: 420, y: 100, icon: QwenIcon },
-      { id: 'results', label: 'Results', x: 560, y: 100, icon: BarChart },
+      { id: 'chunker', label: 'Chunker', x: 250, y: 100, icon: Scissors },
+      { id: 'vectordb', label: 'ChromaDB', x: 500, y: 20, icon: ChromaIcon },
+      { id: 'prompt', label: 'Prompt Builder', x: 500, y: 200, icon: FileEdit },
+      { id: 'qwen', label: 'Qwen3-4B', x: 750, y: 100, icon: QwenIcon },
+      { id: 'results', label: 'Results', x: 1000, y: 100, icon: BarChart },
     ],
     edges: [
       { source: 'doc', target: 'chunker' },
@@ -45,10 +45,10 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'standard-rag': {
     nodes: [
       { id: 'query', label: 'User Query', x: 0, y: 100, icon: Search },
-      { id: 'embed', label: 'Embeddings', x: 140, y: 100, icon: Calculator },
-      { id: 'vectordb', label: 'Vector DB', x: 280, y: 100, icon: Database },
-      { id: 'llm', label: 'LLM', x: 420, y: 100, icon: Bot },
-      { id: 'output', label: 'Output', x: 560, y: 100, icon: FileText },
+      { id: 'embed', label: 'Embeddings', x: 250, y: 100, icon: Calculator },
+      { id: 'vectordb', label: 'Vector DB', x: 500, y: 100, icon: Database },
+      { id: 'llm', label: 'LLM', x: 750, y: 100, icon: Bot },
+      { id: 'output', label: 'Output', x: 1000, y: 100, icon: FileText },
     ],
     edges: [
       { source: 'query', target: 'embed' },
@@ -68,12 +68,12 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'multi-agent': {
     nodes: [
       { id: 'task', label: 'Task', x: 0, y: 100, icon: ClipboardList },
-      { id: 'router', label: 'Router Agent', x: 140, y: 100, icon: TrafficCone },
-      { id: 'agent1', label: 'Researcher', x: 280, y: 0, icon: UserSearch },
-      { id: 'agent2', label: 'Coder', x: 280, y: 100, icon: Code2 },
-      { id: 'agent3', label: 'Reviewer', x: 280, y: 200, icon: CheckSquare },
-      { id: 'merger', label: 'Synthesizer', x: 420, y: 100, icon: Combine },
-      { id: 'results', label: 'Final Output', x: 560, y: 100, icon: Target },
+      { id: 'router', label: 'Router Agent', x: 220, y: 100, icon: TrafficCone },
+      { id: 'agent1', label: 'Researcher', x: 440, y: 20, icon: UserSearch },
+      { id: 'agent2', label: 'Coder', x: 440, y: 100, icon: Code2 },
+      { id: 'agent3', label: 'Reviewer', x: 440, y: 210, icon: CheckSquare },
+      { id: 'merger', label: 'Synthesizer', x: 660, y: 100, icon: Combine },
+      { id: 'results', label: 'Final Output', x: 880, y: 100, icon: Target },
     ],
     edges: [
       { source: 'task', target: 'router' },
@@ -97,9 +97,9 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'evaluator-optimizer': {
     nodes: [
       { id: 'task', label: 'Task', x: 0, y: 100, icon: ClipboardList },
-      { id: 'generator', label: 'Generator', x: 180, y: 100, icon: PenTool },
-      { id: 'evaluator', label: 'Evaluator', x: 360, y: 100, icon: Scale },
-      { id: 'results', label: 'Results', x: 540, y: 100, icon: Sparkles },
+      { id: 'generator', label: 'Generator', x: 300, y: 100, icon: PenTool },
+      { id: 'evaluator', label: 'Evaluator', x: 600, y: 100, icon: Scale },
+      { id: 'results', label: 'Results', x: 900, y: 100, icon: Sparkles },
     ],
     edges: [
       { source: 'task', target: 'generator' },
@@ -119,11 +119,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'routing-agent': {
     nodes: [
       { id: 'input', label: 'Input', x: 0, y: 100, icon: Inbox },
-      { id: 'classifier', label: 'Classifier', x: 140, y: 100, icon: Compass },
-      { id: 'expert_a', label: 'Expert A', x: 320, y: 0, icon: Activity },
-      { id: 'expert_b', label: 'Expert B', x: 320, y: 100, icon: Dumbbell },
-      { id: 'expert_c', label: 'Expert C', x: 320, y: 200, icon: Waves },
-      { id: 'results', label: 'Results', x: 500, y: 100, icon: BarChart },
+      { id: 'classifier', label: 'Classifier', x: 300, y: 100, icon: Compass },
+      { id: 'expert_a', label: 'Expert A', x: 600, y: 20, icon: Activity },
+      { id: 'expert_b', label: 'Expert B', x: 600, y: 100, icon: Dumbbell },
+      { id: 'expert_c', label: 'Expert C', x: 600, y: 210, icon: Waves },
+      { id: 'results', label: 'Results', x: 900, y: 100, icon: BarChart },
     ],
     edges: [
       { source: 'input', target: 'classifier' },
@@ -433,7 +433,7 @@ export default function Dashboard() {
                 {isRunning && (
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute -inset-px rounded-xl bg-[length:200%_100%] bg-gradient-to-r from-cyan-500/60 via-purple-500/60 to-cyan-500/60 animate-[shimmer_3s_linear_infinite] opacity-80"
+                    className="pointer-events-none absolute -inset-1 rounded-xl bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-cyan-500/30 animate-pulse blur-sm"
                   />
                 )}
                 <div className="relative z-10 rounded-xl bg-slate-900">
@@ -553,8 +553,10 @@ export default function Dashboard() {
                   <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
                     {finalResult ? (
                       <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
+                    ) : isRunning ? (
+                      <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Processing Results...</>
                     ) : (
-                      <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Waiting for Results...</>
+                      <><Target className="w-6 h-6 text-cyan-400" /> Ready to Run</>
                     )}
                   </h3>
                   
@@ -597,12 +599,12 @@ export default function Dashboard() {
                   ) : (
                     <div className="h-48 rounded-lg border border-slate-800/60 bg-slate-950/40 p-4 flex flex-col justify-center gap-3">
                       <div className="space-y-2">
-                        <div className="h-2.5 rounded bg-slate-800/70 animate-pulse" style={{ width: '100%' }} />
-                        <div className="h-2.5 rounded bg-slate-800/70 animate-pulse" style={{ width: '82%' }} />
-                        <div className="h-2.5 rounded bg-slate-800/70 animate-pulse" style={{ width: '64%' }} />
+                        <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '100%' }} />
+                        <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '82%' }} />
+                        <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '64%' }} />
                       </div>
                       <p className="text-slate-500 text-xs text-center mt-3">
-                        {isRunning ? 'Streaming annotations…' : 'Run the pipeline to see extraction results here.'}
+                        {isRunning ? 'Streaming annotations…' : 'Waiting for results...'}
                       </p>
                     </div>
                   )}
@@ -610,7 +612,7 @@ export default function Dashboard() {
 
                 <button 
                   onClick={handleExport} 
-                  disabled={!finalResult}
+                  disabled={!finalResult || isRunning}
                   className={`w-full mt-6 py-2 rounded transition-all border relative z-10 font-medium overflow-hidden ${
                     finalResult 
                       ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700 cursor-pointer' 

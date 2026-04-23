@@ -19,7 +19,8 @@ function SliderField({
   onChange: (val: number) => void;
   unit: string;
 }) {
-  const pct = ((value - min) / (max - min)) * 100;
+  const rawPct = ((value - min) / (max - min)) * 100;
+  const pct = Math.max(0, Math.min(100, rawPct));
 
   return (
     <div>
@@ -40,7 +41,7 @@ function SliderField({
         <div className="absolute inset-0 rounded-full bg-slate-800" />
         <div
           className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
-          style={{ width: `${pct}%` }}
+          style={{ width: `calc(${pct}% + ${8 - pct * 0.16}px)` }}
         />
         <input
           type="range"
@@ -52,7 +53,7 @@ function SliderField({
         />
         <div
           className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-white border-2 border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.8)] pointer-events-none"
-          style={{ left: `${pct}%` }}
+          style={{ left: `calc(${pct}% + ${8 - pct * 0.16}px)` }}
         />
       </div>
 
@@ -66,8 +67,9 @@ function SliderField({
 
 export default function SettingsPage() {
   const [topK, setTopK] = useState(3);
-  const [chunkSize, setChunkSize] = useState(200);
+  const [chunkSize, setChunkSize] = useState(512);
   const [chunkOverlap, setChunkOverlap] = useState(20);
+  const [activeModel, setActiveModel] = useState('fast');
   const [saved, setSaved] = useState(false);
 
   React.useEffect(() => {
@@ -79,13 +81,14 @@ export default function SettingsPage() {
         if (parsed.topK) setTopK(parsed.topK);
         if (parsed.chunkSize) setChunkSize(parsed.chunkSize);
         if (parsed.chunkOverlap) setChunkOverlap(parsed.chunkOverlap);
+        if (parsed.activeModel) setActiveModel(parsed.activeModel);
         /* eslint-enable react-hooks/set-state-in-effect */
       } catch {}
     }
   }, []);
 
   function handleSave() {
-    localStorage.setItem('contextweaver_settings', JSON.stringify({ topK, chunkSize, chunkOverlap }));
+    localStorage.setItem('contextweaver_settings', JSON.stringify({ topK, chunkSize, chunkOverlap, activeModel }));
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -94,10 +97,10 @@ export default function SettingsPage() {
     <div className="w-full flex-1 flex flex-col font-sans relative p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto w-full pb-12">
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
             Router Settings
           </h1>
-          <p className="text-slate-400">Configure embedding parameters and model routing thresholds.</p>
+          <p className="text-slate-400 font-medium tracking-wide">Configure embedding parameters and model routing thresholds.</p>
         </div>
 
         <div className="space-y-6">
@@ -173,43 +176,64 @@ export default function SettingsPage() {
 
             <div className="grid md:grid-cols-2 gap-6 relative z-10">
               <motion.div
+                onClick={() => setActiveModel('fast')}
                 whileHover={{ y: -4, scale: 1.01 }}
-                className="bg-slate-950/50 p-5 rounded-lg border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)] cursor-pointer relative overflow-hidden"
+                className={`p-5 rounded-lg border cursor-pointer relative overflow-hidden transition-all ${activeModel === 'fast' ? 'bg-cyan-950/50 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]' : 'bg-slate-900/40 border-slate-800'}`}
               >
                 <div className="absolute top-0 right-0 w-20 h-20 bg-cyan-500/20 blur-2xl pointer-events-none" />
                 <div className="flex justify-between items-center mb-3 relative">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    <Sparkles className={`w-4 h-4 ${activeModel === 'fast' ? 'text-cyan-400' : 'text-slate-400'}`} />
                     <span className="text-white font-semibold">Fast Model</span>
                   </div>
-                  <span className="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-1 rounded">Active</span>
+                  {activeModel === 'fast' && <span className="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-1 rounded">Active</span>}
                 </div>
-                <div className="text-xs text-cyan-300 font-mono mb-2 relative">Qwen3-4B</div>
+                <div className={`text-xs font-mono mb-2 relative ${activeModel === 'fast' ? 'text-cyan-300' : 'text-slate-500'}`}>Qwen3-4B</div>
                 <p className="text-sm text-slate-400 relative">Used for low-complexity queries and rapid extraction.</p>
-                <div className="mt-3 flex gap-1 relative">
-                  {[...Array(8)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ scaleY: 0.3 }}
-                      animate={{ scaleY: [0.3, 1, 0.3] }}
-                      transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.1 }}
-                      className="w-1 h-4 bg-cyan-400/70 rounded-full origin-bottom"
-                    />
-                  ))}
-                </div>
+                {activeModel === 'fast' && (
+                  <div className="mt-3 flex gap-1 relative">
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ scaleY: 0.3 }}
+                        animate={{ scaleY: [0.3, 1, 0.3] }}
+                        transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.1 }}
+                        className="w-1 h-4 bg-cyan-400/70 rounded-full origin-bottom"
+                      />
+                    ))}
+                  </div>
+                )}
               </motion.div>
 
-              <div className="bg-slate-950/50 p-5 rounded-lg border border-slate-800 opacity-60 cursor-not-allowed relative overflow-hidden">
-                <div className="flex justify-between items-center mb-3">
+              <motion.div
+                onClick={() => setActiveModel('deep')}
+                whileHover={{ y: -4, scale: 1.01 }}
+                className={`p-5 rounded-lg border cursor-pointer relative overflow-hidden transition-all ${activeModel === 'deep' ? 'bg-amber-950/50 border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]' : 'bg-slate-900/40 border-slate-800'}`}
+              >
+                <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/20 blur-2xl pointer-events-none" />
+                <div className="flex justify-between items-center mb-3 relative">
                   <div className="flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-amber-400" />
+                    <Cpu className={`w-4 h-4 ${activeModel === 'deep' ? 'text-amber-400' : 'text-slate-400'}`} />
                     <span className="text-white font-semibold">Deep Model</span>
                   </div>
-                  <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-1 rounded">Pro Only</span>
+                  {activeModel === 'deep' && <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2 py-1 rounded">Active</span>}
                 </div>
-                <div className="text-xs text-amber-300 font-mono mb-2">Llama-3-70B</div>
-                <p className="text-sm text-slate-400">Used for complex reasoning and multi-hop synthesis.</p>
-              </div>
+                <div className={`text-xs font-mono mb-2 relative ${activeModel === 'deep' ? 'text-amber-300' : 'text-slate-500'}`}>Llama-3-70B</div>
+                <p className="text-sm text-slate-400 relative">Used for complex reasoning and multi-hop synthesis.</p>
+                {activeModel === 'deep' && (
+                  <div className="mt-3 flex gap-1 relative">
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ scaleY: 0.3 }}
+                        animate={{ scaleY: [0.3, 1, 0.3] }}
+                        transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.1 }}
+                        className="w-1 h-4 bg-amber-400/70 rounded-full origin-bottom"
+                      />
+                    ))}
+                  </div>
+                )}
+              </motion.div>
             </div>
           </motion.section>
 
