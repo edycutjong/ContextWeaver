@@ -30,7 +30,7 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
         <span className="mr-2">🔥</span> Confidence Heatmap
       </h3>
       <div className="grid grid-cols-10 gap-2">
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence>
           {chunks.map((chunk, i) => {
             const confidence = chunk.confidence || chunk.result?.confidence || 0;
             let bgColor = 'bg-slate-800';
