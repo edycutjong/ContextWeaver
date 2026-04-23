@@ -52,7 +52,7 @@ export default function HistoryPage() {
       <div className="max-w-7xl mx-auto w-full">
         <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+            <h1 className="text-3xl font-orbitron font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
               Query History
             </h1>
             <p className="text-slate-400">View past RAG queries, generation latency, and token usage.</p>

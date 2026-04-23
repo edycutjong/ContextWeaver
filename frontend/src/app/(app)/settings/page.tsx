@@ -114,7 +114,7 @@ export default function SettingsPage() {
                 <Database className="w-5 h-5 text-cyan-400" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-white">Retrieval Engine (ChromaDB)</h2>
+                <h2 className="text-xl font-orbitron font-semibold text-white">Retrieval Engine (ChromaDB)</h2>
                 <p className="text-xs text-slate-400">Tune semantic search behaviour</p>
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function SettingsPage() {
                 <Cpu className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-white">Model Routing</h2>
+                <h2 className="text-xl font-orbitron font-semibold text-white">Model Routing</h2>
                 <p className="text-xs text-slate-400">Pick which model handles each chunk</p>
               </div>
             </div>

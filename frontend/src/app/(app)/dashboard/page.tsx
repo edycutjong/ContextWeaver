@@ -335,7 +335,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto space-y-6 relative z-10 w-full">
 
           {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/80 backdrop-blur-md p-6 rounded-xl border border-slate-700/50 shadow-[0_0_40px_rgba(6,182,212,0.15)] relative overflow-hidden group gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/80 backdrop-blur-md p-6 rounded-xl border border-slate-700/50 shadow-[0_0_40px_rgba(6,182,212,0.15)] relative overflow-hidden group gap-6 sm:gap-8">
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             <div className="flex items-center space-x-6 relative z-10">
               <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.4)] border border-cyan-500/30 shrink-0 group-hover:scale-105 transition-transform duration-500 bg-slate-950 p-3 flex items-center justify-center">
@@ -347,7 +347,7 @@ export default function Dashboard() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-tight">
+                <h1 className="text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
                   Pipeline Overview
                 </h1>
                 <p className="text-slate-400 font-medium tracking-wide">Dynamic In-Context Learning Router</p>
