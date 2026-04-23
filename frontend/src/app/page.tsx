@@ -102,7 +102,7 @@ function PipelinePreview() {
                         ease: 'linear',
                         opacity: { times: [0, 0.9, 1], duration: active ? 2 : 0 }
                       }}
-                      className="absolute inset-y-0 w-full bg-gradient-to-r from-transparent via-cyan-400 to-cyan-200"
+                      className="absolute inset-y-0 w-full bg-linear-to-r from-transparent via-cyan-400 to-cyan-200"
                     />
                     {active && (
                       <motion.div
@@ -129,7 +129,7 @@ function PipelinePreview() {
                         ease: 'linear',
                         opacity: { times: [0, 0.9, 1], duration: active ? 2 : 0 }
                       }}
-                      className="absolute inset-x-0 h-full bg-gradient-to-b from-transparent via-cyan-400 to-cyan-200"
+                      className="absolute inset-x-0 h-full bg-linear-to-b from-transparent via-cyan-400 to-cyan-200"
                     />
                     {active && (
                       <motion.div
@@ -224,7 +224,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-normal px-2 sm:px-0 py-2"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-normal px-2 sm:px-0 py-2"
         >
           <span className="md:whitespace-nowrap">Dynamic In-Context</span> <br /> <span className="md:whitespace-nowrap">Learning Router.</span>
         </motion.h1>

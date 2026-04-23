@@ -40,7 +40,7 @@ function SliderField({
       <div className="relative h-2 mb-2">
         <div className="absolute inset-0 rounded-full bg-slate-800" />
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+          className="absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-cyan-500 to-purple-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
           style={{ width: `calc(${pct}% + ${8 - pct * 0.16}px)` }}
         />
         <input
@@ -97,7 +97,7 @@ export default function SettingsPage() {
     <div className="w-full flex-1 flex flex-col font-sans relative p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto w-full pb-12">
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
+          <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
             Router Settings
           </h1>
           <p className="text-slate-400 font-medium tracking-wide">Configure embedding parameters and model routing thresholds.</p>
@@ -144,7 +144,7 @@ export default function SettingsPage() {
                       {topK === k && (
                         <motion.div
                           layoutId="topk-active"
-                          className="absolute inset-0 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-500/20 shadow-[0_0_20px_rgba(6,182,212,0.25)]"
+                          className="absolute inset-0 rounded-lg bg-linear-to-br from-cyan-500/20 to-purple-500/20 shadow-[0_0_20px_rgba(6,182,212,0.25)]"
                           transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                         />
                       )}
@@ -255,9 +255,9 @@ export default function SettingsPage() {
               onClick={handleSave}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-bold px-6 py-3 rounded-lg shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-shadow relative overflow-hidden"
+              className="flex items-center gap-2 bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-bold px-6 py-3 rounded-lg shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-shadow relative overflow-hidden"
             >
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:animate-[shimmer_1.5s_infinite]" />
+              <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:animate-[shimmer_1.5s_infinite]" />
               <Save className="w-4 h-4 relative" /> <span className="relative">Save Configuration</span>
             </motion.button>
           </div>

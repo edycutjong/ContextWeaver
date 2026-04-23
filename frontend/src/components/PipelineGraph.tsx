@@ -115,8 +115,8 @@ export default function PipelineGraph({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, mounted]);
 
-  const maxX = Math.max(0, ...nodes.map(n => n.x));
-  const minContainerWidth = Math.max(1200, maxX + 250);
+  const maxPosX = Math.max(0, ...Object.values(positions).map(p => p.x), ...nodes.map(n => n.x));
+  const minContainerWidth = Math.max(1200, maxPosX + 250);
 
   return (
     <div 

@@ -31,6 +31,7 @@ export default function Header() {
           <div className="logo-container relative">
             <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full group-hover:bg-cyan-400/30 transition-all duration-500" />
             <div className="relative z-10 w-8 h-8">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icon.svg" alt="ContextWeaver Icon" className="w-full h-full drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
             </div>
           </div>
