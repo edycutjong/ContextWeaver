@@ -448,33 +448,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Live running metrics (Always visible to prevent layout shift) */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-slate-900/70 border border-cyan-500/20 rounded-xl p-4 backdrop-blur-sm transition-opacity duration-300">
-                  <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
-                  <p className={`text-lg font-bold font-mono mt-1 truncate ${pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`}>{pipelineStep}</p>
-                </div>
-                <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-4 backdrop-blur-sm transition-opacity duration-300">
-                  <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>
-                  <p className={`text-lg font-bold font-mono mt-1 ${processedChunks.length > 0 ? 'text-purple-300' : 'text-slate-500'}`}>
-                    <AnimatedNumber value={processedChunks.length} />
-                  </p>
-                </div>
-                <div className="bg-slate-900/70 border border-emerald-500/20 rounded-xl p-4 backdrop-blur-sm transition-opacity duration-300">
-                  <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Avg confidence</p>
-                  <p className={`text-lg font-bold font-mono mt-1 ${processedChunks.length > 0 ? 'text-emerald-300' : 'text-slate-500'}`}>
-                    <AnimatedNumber
-                      value={(() => {
-                        const scored = processedChunks.filter((c) => typeof c.confidence === 'number');
-                        if (scored.length === 0) return 0;
-                        return (scored.reduce((a, c) => a + c.confidence, 0) / scored.length) * 100;
-                      })()}
-                      decimals={1}
-                      suffix="%"
-                    />
-                  </p>
-                </div>
-              </div>
 
             </div>
 
@@ -542,57 +515,84 @@ export default function Dashboard() {
                   </div>
                 </div>
 
+                {/* Confidence Heatmap (1 column) */}
+                <div className="lg:col-span-1 relative z-20">
+                  <div className="h-96">
+                    <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
+                  </div>
+                </div>
+
                 {/* Final Results Panel (1 column) */}
                 <div className="lg:col-span-1 bg-linear-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-6 shadow-xl flex flex-col h-96 relative z-20">
-                  <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-2">
-                    <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                  <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-2 flex flex-col">
+                    <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2 shrink-0">
                       {finalResult ? (
-                        <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
+                        <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Complete</>
                       ) : isRunning ? (
-                        <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Processing Results...</>
+                        <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Processing...</>
                       ) : (
-                        <><Target className="w-6 h-6 text-cyan-400" /> Ready to Run</>
+                        <><Target className="w-6 h-6 text-cyan-400" /> Ready</>
                       )}
                     </h3>
                     
+                    {/* Live running metrics */}
+                    <div className="grid grid-cols-2 gap-3 mb-4 shrink-0">
+                      <div className="col-span-2 bg-slate-900/70 border border-cyan-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
+                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
+                        <p className={`text-sm font-bold font-mono mt-0.5 truncate ${pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`}>{pipelineStep}</p>
+                      </div>
+                      <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
+                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>
+                        <p className={`text-sm font-bold font-mono mt-0.5 ${processedChunks.length > 0 ? 'text-purple-300' : 'text-slate-500'}`}>
+                          <AnimatedNumber value={processedChunks.length} />
+                        </p>
+                      </div>
+                      <div className="bg-slate-900/70 border border-emerald-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
+                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Avg Conf</p>
+                        <p className={`text-sm font-bold font-mono mt-0.5 ${processedChunks.length > 0 ? 'text-emerald-300' : 'text-slate-500'}`}>
+                          <AnimatedNumber
+                            value={(() => {
+                              const scored = processedChunks.filter((c) => typeof c.confidence === 'number');
+                              if (scored.length === 0) return 0;
+                              return (scored.reduce((a, c) => a + c.confidence, 0) / scored.length) * 100;
+                            })()}
+                            decimals={1}
+                            suffix="%"
+                          />
+                        </p>
+                      </div>
+                    </div>
+
                     {finalResult ? (
-                      <div className="space-y-4">
-                        <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
-                          <p className="text-slate-400 text-sm">Mean Confidence</p>
-                          <p className="text-3xl font-bold text-white">
-                            <AnimatedNumber value={finalResult.mean_confidence * 100} decimals={1} suffix="%" />
-                          </p>
-                        </div>
-                        <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 flex flex-col">
-                          <p className="text-slate-400 text-sm mb-2 shrink-0">
-                            Extracted Entities (<AnimatedNumber value={finalResult.merged_entities?.length || 0} />)
-                          </p>
-                          <div className="flex flex-wrap gap-1.5 overflow-y-auto">
-                            <AnimatePresence>
-                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                              {(finalResult.merged_entities || []).slice(0, 20).map((entity: any, i: number) => {
-                                const label = entity.type || entity.label || 'DEFAULT';
-                                const style = ENTITY_STYLES[label] || DEFAULT_ENTITY_STYLE;
-                                return (
-                                  <motion.span
-                                    key={`${entity.value || entity}-${i}`}
-                                    initial={{ scale: 0.5, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    exit={{ scale: 0.5, opacity: 0 }}
-                                    transition={{ delay: i * 0.05, type: 'spring', stiffness: 350, damping: 22 }}
-                                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
-                                  >
-                                    <span className="text-[10px] font-bold opacity-60">{label}</span>
-                                    {entity.value || entity}
-                                  </motion.span>
-                                );
-                              })}
-                            </AnimatePresence>
-                          </div>
+                      <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 flex flex-col flex-1 min-h-0">
+                        <p className="text-slate-400 text-sm mb-2 shrink-0">
+                          Extracted Entities (<AnimatedNumber value={finalResult.merged_entities?.length || 0} />)
+                        </p>
+                        <div className="flex flex-wrap gap-1.5 overflow-y-auto">
+                          <AnimatePresence>
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            {(finalResult.merged_entities || []).slice(0, 20).map((entity: any, i: number) => {
+                              const label = entity.type || entity.label || 'DEFAULT';
+                              const style = ENTITY_STYLES[label] || DEFAULT_ENTITY_STYLE;
+                              return (
+                                <motion.span
+                                  key={`${entity.value || entity}-${i}`}
+                                  initial={{ scale: 0.5, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  exit={{ scale: 0.5, opacity: 0 }}
+                                  transition={{ delay: i * 0.05, type: 'spring', stiffness: 350, damping: 22 }}
+                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
+                                >
+                                  <span className="text-[10px] font-bold opacity-60">{label}</span>
+                                  {entity.value || entity}
+                                </motion.span>
+                              );
+                            })}
+                          </AnimatePresence>
                         </div>
                       </div>
                     ) : (
-                      <div className="h-48 rounded-lg border border-slate-800/60 bg-slate-950/40 p-4 flex flex-col justify-center gap-3">
+                      <div className="rounded-lg border border-slate-800/60 bg-slate-950/40 p-4 flex flex-col justify-center gap-3 flex-1">
                         <div className="space-y-2">
                           <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '100%' }} />
                           <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '82%' }} />
@@ -628,13 +628,6 @@ export default function Dashboard() {
                       ) : 'Export JSON'}
                     </span>
                   </button>
-                </div>
-
-                {/* Confidence Heatmap (1 column) */}
-                <div className="lg:col-span-1 relative z-20">
-                  <div className="h-96">
-                    <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
-                  </div>
                 </div>
               </div>
             )}
