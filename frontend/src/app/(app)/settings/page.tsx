@@ -94,7 +94,7 @@ export default function SettingsPage() {
     <div className="w-full flex-1 flex flex-col font-sans relative p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto w-full pb-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-orbitron font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+          <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-2">
             Router Settings
           </h1>
           <p className="text-slate-400">Configure embedding parameters and model routing thresholds.</p>
