@@ -224,9 +224,9 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-tight"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-tight px-2 sm:px-0"
         >
-          <span className="whitespace-nowrap">Dynamic In-Context</span> <br /> <span className="whitespace-nowrap">Learning Router.</span>
+          <span className="md:whitespace-nowrap">Dynamic In-Context</span> <br /> <span className="md:whitespace-nowrap">Learning Router.</span>
         </motion.h1>
 
         <motion.p
