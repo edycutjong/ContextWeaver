@@ -354,7 +354,7 @@ export default function Dashboard() {
 
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/80 backdrop-blur-md p-6 rounded-xl border border-slate-700/50 shadow-[0_0_40px_rgba(6,182,212,0.15)] relative overflow-hidden group gap-6 sm:gap-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-r from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             <div className="flex items-center space-x-6 relative z-10">
               <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.4)] border border-cyan-500/30 shrink-0 group-hover:scale-105 transition-transform duration-500 bg-slate-950 p-3 flex items-center justify-center">
                 <div className="absolute inset-0 bg-cyan-400/20 animate-pulse" />
@@ -365,7 +365,7 @@ export default function Dashboard() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
+                <h1 className="text-4xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
                   Pipeline Overview
                 </h1>
                 <p className="text-slate-400 font-medium tracking-wide">Dynamic In-Context Learning Router</p>
@@ -375,11 +375,11 @@ export default function Dashboard() {
               onClick={startPipeline}
               disabled={isRunning}
               className={`relative z-10 px-8 py-3.5 rounded-xl font-bold tracking-wide transition-all overflow-hidden ${
-                isRunning ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] border border-cyan-400/30'
+                isRunning ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' : 'bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] border border-cyan-400/30'
               }`}
             >
               {isRunning && (
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
               )}
               <span className="relative flex items-center">
                 {isRunning ? (
@@ -434,7 +434,7 @@ export default function Dashboard() {
                 {isRunning && (
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute -inset-1 rounded-xl bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-cyan-500/30 animate-pulse blur-sm"
+                    className="pointer-events-none absolute -inset-1 rounded-xl bg-linear-to-r from-cyan-500/30 via-purple-500/30 to-cyan-500/30 animate-pulse blur-sm"
                   />
                 )}
                 <div className="relative z-10 rounded-xl bg-slate-900">
@@ -448,209 +448,198 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Live running metrics */}
-              <AnimatePresence>
-                {isRunning && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25 }}
-                    className="grid grid-cols-3 gap-4"
-                  >
-                    <div className="bg-slate-900/70 border border-cyan-500/20 rounded-xl p-4 backdrop-blur-sm">
-                      <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
-                      <p className="text-lg font-bold text-cyan-300 font-mono mt-1 truncate">{pipelineStep}</p>
-                    </div>
-                    <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-4 backdrop-blur-sm">
-                      <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>
-                      <p className="text-lg font-bold text-purple-300 font-mono mt-1">
-                        <AnimatedNumber value={processedChunks.length} />
-                      </p>
-                    </div>
-                    <div className="bg-slate-900/70 border border-emerald-500/20 rounded-xl p-4 backdrop-blur-sm">
-                      <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Avg confidence</p>
-                      <p className="text-lg font-bold text-emerald-300 font-mono mt-1">
-                        <AnimatedNumber
-                          value={(() => {
-                            const scored = processedChunks.filter((c) => typeof c.confidence === 'number');
-                            if (scored.length === 0) return 0;
-                            return (scored.reduce((a, c) => a + c.confidence, 0) / scored.length) * 100;
-                          })()}
-                          decimals={1}
-                          suffix="%"
-                        />
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* Live running metrics (Always visible to prevent layout shift) */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-slate-900/70 border border-cyan-500/20 rounded-xl p-4 backdrop-blur-sm transition-opacity duration-300">
+                  <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
+                  <p className={`text-lg font-bold font-mono mt-1 truncate ${pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`}>{pipelineStep}</p>
+                </div>
+                <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-4 backdrop-blur-sm transition-opacity duration-300">
+                  <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>
+                  <p className={`text-lg font-bold font-mono mt-1 ${processedChunks.length > 0 ? 'text-purple-300' : 'text-slate-500'}`}>
+                    <AnimatedNumber value={processedChunks.length} />
+                  </p>
+                </div>
+                <div className="bg-slate-900/70 border border-emerald-500/20 rounded-xl p-4 backdrop-blur-sm transition-opacity duration-300">
+                  <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Avg confidence</p>
+                  <p className={`text-lg font-bold font-mono mt-1 ${processedChunks.length > 0 ? 'text-emerald-300' : 'text-slate-500'}`}>
+                    <AnimatedNumber
+                      value={(() => {
+                        const scored = processedChunks.filter((c) => typeof c.confidence === 'number');
+                        if (scored.length === 0) return 0;
+                        return (scored.reduce((a, c) => a + c.confidence, 0) / scored.length) * 100;
+                      })()}
+                      decimals={1}
+                      suffix="%"
+                    />
+                  </p>
+                </div>
+              </div>
 
             </div>
 
             {/* Bottom Section: Split Pane */}
-            <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-              
-              {/* Left Column: Logs & Results */}
-              <div className="flex flex-col space-y-6 h-full relative z-20">
+            {pipelineStep !== 'idle' && (
+              <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                
+                {selectedChunk && (
+                  <ChunkInspector chunkData={selectedChunk} onClose={() => setSelectedChunk(null)} />
+                )}
 
-              {/* Live Logs */}
-              <div className="bg-slate-950 border border-slate-700 rounded-xl flex flex-col h-96 relative overflow-hidden">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.06),transparent_60%)]"
-                />
-                <div className="p-4 border-b border-slate-800 bg-slate-900/50 rounded-t-xl font-semibold flex items-center relative z-10">
-                  <div className={`w-2 h-2 rounded-full mr-3 ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-slate-600'}`}></div>
-                  Terminal Logs
+                {/* Terminal Logs (2 columns) */}
+                <div className="lg:col-span-2 bg-slate-950 border border-slate-700 rounded-xl flex flex-col h-96 relative overflow-hidden z-20">
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.06),transparent_60%)]"
+                  />
+                  <div className="p-4 border-b border-slate-800 bg-slate-900/50 rounded-t-xl font-semibold flex items-center relative z-10">
+                    <div className={`w-2 h-2 rounded-full mr-3 ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-slate-600'}`}></div>
+                    Terminal Logs
+                  </div>
+                  <div ref={logsContainerRef} className="flex-1 p-4 font-mono text-xs text-slate-400 overflow-y-auto space-y-1.5 scroll-smooth relative z-10">
+                    {displayedLogs.map((msg, i) => {
+                      let Icon = null;
+                      let iconClass = '';
+                      let cleanMsg = msg;
+                      let promptColor = 'text-cyan-600';
+
+                      if (msg.includes('❌')) {
+                        Icon = XCircle;
+                        iconClass = 'text-red-400';
+                        promptColor = 'text-red-400';
+                        cleanMsg = msg.replace('❌', '');
+                      } else if (msg.includes('✅')) {
+                        Icon = CheckCircle2;
+                        iconClass = 'text-emerald-400';
+                        promptColor = 'text-emerald-400';
+                        cleanMsg = msg.replace('✅', '');
+                      } else if (msg.includes('⚠️')) {
+                        Icon = AlertTriangle;
+                        iconClass = 'text-amber-400';
+                        promptColor = 'text-amber-400';
+                        cleanMsg = msg.replace('⚠️', '');
+                      }
+
+                      return (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-start gap-1"
+                        >
+                          <span className={`${promptColor} select-none shrink-0`}>{'>'}</span>
+                          <span className="break-all flex items-center gap-1.5 flex-wrap">
+                            {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClass}`} />}
+                            {cleanMsg}
+                          </span>
+                          {i === displayedLogs.length - 1 && isTyping && (
+                            <span className="animate-pulse inline-block w-1.5 h-3 bg-cyan-400 ml-0.5 rounded-sm shrink-0 mt-0.5" />
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div ref={logsContainerRef} className="flex-1 p-4 font-mono text-xs text-slate-400 overflow-y-auto space-y-1.5 scroll-smooth relative z-10">
-                  {displayedLogs.map((msg, i) => {
-                    let Icon = null;
-                    let iconClass = '';
-                    let cleanMsg = msg;
-                    let promptColor = 'text-cyan-600';
 
-                    if (msg.includes('❌')) {
-                      Icon = XCircle;
-                      iconClass = 'text-red-400';
-                      promptColor = 'text-red-400';
-                      cleanMsg = msg.replace('❌', '');
-                    } else if (msg.includes('✅')) {
-                      Icon = CheckCircle2;
-                      iconClass = 'text-emerald-400';
-                      promptColor = 'text-emerald-400';
-                      cleanMsg = msg.replace('✅', '');
-                    } else if (msg.includes('⚠️')) {
-                      Icon = AlertTriangle;
-                      iconClass = 'text-amber-400';
-                      promptColor = 'text-amber-400';
-                      cleanMsg = msg.replace('⚠️', '');
-                    }
-
-                    return (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex items-start gap-1"
-                      >
-                        <span className={`${promptColor} select-none shrink-0`}>{'>'}</span>
-                        <span className="break-all flex items-center gap-1.5 flex-wrap">
-                          {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClass}`} />}
-                          {cleanMsg}
-                        </span>
-                        {i === displayedLogs.length - 1 && isTyping && (
-                          <span className="animate-pulse inline-block w-1.5 h-3 bg-cyan-400 ml-0.5 rounded-sm shrink-0 mt-0.5" />
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Final Results Panel */}
-              <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-6 shadow-xl flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                {/* Final Results Panel (1 column) */}
+                <div className="lg:col-span-1 bg-linear-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-6 shadow-xl flex flex-col h-96 relative z-20">
+                  <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-2">
+                    <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                      {finalResult ? (
+                        <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
+                      ) : isRunning ? (
+                        <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Processing Results...</>
+                      ) : (
+                        <><Target className="w-6 h-6 text-cyan-400" /> Ready to Run</>
+                      )}
+                    </h3>
+                    
                     {finalResult ? (
-                      <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
-                    ) : isRunning ? (
-                      <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Processing Results...</>
-                    ) : (
-                      <><Target className="w-6 h-6 text-cyan-400" /> Ready to Run</>
-                    )}
-                  </h3>
-                  
-                  {finalResult ? (
-                    <div className="space-y-4">
-                      <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
-                        <p className="text-slate-400 text-sm">Mean Confidence</p>
-                        <p className="text-3xl font-bold text-white">
-                          <AnimatedNumber value={finalResult.mean_confidence * 100} decimals={1} suffix="%" />
-                        </p>
-                      </div>
-                      <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
-                        <p className="text-slate-400 text-sm mb-2">
-                          Extracted Entities (<AnimatedNumber value={finalResult.merged_entities?.length || 0} />)
-                        </p>
-                        <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
-                          <AnimatePresence>
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            {(finalResult.merged_entities || []).slice(0, 20).map((entity: any, i: number) => {
-                              const label = entity.type || entity.label || 'DEFAULT';
-                              const style = ENTITY_STYLES[label] || DEFAULT_ENTITY_STYLE;
-                              return (
-                                <motion.span
-                                  key={`${entity.value || entity}-${i}`}
-                                  initial={{ scale: 0.5, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  exit={{ scale: 0.5, opacity: 0 }}
-                                  transition={{ delay: i * 0.05, type: 'spring', stiffness: 350, damping: 22 }}
-                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
-                                >
-                                  <span className="text-[10px] font-bold opacity-60">{label}</span>
-                                  {entity.value || entity}
-                                </motion.span>
-                              );
-                            })}
-                          </AnimatePresence>
+                      <div className="space-y-4">
+                        <div className="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                          <p className="text-slate-400 text-sm">Mean Confidence</p>
+                          <p className="text-3xl font-bold text-white">
+                            <AnimatedNumber value={finalResult.mean_confidence * 100} decimals={1} suffix="%" />
+                          </p>
+                        </div>
+                        <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 flex flex-col">
+                          <p className="text-slate-400 text-sm mb-2 shrink-0">
+                            Extracted Entities (<AnimatedNumber value={finalResult.merged_entities?.length || 0} />)
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 overflow-y-auto">
+                            <AnimatePresence>
+                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                              {(finalResult.merged_entities || []).slice(0, 20).map((entity: any, i: number) => {
+                                const label = entity.type || entity.label || 'DEFAULT';
+                                const style = ENTITY_STYLES[label] || DEFAULT_ENTITY_STYLE;
+                                return (
+                                  <motion.span
+                                    key={`${entity.value || entity}-${i}`}
+                                    initial={{ scale: 0.5, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.5, opacity: 0 }}
+                                    transition={{ delay: i * 0.05, type: 'spring', stiffness: 350, damping: 22 }}
+                                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
+                                  >
+                                    <span className="text-[10px] font-bold opacity-60">{label}</span>
+                                    {entity.value || entity}
+                                  </motion.span>
+                                );
+                              })}
+                            </AnimatePresence>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="h-48 rounded-lg border border-slate-800/60 bg-slate-950/40 p-4 flex flex-col justify-center gap-3">
-                      <div className="space-y-2">
-                        <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '100%' }} />
-                        <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '82%' }} />
-                        <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '64%' }} />
+                    ) : (
+                      <div className="h-48 rounded-lg border border-slate-800/60 bg-slate-950/40 p-4 flex flex-col justify-center gap-3">
+                        <div className="space-y-2">
+                          <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '100%' }} />
+                          <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '82%' }} />
+                          <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '64%' }} />
+                        </div>
+                        <p className="text-slate-500 text-xs text-center mt-3">
+                          {isRunning ? 'Streaming annotations…' : 'Waiting for results...'}
+                        </p>
                       </div>
-                      <p className="text-slate-500 text-xs text-center mt-3">
-                        {isRunning ? 'Streaming annotations…' : 'Waiting for results...'}
-                      </p>
-                    </div>
-                  )}
+                    )}
+                  </div>
+
+                  <button 
+                    onClick={handleExport} 
+                    disabled={!finalResult || isRunning}
+                    className={`w-full mt-4 shrink-0 py-2 rounded transition-all border relative z-10 font-medium overflow-hidden ${
+                      finalResult 
+                        ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700 cursor-pointer' 
+                        : isRunning
+                          ? 'bg-slate-800 text-slate-500 cursor-not-allowed border-slate-700'
+                          : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    {isRunning && (
+                      <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                    )}
+                    <span className="relative flex items-center justify-center">
+                      {isRunning ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                          Preparing Export...
+                        </>
+                      ) : 'Export JSON'}
+                    </span>
+                  </button>
                 </div>
 
-                <button 
-                  onClick={handleExport} 
-                  disabled={!finalResult || isRunning}
-                  className={`w-full mt-6 py-2 rounded transition-all border relative z-10 font-medium overflow-hidden ${
-                    finalResult 
-                      ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700 cursor-pointer' 
-                      : isRunning
-                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed border-slate-700'
-                        : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed opacity-50'
-                  }`}
-                >
-                  {isRunning && (
-                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
-                  )}
-                  <span className="relative flex items-center justify-center">
-                    {isRunning ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Preparing Export...
-                      </>
-                    ) : 'Export JSON'}
-                  </span>
-                </button>
+                {/* Confidence Heatmap (1 column) */}
+                <div className="lg:col-span-1 relative z-20">
+                  <div className="h-96">
+                    <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
+                  </div>
+                </div>
               </div>
-
-              {/* Right Column: Confidence Heatmap */}
-              <div className="space-y-6">
-                {(pipelineStep !== 'idle' || processedChunks.length > 0) && (
-                  <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </div>
-      </div>
-
-      {/* Inspector Modal */}
-      <ChunkInspector chunkData={selectedChunk} onClose={() => setSelectedChunk(null)} />
     </>
   );
 }

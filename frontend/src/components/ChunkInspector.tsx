@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Database, FileText } from 'lucide-react';
 
 type ChunkData = {
   chunk_idx: string | number;
@@ -53,11 +53,16 @@ function ConfidenceRing({ value }: { value: number }) {
   );
 }
 
+const ENTITY_STYLES: Record<string, { bg: string, text: string, border: string }> = {
+  DEFAULT: { bg: 'bg-slate-800', text: 'text-slate-300', border: 'border-slate-700' },
+};
+
+const DEFAULT_ENTITY_STYLE = ENTITY_STYLES.DEFAULT;
+
 export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -98,21 +103,15 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none" />
 
             {/* Header */}
-            <div className="flex justify-between items-center p-5 border-b border-slate-800 bg-slate-950/80 relative z-10 shrink-0">
+            <div className="px-6 py-4 border-b border-slate-700/50 bg-slate-800/30 flex justify-between items-center relative z-10 backdrop-blur-md">
               <div className="flex items-center gap-4">
-                {typeof chunkData.confidence === 'number' && <ConfidenceRing value={chunkData.confidence} />}
+                <div className="bg-cyan-500/10 p-2 rounded-lg border border-cyan-500/20">
+                  <Database className="w-5 h-5 text-cyan-400" />
+                </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Chunk Inspector</h2>
+                  <h2 className="text-xl font-bold text-white tracking-wide">Chunk Inspector</h2>
                   <p className="text-sm text-slate-400">
-                    Chunk ID: <span className="text-cyan-400 font-mono">{chunkData.chunk_idx}</span>
-                    {typeof chunkData.confidence === 'number' && (
-                      <>
-                        {' '}• Confidence:{' '}
-                        <span className={chunkData.confidence > 0.8 ? 'text-green-400' : 'text-amber-400'}>
-                          {(chunkData.confidence * 100).toFixed(1)}%
-                        </span>
-                      </>
-                    )}
+                    Viewing details for Chunk <span className="text-cyan-300 font-mono font-bold">#{chunkData.chunk_idx}</span>
                   </p>
                 </div>
               </div>
@@ -133,14 +132,14 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.15 }}
-                className="border-b md:border-b-0 md:border-r border-slate-800 flex flex-col min-h-0 overflow-hidden"
+                transition={{ delay: 0.1 }}
+                className="border-r border-slate-700/50 flex flex-col bg-slate-900/50 min-h-0"
               >
-                <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex items-center gap-2 shrink-0">
-                  <span className="w-5 h-5 rounded bg-cyan-500/20 text-cyan-400 text-xs flex items-center justify-center font-bold">1</span>
-                  Raw Chunk Text
+                <div className="px-4 py-3 bg-slate-800/40 border-b border-slate-700/50 font-semibold text-slate-300 flex items-center gap-2 shrink-0">
+                  <FileText className="w-4 h-4 text-slate-400" />
+                  Raw Source Text
                 </div>
-                <div className="p-4 overflow-y-auto flex-1 text-slate-300 font-mono whitespace-pre-wrap text-xs leading-relaxed">
+                <div className="p-4 overflow-y-auto flex-1 font-mono text-xs leading-relaxed text-slate-400 whitespace-pre-wrap">
                   {chunkData.raw_text}
                 </div>
               </motion.div>
@@ -150,7 +149,7 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="border-b md:border-b-0 md:border-r border-slate-800 flex flex-col min-h-0 overflow-hidden"
+                className="border-b md:border-b-0 md:border-r border-slate-800 flex flex-col min-h-0 overflow-hidden bg-slate-900/50"
               >
                 <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex justify-between items-center shrink-0">
                   <div className="flex items-center gap-2">
@@ -226,4 +225,3 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
     document.body
   );
 }
-
