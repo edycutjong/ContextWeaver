@@ -57,7 +57,7 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
 
             return (
               <motion.button
-                key={`${i}-${confidence.toFixed(2)}`}
+                key={`chunk-${i}`}
                 onClick={() => onSelectChunk(chunk)}
                 className={`w-full aspect-square rounded ${bgColor} hover:ring-2 ring-white transition-colors group relative`}
                 initial={{ scale: 0, opacity: 0 }}

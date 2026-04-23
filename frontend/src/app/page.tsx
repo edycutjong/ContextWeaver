@@ -3,14 +3,15 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
-import { Zap, Shield, ZapIcon, Cpu, FileText, Scissors, Database, Brain, BarChart } from "lucide-react";
+import { QwenIcon } from "@/components/CustomIcons";
+import { Zap, Shield, ZapIcon, Cpu, FileText, Scissors, Database, Brain, BarChart, Workflow } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const PREVIEW_STEPS = [
   { id: 'doc', label: 'Document', icon: FileText },
   { id: 'chunker', label: 'Chunker', icon: Scissors },
   { id: 'retrieve', label: 'Retrieve', icon: Database },
-  { id: 'qwen', label: 'Qwen3-4B', icon: Brain },
+  { id: 'qwen', label: 'Qwen3-4B', icon: QwenIcon },
   { id: 'results', label: 'Results', icon: BarChart },
 ];
 
@@ -291,7 +292,7 @@ export default function LandingPage() {
         >
           <TiltCard className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 backdrop-blur-sm h-full">
             <div className="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center mb-6">
-              <Zap className="w-6 h-6 text-cyan-400" />
+              <Workflow className="w-6 h-6 text-cyan-400" />
             </div>
             <h3 className="text-xl font-bold text-white mb-3">Visual Pipeline</h3>
             <p className="text-slate-400 leading-relaxed">
@@ -307,7 +308,7 @@ export default function LandingPage() {
         >
           <TiltCard className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 backdrop-blur-sm h-full">
             <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/50 flex items-center justify-center mb-6">
-              <Shield className="w-6 h-6 text-purple-400" />
+              <QwenIcon className="w-6 h-6 text-purple-400" />
             </div>
             <h3 className="text-xl font-bold text-white mb-3">ChromaDB + Qwen3</h3>
             <p className="text-slate-400 leading-relaxed">

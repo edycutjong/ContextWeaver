@@ -188,6 +188,7 @@ export default function Dashboard() {
   const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const logsContainerRef = useRef<HTMLDivElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   // Reset state when graph tab changes
   useEffect(() => {
@@ -314,6 +315,9 @@ export default function Dashboard() {
         setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ✅ Pipeline complete! Accuracy optimized.`]);
         setIsRunning(false);
         eventSource.close();
+        setTimeout(() => {
+          resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 100);
       }
     };
 
@@ -423,7 +427,7 @@ export default function Dashboard() {
           </div>
 
           {/* Main Content Area */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {/* Left Column: Visualizations */}
             <div className="lg:col-span-2 space-y-6">
@@ -485,7 +489,9 @@ export default function Dashboard() {
                 )}
               </AnimatePresence>
 
-              <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
+              {(pipelineStep !== 'idle' || processedChunks.length > 0) && (
+                <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
+              )}
             </div>
 
             {/* Right Column: Logs & Results */}

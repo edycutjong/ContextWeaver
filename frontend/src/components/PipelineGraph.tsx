@@ -10,7 +10,7 @@ export interface NodeData {
   label: string;
   x: number;
   y: number;
-  icon?: LucideIcon;
+  icon?: LucideIcon | React.ComponentType<any>;
 }
 
 export interface EdgeData {
@@ -58,6 +58,7 @@ export default function PipelineGraph({
   }
 }: PipelineGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Need to wait for mount to render lines correctly to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
@@ -82,11 +83,50 @@ export default function PipelineGraph({
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
+  // Auto-scroll to active node
+  useEffect(() => {
+    if (!mounted || !scrollContainerRef.current) return;
+    
+    const activeNodes = nodes.filter(n => isNodeActive(n.id, currentStep));
+    if (activeNodes.length === 0) return;
+
+    // Use the rightmost active node to follow progress
+    const sortedActive = [...activeNodes].sort((a, b) => {
+      const posA = positions[a.id]?.x ?? a.x;
+      const posB = positions[b.id]?.x ?? b.x;
+      return posA - posB;
+    });
+    
+    const targetNode = sortedActive[sortedActive.length - 1];
+    const targetPos = positions[targetNode.id] || { x: targetNode.x };
+    
+    // Node center = 50px (left offset) + node.x + 70px (half of 140px width)
+    const nodeCenterX = targetPos.x + 120;
+    
+    const container = scrollContainerRef.current;
+    const containerWidth = container.clientWidth;
+    
+    const targetScrollLeft = Math.max(0, nodeCenterX - containerWidth / 2);
+
+    container.scrollTo({
+      left: targetScrollLeft,
+      behavior: 'smooth'
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, mounted]);
+
+  const maxX = Math.max(0, ...nodes.map(n => n.x));
+  const minContainerWidth = Math.max(1200, maxX + 250);
+
   return (
-    <div className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm overflow-x-auto overflow-y-hidden">
+    <div 
+      ref={scrollContainerRef}
+      className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm overflow-x-auto overflow-y-hidden scroll-smooth"
+    >
       <div 
         ref={containerRef}
-        className="min-w-[1200px] h-full relative"
+        className="h-full relative"
+        style={{ minWidth: `${minContainerWidth}px` }}
       >
         {/* Background grid pattern */}
         <div 
@@ -170,7 +210,7 @@ export default function PipelineGraph({
       )}
 
       {/* Nodes */}
-      <div className="absolute inset-0 p-[50px] z-10 pointer-events-none">
+      <div className="absolute inset-0 z-10 pointer-events-none">
         {nodes.map((node) => {
           const active = isNodeActive(node.id, currentStep);
           return (
@@ -206,7 +246,7 @@ export default function PipelineGraph({
                   }
                 }
               }}
-              className={`group absolute top-0 left-0 cursor-default hover:cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] max-w-[140px] flex-shrink-0 min-w-[140px] h-[50px] min-h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${
+              className={`group absolute top-[50px] left-[50px] cursor-default hover:cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] max-w-[140px] flex-shrink-0 min-w-[140px] h-[50px] min-h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${
                 active
                   ? 'bg-cyan-950/90 border-cyan-400 text-white'
                   : 'bg-slate-800/90 border-slate-600 text-slate-300'
