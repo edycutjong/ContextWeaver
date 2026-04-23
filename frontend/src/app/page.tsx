@@ -61,7 +61,7 @@ function PipelinePreview() {
                       className="absolute inset-0 rounded-xl border-2 border-cyan-400"
                       initial={{ opacity: 0.8, scale: 1 }}
                       animate={{ opacity: 0, scale: 1.5 }}
-                      transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "easeOut" }}
                     />
                   )}
                   <motion.div
@@ -96,15 +96,23 @@ function PipelinePreview() {
                   <div className="relative flex-1 h-1.5 bg-slate-800/80 mx-2 rounded-full overflow-hidden hidden sm:block z-10">
                     <motion.div
                       initial={{ x: '-100%' }}
-                      animate={{ x: active ? '100%' : '-100%' }}
-                      transition={{ duration: active ? 2 : 0, ease: 'linear' }}
+                      animate={{ x: active ? '100%' : '-100%', opacity: active ? [1, 1, 0] : 0 }}
+                      transition={{ 
+                        duration: active ? 2 : 0, 
+                        ease: 'linear',
+                        opacity: { times: [0, 0.9, 1], duration: active ? 2 : 0 }
+                      }}
                       className="absolute inset-y-0 w-full bg-gradient-to-r from-transparent via-cyan-400 to-cyan-200"
                     />
                     {active && (
                       <motion.div
-                        initial={{ left: '0%' }}
-                        animate={{ left: '100%' }}
-                        transition={{ duration: 2, ease: 'linear' }}
+                        initial={{ left: '0%', opacity: 1 }}
+                        animate={{ left: '100%', opacity: [1, 1, 0] }}
+                        transition={{ 
+                          duration: 2, 
+                          ease: 'linear',
+                          opacity: { times: [0, 0.9, 1], duration: 2 }
+                        }}
                         className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_4px_rgba(34,211,238,1)] z-20"
                       />
                     )}
@@ -115,15 +123,23 @@ function PipelinePreview() {
                   <div className="relative w-1.5 h-10 bg-slate-800/80 my-2 rounded-full overflow-hidden sm:hidden z-10">
                     <motion.div
                       initial={{ y: '-100%' }}
-                      animate={{ y: active ? '100%' : '-100%' }}
-                      transition={{ duration: active ? 2 : 0, ease: 'linear' }}
+                      animate={{ y: active ? '100%' : '-100%', opacity: active ? [1, 1, 0] : 0 }}
+                      transition={{ 
+                        duration: active ? 2 : 0, 
+                        ease: 'linear',
+                        opacity: { times: [0, 0.9, 1], duration: active ? 2 : 0 }
+                      }}
                       className="absolute inset-x-0 h-full bg-gradient-to-b from-transparent via-cyan-400 to-cyan-200"
                     />
                     {active && (
                       <motion.div
-                        initial={{ top: '0%' }}
-                        animate={{ top: '100%' }}
-                        transition={{ duration: 2, ease: 'linear' }}
+                        initial={{ top: '0%', opacity: 1 }}
+                        animate={{ top: '100%', opacity: [1, 1, 0] }}
+                        transition={{ 
+                          duration: 2, 
+                          ease: 'linear',
+                          opacity: { times: [0, 0.9, 1], duration: 2 }
+                        }}
                         className="absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_4px_rgba(34,211,238,1)] z-20"
                       />
                     )}
