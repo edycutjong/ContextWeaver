@@ -1,11 +1,11 @@
 import React from "react";
-import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen w-full bg-slate-950 text-slate-200 overflow-hidden">
-      <Sidebar />
-      <main className="flex-1 h-full overflow-y-auto relative">
+    <div className="flex flex-col h-screen w-full bg-slate-950 text-slate-200 overflow-hidden">
+      <Header />
+      <main className="flex-1 overflow-y-auto relative">
         {/* Background decorations */}
         <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-900/20 to-transparent pointer-events-none" />
         <div
