@@ -4,7 +4,8 @@ import ConfidenceHeatmap from '../ConfidenceHeatmap';
 
 describe('ConfidenceHeatmap', () => {
   it('returns null if chunks is falsy or empty', () => {
-    const { container: containerNull } = render(<ConfidenceHeatmap chunks={null as any} onSelectChunk={jest.fn()} />);
+    // @ts-expect-error Testing invalid input
+    const { container: containerNull } = render(<ConfidenceHeatmap chunks={null} onSelectChunk={jest.fn()} />);
     expect(containerNull.firstChild).toBeNull();
 
     const { container: containerEmpty } = render(<ConfidenceHeatmap chunks={[]} onSelectChunk={jest.fn()} />);

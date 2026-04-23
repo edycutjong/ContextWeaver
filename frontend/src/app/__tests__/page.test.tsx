@@ -7,20 +7,24 @@ const mockSetY = jest.fn();
 
 // Mock framer-motion to avoid animation issues
 jest.mock('framer-motion', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
   
   // Keep track of which useMotionValue call it is to return the right mock
   let motionValueCallCount = 0;
   
+  const MockMotionDiv = React.forwardRef(({ children, style, className, onMouseMove, onMouseLeave }: React.HTMLAttributes<HTMLDivElement>, ref: React.Ref<HTMLDivElement>) => (
+    <div ref={ref} style={style} className={className} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} data-testid="motion-div">
+      {children}
+    </div>
+  ));
+  MockMotionDiv.displayName = 'MockMotionDiv';
+
   return {
     motion: {
-      div: React.forwardRef(({ children, style, className, onMouseMove, onMouseLeave }: any, ref: any) => (
-        <div ref={ref} style={style} className={className} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} data-testid="motion-div">
-          {children}
-        </div>
-      )),
-      h1: ({ children, className }: any) => <h1 className={className}>{children}</h1>,
-      p: ({ children, className }: any) => <p className={className}>{children}</p>,
+      div: MockMotionDiv,
+      h1: ({ children, className }: React.HTMLAttributes<HTMLHeadingElement>) => <h1 className={className}>{children}</h1>,
+      p: ({ children, className }: React.HTMLAttributes<HTMLParagraphElement>) => <p className={className}>{children}</p>,
     },
     useMotionValue: () => {
       motionValueCallCount++;

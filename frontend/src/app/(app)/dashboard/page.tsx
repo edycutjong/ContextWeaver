@@ -168,8 +168,11 @@ export default function Dashboard() {
   const [pipelineStep, setPipelineStep] = useState<string>('idle');
   const [selectedGraph, setSelectedGraph] = useState<GraphType>('contextweaver');
   const [logMessages, setLogMessages] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [processedChunks, setProcessedChunks] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [finalResult, setFinalResult] = useState<any | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedChunk, setSelectedChunk] = useState<any | null>(null);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -189,6 +192,7 @@ export default function Dashboard() {
   // Typewriter effect: type the newest log line char-by-char
   useEffect(() => {
     const newCount = logMessages.length;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (newCount === 0) { setDisplayedLogs([]); return; }
 
     const completeLines = logMessages.slice(0, newCount - 1);
@@ -215,7 +219,6 @@ export default function Dashboard() {
     return () => {
       if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logMessages]);
 
   const startPipeline = () => {
@@ -318,6 +321,7 @@ export default function Dashboard() {
             <div className="flex items-center space-x-6 relative z-10">
               <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.4)] border border-cyan-500/30 shrink-0 group-hover:scale-105 transition-transform duration-500 bg-slate-950 p-1">
                 <div className="absolute inset-0 bg-cyan-400/20 animate-pulse" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/icon.svg" alt="ContextWeaver Logo" className="w-full h-full object-cover relative z-10" />
               </div>
               <div>
@@ -445,6 +449,7 @@ export default function Dashboard() {
                       </p>
                       <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                         <AnimatePresence>
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                           {(finalResult.merged_entities || []).slice(0, 20).map((entity: any, i: number) => {
                             const label = entity.type || entity.label || 'DEFAULT';
                             const style = ENTITY_STYLES[label] || DEFAULT_ENTITY_STYLE;

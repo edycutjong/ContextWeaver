@@ -3,9 +3,15 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+type HeatmapChunk = {
+  confidence?: number;
+  result?: { confidence?: number };
+  [key: string]: unknown;
+};
+
 type HeatmapProps = {
-  chunks: any[];
-  onSelectChunk: (chunk: any) => void;
+  chunks: HeatmapChunk[];
+  onSelectChunk: (chunk: HeatmapChunk) => void;
 };
 
 export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProps) {

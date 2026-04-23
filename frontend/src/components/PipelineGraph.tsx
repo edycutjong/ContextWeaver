@@ -58,28 +58,30 @@ export default function PipelineGraph({
   
   // Need to wait for mount to render lines correctly to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
-  const [, setRenderTick] = useState(0);
 
-  const positions = useRef<{ [key: string]: { x: number, y: number } }>(
-    nodes.reduce((acc, node) => {
+  const [positions, setPositions] = useState<{ [key: string]: { x: number, y: number } }>(() => {
+    return nodes.reduce((acc, node) => {
       acc[node.id] = { x: node.x, y: node.y };
       return acc;
-    }, {} as Record<string, { x: number, y: number }>)
-  );
+    }, {} as Record<string, { x: number, y: number }>);
+  });
 
   useEffect(() => {
-    let changed = false;
-    nodes.forEach(node => {
-      if (!positions.current[node.id]) {
-        positions.current[node.id] = { x: node.x, y: node.y };
-        changed = true;
-      }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPositions(prev => {
+      const nextPos = { ...prev };
+      let changed = false;
+      nodes.forEach(node => {
+        if (!nextPos[node.id]) {
+          nextPos[node.id] = { x: node.x, y: node.y };
+          changed = true;
+        }
+      });
+      return changed ? nextPos : prev;
     });
-    if (changed) {
-      setRenderTick(t => t + 1);
-    }
   }, [nodes]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   return (
@@ -110,8 +112,8 @@ export default function PipelineGraph({
           </defs>
 
           {edges.map((edge, i) => {
-            const sourcePos = positions.current[edge.source];
-            const targetPos = positions.current[edge.target];
+            const sourcePos = positions[edge.source];
+            const targetPos = positions[edge.target];
             if (!sourcePos || !targetPos) return null;
 
             const nodeWidth = 140;
@@ -185,8 +187,10 @@ export default function PipelineGraph({
                   const lx = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x as string);
                   const ly = typeof latest.y === 'number' ? latest.y : parseFloat(latest.y as string);
                   if (!isNaN(lx) && !isNaN(ly)) {
-                    positions.current[node.id] = { x: lx, y: ly };
-                    setRenderTick(t => t + 1);
+                    setPositions(prev => ({
+                      ...prev,
+                      [node.id]: { x: lx, y: ly }
+                    }));
                   }
                 }
               }}

@@ -4,43 +4,77 @@ import Dashboard from '../page';
 
 // Mock components
 jest.mock('@/components/PipelineGraph', () => {
-  return function MockPipelineGraph({ isNodeActive, nodes, currentStep }: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  const MockPipelineGraph = ({ isNodeActive, nodes, currentStep }: any) => {
     // Call isNodeActive for all steps and nodes to ensure 100% coverage of the graph configs
     const steps = ['init', 'chunking', 'chunk_complete', 'retrieving', 'retrieve_complete', 'building_prompt', 'annotating', 'annotate_complete', 'merging', 'done', 'other'];
     steps.forEach(step => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       nodes.forEach((n: any) => isNodeActive(n.id, step));
     });
     return <div data-testid="pipeline-graph" />;
   };
+  MockPipelineGraph.displayName = 'MockPipelineGraph';
+  return MockPipelineGraph;
 });
-jest.mock('@/components/ChunkInspector', () => ({ onClose }: any) => <div data-testid="chunk-inspector" onClick={onClose} />);
-jest.mock('@/components/ConfidenceHeatmap', () => ({ onSelectChunk }: any) => <div data-testid="confidence-heatmap" onClick={() => onSelectChunk({ id: 'test' })} />);
+jest.mock('@/components/ChunkInspector', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Mock = ({ onClose }: any) => <div data-testid="chunk-inspector" onClick={onClose} />;
+  Mock.displayName = 'MockChunkInspector';
+  return Mock;
+});
+
+jest.mock('@/components/ConfidenceHeatmap', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Mock = ({ onSelectChunk }: any) => <div data-testid="confidence-heatmap" onClick={() => onSelectChunk({ id: 'test' })} />;
+  Mock.displayName = 'MockConfidenceHeatmap';
+  return Mock;
+});
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: React.forwardRef(({ children, ...props }: any, ref: any) => <div ref={ref} {...props}>{children}</div>),
-    span: React.forwardRef(({ children, ...props }: any, ref: any) => <span ref={ref} {...props}>{children}</span>),
-    button: React.forwardRef(({ children, ...props }: any, ref: any) => <button ref={ref} {...props}>{children}</button>),
-  },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
-  useMotionValue: (init: any) => {
-    let val = init;
-    const cbs: any[] = [];
-    return {
-      get: () => val,
-      set: (v: any) => { val = v; cbs.forEach(cb => cb(v)); },
-      on: (ev: string, cb: any) => { cbs.push(cb); return () => {}; },
-      simulateChange: (v: any) => cbs.forEach(cb => cb(v)),
-    };
-  },
-  animate: (val: any, target: any) => {
-    if (val.simulateChange) val.simulateChange(target);
-    return { stop: jest.fn() };
-  },
-}));
+jest.mock('framer-motion', () => {
+  const MockDiv = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ children, ...props }, ref) => <div ref={ref} {...props}>{children}</div>);
+  MockDiv.displayName = 'motion.div';
+
+  const MockSpan = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(({ children, ...props }, ref) => <span ref={ref} {...props}>{children}</span>);
+  MockSpan.displayName = 'motion.span';
+
+  const MockButton = React.forwardRef<HTMLButtonElement, React.HTMLAttributes<HTMLButtonElement>>(({ children, ...props }, ref) => <button ref={ref} {...props}>{children}</button>);
+  MockButton.displayName = 'motion.button';
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const MockAnimatePresence = ({ children }: any) => <>{children}</>;
+  MockAnimatePresence.displayName = 'AnimatePresence';
+
+  return {
+    motion: {
+      div: MockDiv,
+      span: MockSpan,
+      button: MockButton,
+    },
+    AnimatePresence: MockAnimatePresence,
+    useMotionValue: (init: number) => {
+      let val = init;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      const cbs: Function[] = [];
+      return {
+        get: () => val,
+        set: (v: number) => { val = v; cbs.forEach(cb => cb(v)); },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        on: (_ev: string, cb: Function) => { cbs.push(cb); return () => {}; },
+        simulateChange: (v: number) => cbs.forEach(cb => cb(v)),
+      };
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    animate: (val: any, target: number) => {
+      if (val.simulateChange) val.simulateChange(target);
+      return { stop: jest.fn() };
+    },
+  };
+});
 
 describe('Dashboard', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockEventSource: any;
 
   beforeEach(() => {
@@ -50,6 +84,7 @@ describe('Dashboard', () => {
       close: jest.fn(),
     };
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     global.EventSource = jest.fn(() => mockEventSource) as any;
     
     global.URL.createObjectURL = jest.fn(() => 'mock-url');
@@ -63,6 +98,7 @@ describe('Dashboard', () => {
         el.click = jest.fn();
       }
       return el;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }) as any;
   });
 

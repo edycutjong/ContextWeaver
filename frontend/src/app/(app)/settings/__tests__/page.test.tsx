@@ -5,10 +5,14 @@ import SettingsPage from '../page';
 // Mock framer-motion
 jest.mock('framer-motion', () => {
   const mockComponent = (tag: string) => {
-    return React.forwardRef(({ children, whileHover, whileTap, layoutId, initial, animate, exit, transition, ...props }: any, ref: any) => {
-      const Tag = tag as any;
-      return <Tag ref={ref} {...props}>{children}</Tag>;
+    const MockComp = React.forwardRef((allProps: React.HTMLAttributes<HTMLElement> & { [key: string]: unknown }, ref: React.Ref<HTMLElement>) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { whileHover, whileTap, layoutId, initial, animate, exit, transition, ...props } = allProps;
+      const Tag = tag as React.ElementType;
+      return <Tag ref={ref} {...props}>{allProps.children}</Tag>;
     });
+    MockComp.displayName = `MockMotion(${tag})`;
+    return MockComp;
   };
   return {
     motion: {
@@ -17,7 +21,7 @@ jest.mock('framer-motion', () => {
       button: mockComponent('button'),
       span: mockComponent('span'),
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   };
 });
 

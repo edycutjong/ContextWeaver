@@ -5,8 +5,17 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
+type ChunkData = {
+  chunk_idx: string | number;
+  confidence?: number;
+  raw_text?: string;
+  examples?: Array<{ similarity_score?: number; text?: string; annotation?: string }>;
+  prompt?: string;
+  annotation?: string;
+};
+
 type InspectorProps = {
-  chunkData: any | null;
+  chunkData: ChunkData | null;
   onClose: () => void;
 };
 
@@ -48,6 +57,7 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -150,7 +160,7 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
                   <span className="text-xs bg-cyan-900/60 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full">ChromaDB Top-3</span>
                 </div>
                 <div className="p-4 overflow-y-auto flex-1 space-y-3">
-                  {chunkData.examples?.map((ex: any, i: number) => {
+                  {chunkData.examples?.map((ex, i: number) => {
                     const simPct = (ex.similarity_score || 0) * 100;
                     return (
                       <motion.div

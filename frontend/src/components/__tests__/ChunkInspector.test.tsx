@@ -23,7 +23,7 @@ describe('ChunkInspector', () => {
   });
 
   it('does not render when chunkData is null', () => {
-    const { container } = render(<ChunkInspector chunkData={null} onClose={mockOnClose} />);
+    render(<ChunkInspector chunkData={null} onClose={mockOnClose} />);
     expect(screen.queryByText('Chunk Inspector')).not.toBeInTheDocument();
   });
 
@@ -71,8 +71,8 @@ describe('ChunkInspector', () => {
   });
 
   it('does not render ConfidenceRing when confidence is missing', () => {
-    const dataWithoutConfidence = { ...mockChunkData };
-    delete (dataWithoutConfidence as any).confidence;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { confidence, ...dataWithoutConfidence } = mockChunkData;
     
     render(<ChunkInspector chunkData={dataWithoutConfidence} onClose={mockOnClose} />);
     expect(screen.queryByText('90%')).not.toBeInTheDocument();
@@ -86,8 +86,8 @@ describe('ChunkInspector', () => {
   });
 
   it('handles missing examples array gracefully', () => {
-    const dataWithoutExamples = { ...mockChunkData };
-    delete (dataWithoutExamples as any).examples;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { examples, ...dataWithoutExamples } = mockChunkData;
     
     render(<ChunkInspector chunkData={dataWithoutExamples} onClose={mockOnClose} />);
     expect(screen.getByText('Chunk Inspector')).toBeInTheDocument();
