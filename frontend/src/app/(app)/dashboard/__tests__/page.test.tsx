@@ -142,6 +142,30 @@ describe('Dashboard', () => {
     jest.useRealTimers();
   });
 
+  it('handles final_result with missing merged_entities safely', () => {
+    jest.useFakeTimers();
+    const { getByText, getByRole } = render(<Dashboard />);
+    
+    const startBtn = getByRole('button', { name: /Run Document Annotation/i });
+    fireEvent.click(startBtn);
+
+    act(() => {
+      mockEventSource.onmessage({ 
+        data: JSON.stringify({ 
+          step: 'done', 
+          final_result: { 
+            mean_confidence: 0.9,
+            // merged_entities intentionally omitted
+          } 
+        }) 
+      });
+    });
+    
+    expect(getByText('✅ Annotation Complete')).toBeInTheDocument();
+    
+    jest.useRealTimers();
+  });
+
   it('handles zero log messages edge case', () => {
     jest.useFakeTimers();
     render(<Dashboard />);

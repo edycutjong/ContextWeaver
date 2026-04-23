@@ -39,9 +39,8 @@ export default function LandingPage() {
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const el = containerRef.current;
-    if (!el) return;
-    el.style.setProperty('--mouse-x', `${e.clientX}px`);
-    el.style.setProperty('--mouse-y', `${e.clientY}px`);
+    el?.style.setProperty('--mouse-x', `${e.clientX}px`);
+    el?.style.setProperty('--mouse-y', `${e.clientY}px`);
   }, []);
 
   return (
