@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/public/window.svg" alt="ContextWeaver Logo" width="150">
+  <img src="frontend/src/app/icon.svg" alt="ContextWeaver Logo" width="150">
   <h1>ContextWeaver 🚀</h1>
   <p><em>Dynamic In-Context Learning Router for Intelligent Data Annotation</em></p>
   
