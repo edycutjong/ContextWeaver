@@ -113,6 +113,11 @@ sequenceDiagram
 
 * **FlagOS Open Computing Global Challenge**: Submitted to **Track 3 — Automatic Data Annotation with Large Models in Long-Context Scenarios**. We effectively optimize the context window for Qwen3-4B.
 
+**Jointly hosted by:**
+* FlagOS Community
+* Beijing Academy of Artificial Intelligence (BAAI)
+* CCF Open Source Development Technology Committee (ODTC)
+
 ## 🚀 Run it Locally (For Judges)
 
 We have made running the project as frictionless as possible. Just use the included Makefile:

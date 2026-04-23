@@ -1,0 +1,9 @@
+{
+  "name": "contextweaver-root",
+  "private": true,
+  "scripts": {
+    "ci": "npm run ci --prefix frontend",
+    "dev": "make docker-up",
+    "test": "make test"
+  }
+}

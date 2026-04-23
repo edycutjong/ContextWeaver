@@ -2,6 +2,8 @@
 
 The frontend dashboard for **ContextWeaver**, built with Next.js 16, React Flow, and Tailwind CSS v4.
 
+*Targeted for the **FlagOS Open Computing Global Challenge**, jointly hosted by FlagOS Community, BAAI, and CCF ODTC.*
+
 ## Features
 - **Pipeline Visualization**: React Flow nodes mapping the Chunk → Retrieve → Annotate → Merge pipeline.
 - **Confidence Heatmaps**: Visual grids indicating the LLM's confidence scores for extracted entities.

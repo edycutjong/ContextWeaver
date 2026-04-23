@@ -67,7 +67,7 @@ export default function PipelineGraph({
   });
 
   useEffect(() => {
-    // Reset positions whenever nodes array changes to ensure fresh layout
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPositions(
       nodes.reduce((acc, node) => {
         acc[node.id] = { x: node.x, y: node.y };
@@ -83,7 +83,7 @@ export default function PipelineGraph({
     <div className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm overflow-x-auto overflow-y-hidden">
       <div 
         ref={containerRef}
-        className="min-w-[1100px] h-full relative"
+        className="min-w-[1000px] h-full relative"
       >
         {/* Background grid pattern */}
         <div 
@@ -178,6 +178,16 @@ export default function PipelineGraph({
               dragElastic={0}
               dragMomentum={false}
               initial={{ x: node.x, y: node.y }}
+              animate={{
+                boxShadow: active
+                  ? [
+                      '0 0 16px rgba(6,182,212,0.35)',
+                      '0 0 28px rgba(6,182,212,0.6)',
+                      '0 0 16px rgba(6,182,212,0.35)',
+                    ]
+                  : '0 0 0px rgba(6,182,212,0)',
+              }}
+              transition={active ? { duration: 2, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.3 }}
               onUpdate={(latest) => {
                 if (latest.x !== undefined && latest.y !== undefined) {
                   const lx = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x as string);
@@ -190,9 +200,9 @@ export default function PipelineGraph({
                   }
                 }
               }}
-              className={`absolute cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${
-                active 
-                  ? 'bg-cyan-950/90 border-cyan-400 text-white shadow-[0_0_20px_rgba(6,182,212,0.5)]' 
+              className={`group absolute cursor-default hover:cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${
+                active
+                  ? 'bg-cyan-950/90 border-cyan-400 text-white'
                   : 'bg-slate-800/90 border-slate-600 text-slate-300'
               }`}
               whileHover={{ scale: 1.05 }}
@@ -200,10 +210,18 @@ export default function PipelineGraph({
             >
               <span className="font-medium text-sm whitespace-nowrap">{node.label}</span>
               {active && (
-                <motion.div 
-                  layoutId={`active-indicator-${node.id}`}
-                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(6,182,212,1)]" 
-                />
+                <>
+                  <motion.div
+                    aria-hidden
+                    className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_6px_rgba(34,211,238,0.9)]"
+                    animate={{ scale: [1, 1.4, 1], opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  <motion.div
+                    layoutId={`active-indicator-${node.id}`}
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(6,182,212,1)]"
+                  />
+                </>
               )}
             </motion.div>
           );

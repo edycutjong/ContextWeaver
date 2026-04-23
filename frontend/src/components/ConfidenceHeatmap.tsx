@@ -14,6 +14,13 @@ type HeatmapProps = {
   onSelectChunk: (chunk: HeatmapChunk) => void;
 };
 
+const LEGEND = [
+  { label: '≥90%', className: 'bg-green-500' },
+  { label: '≥80%', className: 'bg-green-400' },
+  { label: '≥70%', className: 'bg-amber-400' },
+  { label: '<70%', className: 'bg-red-500' },
+];
+
 export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProps) {
   if (!chunks || chunks.length === 0) return null;
 
@@ -27,13 +34,26 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
           {chunks.map((chunk, i) => {
             const confidence = chunk.confidence || chunk.result?.confidence || 0;
             let bgColor = 'bg-slate-800';
+            let borderTint = 'border-slate-500/40';
 
             if (confidence > 0) {
-              if (confidence >= 0.9) bgColor = 'bg-green-500';
-              else if (confidence >= 0.8) bgColor = 'bg-green-400';
-              else if (confidence >= 0.7) bgColor = 'bg-amber-400';
-              else bgColor = 'bg-red-500';
+              if (confidence >= 0.9) {
+                bgColor = 'bg-green-500';
+                borderTint = 'border-green-400/50';
+              } else if (confidence >= 0.8) {
+                bgColor = 'bg-green-400';
+                borderTint = 'border-green-300/50';
+              } else if (confidence >= 0.7) {
+                bgColor = 'bg-amber-400';
+                borderTint = 'border-amber-300/50';
+              } else {
+                bgColor = 'bg-red-500';
+                borderTint = 'border-red-400/50';
+              }
             }
+
+            const isFirstRow = Math.floor(i / 10) === 0;
+            const tooltipPosition = isFirstRow ? '-bottom-9' : '-top-9';
 
             return (
               <motion.button
@@ -47,13 +67,25 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
                 whileHover={{ scale: 1.15 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <span className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-xs text-white px-2 py-1 rounded pointer-events-none z-10 whitespace-nowrap">
+                <span
+                  className={`opacity-0 group-hover:opacity-100 absolute ${tooltipPosition} left-1/2 -translate-x-1/2 bg-slate-950/95 backdrop-blur-sm border ${borderTint} text-xs text-white px-2 py-1 rounded-md pointer-events-none z-10 whitespace-nowrap shadow-lg transition-opacity`}
+                >
                   Chunk {i}: {confidence ? `${(confidence * 100).toFixed(0)}%` : 'Processing...'}
                 </span>
               </motion.button>
             );
           })}
         </AnimatePresence>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-slate-500">
+        <span className="uppercase tracking-wider font-medium">Legend</span>
+        {LEGEND.map((item) => (
+          <div key={item.label} className="flex items-center gap-1.5">
+            <span aria-hidden className={`w-2.5 h-2.5 rounded-sm ${item.className}`} />
+            <span>{item.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
