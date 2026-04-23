@@ -163,7 +163,7 @@ describe('Dashboard', () => {
       });
     });
     
-    expect(getByText('✅ Annotation Complete')).toBeInTheDocument();
+    expect(getByText('Annotation Complete')).toBeInTheDocument();
     
     const exportBtn = getByText('Export JSON');
     fireEvent.click(exportBtn);
@@ -197,7 +197,7 @@ describe('Dashboard', () => {
       });
     });
     
-    expect(getByText('✅ Annotation Complete')).toBeInTheDocument();
+    expect(getByText('Annotation Complete')).toBeInTheDocument();
     
     jest.useRealTimers();
   });
