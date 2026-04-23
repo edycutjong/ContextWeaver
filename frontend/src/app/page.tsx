@@ -3,7 +3,7 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
-import { Zap, Shield, ZapIcon, Cpu, Package, FileText, Scissors, Database, Brain, BarChart } from "lucide-react";
+import { Zap, Shield, ZapIcon, Cpu, FileText, Scissors, Database, Brain, BarChart } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const PREVIEW_STEPS = [
@@ -59,11 +59,8 @@ function PipelinePreview() {
                   <motion.div
                     className="absolute inset-0 rounded-xl border-2 border-cyan-400 pointer-events-none"
                     initial={{ opacity: 0, scale: 1 }}
-                    animate={{ 
-                      opacity: active ? [0.8, 0] : 0, 
-                      scale: active ? [1, 1.5] : 1 
-                    }}
-                    transition={{ duration: 2, ease: "easeOut" }}
+                    animate={active ? { opacity: [0.8, 0], scale: [1, 1.5] } : { opacity: 0, scale: 1.5 }}
+                    transition={{ duration: 2, ease: "easeOut", repeat: active ? Infinity : 0 }}
                   />
                   <motion.div
                     animate={{
@@ -226,7 +223,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-tight px-2 sm:px-0"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-normal px-2 sm:px-0 py-2"
         >
           <span className="md:whitespace-nowrap">Dynamic In-Context</span> <br /> <span className="md:whitespace-nowrap">Learning Router.</span>
         </motion.h1>
