@@ -17,11 +17,11 @@ export interface EdgeData {
 
 const defaultSteps: NodeData[] = [
   { id: 'doc', label: '📄 Document', x: 0, y: 100 },
-  { id: 'chunker', label: '✂️ Chunker', x: 200, y: 100 },
-  { id: 'vectordb', label: '🗄️ ChromaDB', x: 400, y: 0 },
-  { id: 'prompt', label: '📝 Prompt Builder', x: 400, y: 200 },
-  { id: 'qwen', label: '🧠 Qwen3-4B', x: 600, y: 100 },
-  { id: 'results', label: '📊 Results', x: 800, y: 100 },
+  { id: 'chunker', label: '✂️ Chunker', x: 150, y: 100 },
+  { id: 'vectordb', label: '🗄️ ChromaDB', x: 300, y: 0 },
+  { id: 'prompt', label: '📝 Prompt Builder', x: 300, y: 200 },
+  { id: 'qwen', label: '🧠 Qwen3-4B', x: 450, y: 100 },
+  { id: 'results', label: '📊 Results', x: 600, y: 100 },
 ];
 
 const defaultEdges: EdgeData[] = [
@@ -85,18 +85,19 @@ export default function PipelineGraph({
   useEffect(() => setMounted(true), []);
 
   return (
-    <div 
-      ref={containerRef}
-      className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm relative overflow-hidden"
-    >
-      {/* Background grid pattern */}
+    <div className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm overflow-x-auto overflow-y-hidden">
       <div 
-        className="absolute inset-0 opacity-20 pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#334155 1px, transparent 1px)',
-          backgroundSize: '20px 20px'
-        }}
-      />
+        ref={containerRef}
+        className="min-w-[850px] h-full relative"
+      >
+        {/* Background grid pattern */}
+        <div 
+          className="absolute inset-0 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(#334155 1px, transparent 1px)',
+            backgroundSize: '20px 20px'
+          }}
+        />
       
       {/* SVG for edges */}
       {mounted && (
@@ -213,6 +214,7 @@ export default function PipelineGraph({
           );
         })}
       </div>
+    </div>
     </div>
   );
 }

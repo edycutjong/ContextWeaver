@@ -13,11 +13,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'contextweaver': {
     nodes: [
       { id: 'doc', label: '📄 Document', x: 0, y: 100 },
-      { id: 'chunker', label: '✂️ Chunker', x: 200, y: 100 },
-      { id: 'vectordb', label: '🗄️ ChromaDB', x: 400, y: 0 },
-      { id: 'prompt', label: '📝 Prompt Builder', x: 400, y: 200 },
-      { id: 'qwen', label: '🧠 Qwen3-4B', x: 600, y: 100 },
-      { id: 'results', label: '📊 Results', x: 800, y: 100 },
+      { id: 'chunker', label: '✂️ Chunker', x: 150, y: 100 },
+      { id: 'vectordb', label: '🗄️ ChromaDB', x: 300, y: 0 },
+      { id: 'prompt', label: '📝 Prompt Builder', x: 300, y: 200 },
+      { id: 'qwen', label: '🧠 Qwen3-4B', x: 450, y: 100 },
+      { id: 'results', label: '📊 Results', x: 600, y: 100 },
     ],
     edges: [
       { source: 'doc', target: 'chunker' },
@@ -40,10 +40,10 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'standard-rag': {
     nodes: [
       { id: 'query', label: '🔍 User Query', x: 0, y: 100 },
-      { id: 'embed', label: '🧮 Embeddings', x: 200, y: 100 },
-      { id: 'vectordb', label: '🗄️ Vector DB', x: 400, y: 100 },
-      { id: 'llm', label: '🤖 LLM', x: 600, y: 100 },
-      { id: 'output', label: '📝 Output', x: 800, y: 100 },
+      { id: 'embed', label: '🧮 Embeddings', x: 150, y: 100 },
+      { id: 'vectordb', label: '🗄️ Vector DB', x: 300, y: 100 },
+      { id: 'llm', label: '🤖 LLM', x: 450, y: 100 },
+      { id: 'output', label: '📝 Output', x: 600, y: 100 },
     ],
     edges: [
       { source: 'query', target: 'embed' },
@@ -63,12 +63,12 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'multi-agent': {
     nodes: [
       { id: 'task', label: '📋 Task', x: 0, y: 100 },
-      { id: 'router', label: '🚦 Router Agent', x: 200, y: 100 },
-      { id: 'agent1', label: '🕵️ Researcher', x: 400, y: 0 },
-      { id: 'agent2', label: '🧑‍💻 Coder', x: 400, y: 100 },
-      { id: 'agent3', label: '🧐 Reviewer', x: 400, y: 200 },
-      { id: 'merger', label: '🔄 Synthesizer', x: 600, y: 100 },
-      { id: 'results', label: '🎯 Final Output', x: 800, y: 100 },
+      { id: 'router', label: '🚦 Router Agent', x: 150, y: 100 },
+      { id: 'agent1', label: '🕵️ Researcher', x: 300, y: 0 },
+      { id: 'agent2', label: '🧑‍💻 Coder', x: 300, y: 100 },
+      { id: 'agent3', label: '🧐 Reviewer', x: 300, y: 200 },
+      { id: 'merger', label: '🔄 Synthesizer', x: 450, y: 100 },
+      { id: 'results', label: '🎯 Final Output', x: 600, y: 100 },
     ],
     edges: [
       { source: 'task', target: 'router' },
@@ -92,9 +92,9 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'evaluator-optimizer': {
     nodes: [
       { id: 'task', label: '📋 Task', x: 0, y: 100 },
-      { id: 'generator', label: '🏗️ Generator', x: 250, y: 100 },
-      { id: 'evaluator', label: '⚖️ Evaluator', x: 500, y: 100 },
-      { id: 'results', label: '✨ Results', x: 750, y: 100 },
+      { id: 'generator', label: '🏗️ Generator', x: 200, y: 100 },
+      { id: 'evaluator', label: '⚖️ Evaluator', x: 400, y: 100 },
+      { id: 'results', label: '✨ Results', x: 600, y: 100 },
     ],
     edges: [
       { source: 'task', target: 'generator' },
@@ -114,11 +114,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   'routing-agent': {
     nodes: [
       { id: 'input', label: '📥 Input', x: 0, y: 100 },
-      { id: 'classifier', label: '🧭 Classifier', x: 200, y: 100 },
-      { id: 'expert_a', label: '🏃 Expert A', x: 450, y: 0 },
-      { id: 'expert_b', label: '🏋️ Expert B', x: 450, y: 100 },
-      { id: 'expert_c', label: '🏊 Expert C', x: 450, y: 200 },
-      { id: 'results', label: '📊 Results', x: 700, y: 100 },
+      { id: 'classifier', label: '🧭 Classifier', x: 150, y: 100 },
+      { id: 'expert_a', label: '🏃 Expert A', x: 350, y: 0 },
+      { id: 'expert_b', label: '🏋️ Expert B', x: 350, y: 100 },
+      { id: 'expert_c', label: '🏊 Expert C', x: 350, y: 200 },
+      { id: 'results', label: '📊 Results', x: 550, y: 100 },
     ],
     edges: [
       { source: 'input', target: 'classifier' },
