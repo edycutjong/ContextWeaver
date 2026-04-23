@@ -2,7 +2,8 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Scissors, Database, FileEdit, Brain, BarChart, LucideIcon } from 'lucide-react';
+import { FileText, Scissors, Database, FileEdit, BarChart, LucideIcon } from 'lucide-react';
+import { ChromaIcon, QwenIcon } from '@/components/CustomIcons';
 
 export interface NodeData {
   id: string;
@@ -20,9 +21,9 @@ export interface EdgeData {
 const defaultSteps: NodeData[] = [
   { id: 'doc', label: 'Document', x: 0, y: 100, icon: FileText },
   { id: 'chunker', label: 'Chunker', x: 150, y: 100, icon: Scissors },
-  { id: 'vectordb', label: 'ChromaDB', x: 300, y: 0, icon: Database },
+  { id: 'vectordb', label: 'ChromaDB', x: 300, y: 20, icon: Database },
   { id: 'prompt', label: 'Prompt Builder', x: 300, y: 200, icon: FileEdit },
-  { id: 'qwen', label: 'Qwen3-4B', x: 450, y: 100, icon: Brain },
+  { id: 'qwen', label: 'Qwen3-4B', x: 450, y: 100, icon: QwenIcon },
   { id: 'results', label: 'Results', x: 600, y: 100, icon: BarChart },
 ];
 
@@ -85,7 +86,7 @@ export default function PipelineGraph({
     <div className="w-full h-[400px] border border-slate-700/50 rounded-xl bg-slate-900/50 backdrop-blur-sm overflow-x-auto overflow-y-hidden">
       <div 
         ref={containerRef}
-        className="min-w-[1000px] h-full relative"
+        className="min-w-[1200px] h-full relative"
       >
         {/* Background grid pattern */}
         <div 
@@ -195,14 +196,17 @@ export default function PipelineGraph({
                   const lx = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x as string);
                   const ly = typeof latest.y === 'number' ? latest.y : parseFloat(latest.y as string);
                   if (!isNaN(lx) && !isNaN(ly)) {
-                    setPositions(prev => ({
-                      ...prev,
-                      [node.id]: { x: lx, y: ly }
-                    }));
+                    setPositions(prev => {
+                      if (prev[node.id]?.x === lx && prev[node.id]?.y === ly) return prev;
+                      return {
+                        ...prev,
+                        [node.id]: { x: lx, y: ly }
+                      };
+                    });
                   }
                 }
               }}
-              className={`group absolute cursor-default hover:cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${
+              className={`group absolute top-0 left-0 cursor-default hover:cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] max-w-[140px] flex-shrink-0 min-w-[140px] h-[50px] min-h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${
                 active
                   ? 'bg-cyan-950/90 border-cyan-400 text-white'
                   : 'bg-slate-800/90 border-slate-600 text-slate-300'
