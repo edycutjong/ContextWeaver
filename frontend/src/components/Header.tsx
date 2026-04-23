@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Package, LayoutDashboard, History, Settings, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, History, Settings, ExternalLink } from 'lucide-react';
 
 export default function Header() {
   const pathname = usePathname();
