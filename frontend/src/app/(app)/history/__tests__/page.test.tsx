@@ -6,15 +6,15 @@ import HistoryPage from '../page';
 jest.mock('framer-motion', () => {
   const MockDiv = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ children, ...props }, ref) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { whileHover, whileTap, layoutId, initial, animate, transition, ...rest } = props as any;
-    return <div ref={ref} {...rest}>{children}</div>;
+    const { whileHover, whileTap, layoutId, initial, animate, transition, ...rest } = props as Record<string, unknown>;
+    return <div ref={ref} {...(rest as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>;
   });
   MockDiv.displayName = 'motion.div';
 
   const MockTr = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(({ children, ...props }, ref) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { whileHover, whileTap, layoutId, initial, animate, transition, ...rest } = props as any;
-    return <tr ref={ref} {...rest}>{children}</tr>;
+    const { whileHover, whileTap, layoutId, initial, animate, transition, ...rest } = props as Record<string, unknown>;
+    return <tr ref={ref} {...(rest as React.HTMLAttributes<HTMLTableRowElement>)}>{children}</tr>;
   });
   MockTr.displayName = 'motion.tr';
 
