@@ -2,6 +2,7 @@
 
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import Header from "@/components/Header";
 import { Zap, Shield, ZapIcon, Cpu, Package } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
@@ -19,50 +20,119 @@ function PipelinePreview() {
   useEffect(() => {
     const id = setInterval(() => {
       setActiveIdx((i) => (i + 1) % PREVIEW_STEPS.length);
-    }, 1400);
+    }, 2000);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <div className="relative rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-sm p-6 md:p-10 overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(6,182,212,0.06),transparent_30%,transparent_70%,rgba(168,85,247,0.06))]"
+    <div className="relative rounded-3xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-md p-8 md:p-12 overflow-hidden group shadow-[0_0_40px_rgba(0,0,0,0.3)]">
+      {/* Dynamic background glow based on active step */}
+      <motion.div
+        className="absolute inset-0 z-0 opacity-40 hidden sm:block"
+        animate={{
+          background: `radial-gradient(600px circle at ${10 + activeIdx * 20}% 50%, rgba(6,182,212,0.3), transparent 60%)`,
+        }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
       />
-      <p className="text-xs uppercase tracking-[0.2em] text-slate-500 mb-6 text-center relative">Live pipeline preview</p>
-      <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 relative">
-        {PREVIEW_STEPS.map((step, idx) => {
-          const active = idx === activeIdx;
-          return (
-            <React.Fragment key={step.id}>
-              <motion.div
-                animate={{
-                  scale: active ? 1.05 : 1,
-                  boxShadow: active
-                    ? '0 0 24px rgba(6,182,212,0.45)'
-                    : '0 0 0px rgba(6,182,212,0)',
-                }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                className={`px-4 py-2.5 rounded-lg border text-sm font-medium whitespace-nowrap transition-colors ${
-                  active
-                    ? 'bg-cyan-950/80 border-cyan-400 text-white'
-                    : 'bg-slate-900/80 border-slate-700 text-slate-400'
-                }`}
-              >
-                {step.label}
-              </motion.div>
-              {idx < PREVIEW_STEPS.length - 1 && (
-                <div className="relative w-6 md:w-10 h-0.5 bg-slate-700 rounded-full overflow-hidden hidden sm:block">
+      
+      <div className="relative z-10 flex flex-col items-center">
+        <p className="text-xs uppercase tracking-[0.3em] text-cyan-400 mb-12 font-bold drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]">
+          Live Telemetry Stream
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center w-full max-w-5xl mx-auto">
+          {PREVIEW_STEPS.map((step, idx) => {
+            const active = idx === activeIdx;
+            const past = idx < activeIdx;
+            return (
+              <React.Fragment key={step.id}>
+                {/* Node */}
+                <motion.div
+                  animate={{
+                    scale: active ? 1.15 : 1,
+                    y: active ? -5 : 0,
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="relative z-20 flex flex-col items-center justify-center my-2 sm:my-0"
+                >
+                  {/* Orbit ring for active node */}
+                  {active && (
+                    <motion.div
+                      className="absolute inset-0 rounded-xl border-2 border-cyan-400"
+                      initial={{ opacity: 0.8, scale: 1 }}
+                      animate={{ opacity: 0, scale: 1.5 }}
+                      transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
+                    />
+                  )}
                   <motion.div
-                    animate={{ x: active ? ['-100%', '100%'] : '0%' }}
-                    transition={active ? { duration: 1.4, ease: 'linear', repeat: Infinity } : { duration: 0 }}
-                    className="absolute inset-y-0 w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
-                  />
-                </div>
-              )}
-            </React.Fragment>
-          );
-        })}
+                    animate={{
+                      boxShadow: active 
+                        ? '0 0 30px rgba(6,182,212,0.6), inset 0 0 15px rgba(6,182,212,0.4)' 
+                        : past 
+                        ? '0 0 10px rgba(6,182,212,0.1), inset 0 0 0px rgba(6,182,212,0)'
+                        : '0 0 0px rgba(6,182,212,0)',
+                      borderColor: active ? 'rgba(34,211,238,0.8)' : past ? 'rgba(34,211,238,0.3)' : 'rgba(51,65,85,0.5)',
+                      backgroundColor: active ? 'rgba(8,145,178,0.2)' : 'rgba(15,23,42,0.6)',
+                    }}
+                    className="px-5 py-3 rounded-xl border-2 backdrop-blur-md transition-colors relative z-10"
+                  >
+                    <span className={`text-base md:text-lg font-bold whitespace-nowrap transition-colors ${active ? 'text-white' : past ? 'text-cyan-100' : 'text-slate-500'}`}>
+                      {step.label}
+                    </span>
+                  </motion.div>
+                  
+                  {/* Status text below node */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: active ? 1 : 0, y: active ? 0 : 10 }}
+                    className="absolute -bottom-8 whitespace-nowrap text-[10px] uppercase font-mono text-cyan-400 tracking-wider hidden sm:block"
+                  >
+                    {active ? "Processing..." : ""}
+                  </motion.div>
+                </motion.div>
+
+                {/* Horizontal Line (Desktop) */}
+                {idx < PREVIEW_STEPS.length - 1 && (
+                  <div className="relative flex-1 h-1.5 bg-slate-800/80 mx-2 rounded-full overflow-hidden hidden sm:block z-10">
+                    <motion.div
+                      initial={{ x: '-100%' }}
+                      animate={{ x: active ? '100%' : '-100%' }}
+                      transition={{ duration: active ? 2 : 0, ease: 'linear' }}
+                      className="absolute inset-y-0 w-full bg-gradient-to-r from-transparent via-cyan-400 to-cyan-200"
+                    />
+                    {active && (
+                      <motion.div
+                        initial={{ left: '0%' }}
+                        animate={{ left: '100%' }}
+                        transition={{ duration: 2, ease: 'linear' }}
+                        className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_4px_rgba(34,211,238,1)] z-20"
+                      />
+                    )}
+                  </div>
+                )}
+                {/* Vertical Line (Mobile) */}
+                {idx < PREVIEW_STEPS.length - 1 && (
+                  <div className="relative w-1.5 h-10 bg-slate-800/80 my-2 rounded-full overflow-hidden sm:hidden z-10">
+                    <motion.div
+                      initial={{ y: '-100%' }}
+                      animate={{ y: active ? '100%' : '-100%' }}
+                      transition={{ duration: active ? 2 : 0, ease: 'linear' }}
+                      className="absolute inset-x-0 h-full bg-gradient-to-b from-transparent via-cyan-400 to-cyan-200"
+                    />
+                    {active && (
+                      <motion.div
+                        initial={{ top: '0%' }}
+                        animate={{ top: '100%' }}
+                        transition={{ duration: 2, ease: 'linear' }}
+                        className="absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_15px_4px_rgba(34,211,238,1)] z-20"
+                      />
+                    )}
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -120,26 +190,11 @@ export default function LandingPage() {
       />
       {/* Background decorations */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-600/20 blur-[120px] rounded-full pointer-events-none" />
-      
-      {/* Navbar */}
-      <header className="container mx-auto px-6 py-8 flex justify-between items-center relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/50 flex items-center justify-center overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icon.svg" alt="ContextWeaver Logo" className="w-6 h-6 object-contain" />
-          </div>
-          <span className="font-bold text-2xl text-white tracking-tight">ContextWeaver</span>
-        </div>
-        <Link 
-          href="/dashboard"
-          className="px-6 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-medium border border-slate-700 transition-colors"
-        >
-          Enter App
-        </Link>
-      </header>
+
+      <Header />
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 relative z-10 -mt-20">
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 relative z-10 pt-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -148,21 +203,21 @@ export default function LandingPage() {
         >
           <ZapIcon className="w-4 h-4" /> FlagOS Open Computing Global Challenge
         </motion.div>
-        
-        <motion.h1 
+
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-8 max-w-4xl leading-tight"
+          className="text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-tight"
         >
-          Dynamic In-Context Learning Router.
+          <span className="whitespace-nowrap">Dynamic In-Context</span> <br /> <span className="whitespace-nowrap">Learning Router.</span>
         </motion.h1>
-        
-        <motion.p 
+
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-xl text-slate-400 max-w-2xl mb-8 leading-relaxed"
+          className="text-xl text-slate-400 max-w-2xl mb-12 leading-relaxed"
         >
           Optimize LLM accuracy through visual transparency and real-time visualization. Built for high-performance AI orchestration.
         </motion.p>
@@ -171,23 +226,11 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25 }}
-          className="flex flex-wrap items-center justify-center gap-3 text-sm text-slate-400 mb-12"
+          className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6 w-full"
         >
-          <span className="text-slate-500">Jointly hosted by:</span>
-          <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">FlagOS Community</span>
-          <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">BAAI</span>
-          <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">CCF ODTC</span>
-        </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex gap-4 mb-20"
-        >
-          <Link 
+          <Link
             href="/dashboard"
-            className="px-8 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all hover:scale-105"
+            className="w-full sm:w-auto px-8 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all hover:scale-105"
           >
             Launch Dashboard
           </Link>
@@ -195,10 +238,24 @@ export default function LandingPage() {
             href="https://github.com/edycutjong/contextweaver"
             target="_blank"
             rel="noreferrer"
-            className="px-8 py-4 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg border border-slate-700 transition-all"
+            className="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg border border-slate-700 transition-all"
           >
             View Source
           </a>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-col items-center justify-center gap-3 text-sm text-slate-400 mb-20"
+        >
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="text-slate-500">Jointly hosted by:</div>
+            <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">FlagOS Community</span>
+            <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">BAAI</span>
+            <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">CCF ODTC</span>
+          </div>
         </motion.div>
       </main>
 
@@ -262,21 +319,6 @@ export default function LandingPage() {
           <PipelinePreview />
         </motion.div>
       </section>
-
-      {/* Footer / Sponsor Section */}
-      <footer className="w-full border-t border-slate-800 bg-slate-950/80 backdrop-blur-md relative z-10 py-8 mt-auto">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-slate-500 text-sm mb-4">
-            Targeting Track 3 of the FlagOS Open Computing Global Challenge.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-400">
-            <span>Jointly hosted by:</span>
-            <span className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-cyan-500/30 transition-colors">FlagOS Community</span>
-            <span className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-cyan-500/30 transition-colors">Beijing Academy of Artificial Intelligence (BAAI)</span>
-            <span className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-cyan-500/30 transition-colors">CCF ODTC</span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
