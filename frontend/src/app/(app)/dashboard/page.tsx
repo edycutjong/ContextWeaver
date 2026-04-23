@@ -7,8 +7,10 @@ import ChunkInspector from '@/components/ChunkInspector';
 import ConfidenceHeatmap from '@/components/ConfidenceHeatmap';
 import { NodeData, EdgeData } from '@/components/PipelineGraph';
 import {
-  FileText, Scissors, Database, FileEdit, Brain, BarChart, Search, Calculator, Bot, ClipboardList, TrafficCone, UserSearch, Code2, CheckSquare, Combine, Target, PenTool, Scale, Sparkles, Inbox, Compass, Activity, Dumbbell, Waves
+  FileText, Scissors, Database, FileEdit, Brain, BarChart, Search, Calculator, Bot, ClipboardList, TrafficCone, UserSearch, Code2, CheckSquare, Combine, Target, PenTool, Scale, Sparkles, Inbox, Compass, Activity, Dumbbell, Waves,
+  CheckCircle2, XCircle, AlertTriangle, Loader2
 } from "lucide-react";
+import { ChromaIcon, QwenIcon } from '@/components/CustomIcons';
 
 type GraphType = 'contextweaver' | 'standard-rag' | 'multi-agent' | 'evaluator-optimizer' | 'routing-agent';
 
@@ -17,9 +19,9 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
     nodes: [
       { id: 'doc', label: 'Document', x: 0, y: 100, icon: FileText },
       { id: 'chunker', label: 'Chunker', x: 140, y: 100, icon: Scissors },
-      { id: 'vectordb', label: 'ChromaDB', x: 280, y: 0, icon: Database },
+      { id: 'vectordb', label: 'ChromaDB', x: 280, y: 0, icon: ChromaIcon },
       { id: 'prompt', label: 'Prompt Builder', x: 280, y: 200, icon: FileEdit },
-      { id: 'qwen', label: 'Qwen3-4B', x: 420, y: 100, icon: Brain },
+      { id: 'qwen', label: 'Qwen3-4B', x: 420, y: 100, icon: QwenIcon },
       { id: 'results', label: 'Results', x: 560, y: 100, icon: BarChart },
     ],
     edges: [
@@ -501,13 +503,28 @@ export default function Dashboard() {
                 </div>
                 <div ref={logsContainerRef} className="flex-1 p-4 font-mono text-xs text-slate-400 overflow-y-auto space-y-1.5 scroll-smooth relative z-10">
                   {displayedLogs.map((msg, i) => {
-                    const promptColor = msg.includes('❌')
-                      ? 'text-red-400'
-                      : msg.includes('✅')
-                      ? 'text-emerald-400'
-                      : msg.includes('⚠️')
-                      ? 'text-amber-400'
-                      : 'text-cyan-600';
+                    let Icon = null;
+                    let iconClass = '';
+                    let cleanMsg = msg;
+                    let promptColor = 'text-cyan-600';
+
+                    if (msg.includes('❌')) {
+                      Icon = XCircle;
+                      iconClass = 'text-red-400';
+                      promptColor = 'text-red-400';
+                      cleanMsg = msg.replace('❌', '');
+                    } else if (msg.includes('✅')) {
+                      Icon = CheckCircle2;
+                      iconClass = 'text-emerald-400';
+                      promptColor = 'text-emerald-400';
+                      cleanMsg = msg.replace('✅', '');
+                    } else if (msg.includes('⚠️')) {
+                      Icon = AlertTriangle;
+                      iconClass = 'text-amber-400';
+                      promptColor = 'text-amber-400';
+                      cleanMsg = msg.replace('⚠️', '');
+                    }
+
                     return (
                       <motion.div
                         key={i}
@@ -517,9 +534,12 @@ export default function Dashboard() {
                         className="flex items-start gap-1"
                       >
                         <span className={`${promptColor} select-none shrink-0`}>{'>'}</span>
-                        <span className="break-all">{msg}</span>
+                        <span className="break-all flex items-center gap-1.5 flex-wrap">
+                          {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClass}`} />}
+                          {cleanMsg}
+                        </span>
                         {i === displayedLogs.length - 1 && isTyping && (
-                          <span className="animate-pulse inline-block w-1.5 h-3 bg-cyan-400 ml-0.5 rounded-sm shrink-0" />
+                          <span className="animate-pulse inline-block w-1.5 h-3 bg-cyan-400 ml-0.5 rounded-sm shrink-0 mt-0.5" />
                         )}
                       </motion.div>
                     );
@@ -530,8 +550,12 @@ export default function Dashboard() {
               {/* Final Results Panel */}
               <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-6 shadow-xl flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center">
-                    {finalResult ? '✅ Annotation Complete' : '⏳ Waiting for Results...'}
+                  <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                    {finalResult ? (
+                      <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
+                    ) : (
+                      <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Waiting for Results...</>
+                    )}
                   </h3>
                   
                   {finalResult ? (
