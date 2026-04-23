@@ -226,22 +226,14 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25 }}
-          className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6 w-full"
+          className="flex justify-center items-center gap-4 mb-6 w-full"
         >
           <Link
             href="/dashboard"
-            className="w-full sm:w-auto px-8 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all hover:scale-105"
+            className="w-full sm:w-auto px-12 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all hover:scale-105"
           >
             Launch Dashboard
           </Link>
-          <a
-            href="https://github.com/edycutjong/contextweaver"
-            target="_blank"
-            rel="noreferrer"
-            className="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg border border-slate-700 transition-all"
-          >
-            View Source
-          </a>
         </motion.div>
 
         <motion.div
