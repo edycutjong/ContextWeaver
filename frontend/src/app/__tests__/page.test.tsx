@@ -59,9 +59,7 @@ describe('LandingPage', () => {
     const { getByText } = render(<LandingPage />);
     expect(getByText('Dynamic In-Context Learning Router.')).toBeInTheDocument();
     expect(getByText('ContextWeaver')).toBeInTheDocument();
-    expect(getByText('Enter App')).toBeInTheDocument();
     expect(getByText('Launch Dashboard')).toBeInTheDocument();
-    expect(getByText('View Source')).toBeInTheDocument();
   });
 
   it('handles mouse move on container', () => {

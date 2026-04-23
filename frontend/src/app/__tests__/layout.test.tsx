@@ -6,6 +6,7 @@ import RootLayout, { metadata } from '../layout';
 jest.mock('next/font/google', () => ({
   Geist: () => ({ variable: '--font-geist-sans' }),
   Geist_Mono: () => ({ variable: '--font-geist-mono' }),
+  Orbitron: () => ({ variable: '--font-orbitron' }),
 }));
 
 describe('RootLayout', () => {
