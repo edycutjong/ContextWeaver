@@ -3,15 +3,15 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
-import { Zap, Shield, ZapIcon, Cpu, Package } from "lucide-react";
+import { Zap, Shield, ZapIcon, Cpu, Package, FileText, Scissors, Database, Brain, BarChart } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const PREVIEW_STEPS = [
-  { id: 'doc', label: '📄 Document' },
-  { id: 'chunker', label: '✂️ Chunker' },
-  { id: 'retrieve', label: '🗄️ Retrieve' },
-  { id: 'qwen', label: '🧠 Qwen3-4B' },
-  { id: 'results', label: '📊 Results' },
+  { id: 'doc', label: 'Document', icon: FileText },
+  { id: 'chunker', label: 'Chunker', icon: Scissors },
+  { id: 'retrieve', label: 'Retrieve', icon: Database },
+  { id: 'qwen', label: 'Qwen3-4B', icon: Brain },
+  { id: 'results', label: 'Results', icon: BarChart },
 ];
 
 function PipelinePreview() {
@@ -77,7 +77,8 @@ function PipelinePreview() {
                     }}
                     className="px-5 py-3 rounded-xl border-2 backdrop-blur-md transition-colors relative z-10"
                   >
-                    <span className={`text-base md:text-lg font-bold whitespace-nowrap transition-colors ${active ? 'text-white' : past ? 'text-cyan-100' : 'text-slate-500'}`}>
+                    <span className={`text-base md:text-lg font-bold whitespace-nowrap transition-colors flex items-center gap-2 ${active ? 'text-white' : past ? 'text-cyan-100' : 'text-slate-500'}`}>
+                      {step.icon && <step.icon className="w-5 h-5" />}
                       {step.label}
                     </span>
                   </motion.div>
