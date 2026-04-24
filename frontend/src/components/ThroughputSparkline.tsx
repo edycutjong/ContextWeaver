@@ -74,7 +74,7 @@ export default function ThroughputSparkline({
     const areaPath = `${path} L ${width} ${height} L 0 ${height} Z`;
     const peak = max;
     const current = points[points.length - 1] ?? 0;
-    const avg = points.reduce((a, b) => a + b, 0) / points.length;
+    const avg = points.length > 0 ? points.reduce((a, b) => a + b, 0) / points.length : 0;
     return { path, areaPath, peak, current, avg };
   }, [points]);
 
