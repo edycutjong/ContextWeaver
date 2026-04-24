@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 
 type Particle = {
   x: number;
@@ -20,10 +20,10 @@ type Particle = {
 const COLORS = ["#06b6d4", "#22d3ee", "#a855f7", "#f472b6", "#fbbf24", "#34d399"];
 
 export default function ConfettiBurst({ trigger }: { trigger: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number | null>(null);
-  const partsRef = useRef<Particle[]>([]);
-  const lastTriggerRef = useRef<number>(0);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const rafRef = React.useRef<number | null>(null);
+  const partsRef = React.useRef<Particle[]>([]);
+  const lastTriggerRef = React.useRef<number>(0);
 
   useEffect(() => {
     if (!trigger || trigger === lastTriggerRef.current) return;

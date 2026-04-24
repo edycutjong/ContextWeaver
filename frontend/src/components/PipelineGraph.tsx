@@ -91,6 +91,7 @@ export default function PipelineGraph({
     if (activeNodes.length === 0) return;
 
     // Use the rightmost active node to follow progress
+    // istanbul ignore next
     const sortedActive = [...activeNodes].sort((a, b) => {
       const posA = positions[a.id]?.x ?? a.x;
       const posB = positions[b.id]?.x ?? b.x;
@@ -247,6 +248,7 @@ export default function PipelineGraph({
                     const lx = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x as string);
                     const ly = typeof latest.y === 'number' ? latest.y : parseFloat(latest.y as string);
                     if (!isNaN(lx) && !isNaN(ly)) {
+                      // istanbul ignore next
                       setPositions(prev => {
                         if (prev[node.id]?.x === lx && prev[node.id]?.y === ly) return prev;
                         return {

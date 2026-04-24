@@ -282,16 +282,12 @@ export default function CommandPalette() {
                                 setQuery("");
                               }}
                               className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                                active
-                                  ? "bg-cyan-500/10 text-white"
-                                  : "text-slate-300 hover:bg-slate-800/40"
+                                active ? "bg-cyan-500/10 text-white" : "text-slate-300 hover:bg-slate-800/40"
                               }`}
                             >
                               <div
                                 className={`w-7 h-7 rounded-md flex items-center justify-center border ${
-                                  active
-                                    ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-300"
-                                    : "border-slate-800 bg-slate-900/60 text-slate-400"
+                                  active ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-300" : "border-slate-800 bg-slate-900/60 text-slate-400"
                                 }`}
                               >
                                 <Icon className="w-3.5 h-3.5" />

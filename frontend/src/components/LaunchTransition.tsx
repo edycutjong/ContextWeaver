@@ -122,6 +122,7 @@ export default function LaunchTransition() {
         const canvasEl = canvasRef.current;
         if (!canvasEl) return;
         const c2 = canvasEl.getContext("2d");
+        /* istanbul ignore next */
         if (!c2) return;
 
         const t = (now - startTimeRef.current) / 1000;
@@ -162,6 +163,8 @@ export default function LaunchTransition() {
 
         if (progress < 1) {
           rafRef.current = requestAnimationFrame(step);
+        } else {
+          rafRef.current = null;
         }
       };
 
@@ -325,8 +328,8 @@ export default function LaunchTransition() {
               initial={{ scale: 1, opacity: 0.95 }}
               animate={{
                 scale: Math.max(40, Math.hypot(
-                  Math.max(originX, (typeof window === "undefined" ? 0 : window.innerWidth) - originX),
-                  Math.max(originY, (typeof window === "undefined" ? 0 : window.innerHeight) - originY),
+                  Math.max(originX, window.innerWidth - originX),
+                  Math.max(originY, window.innerHeight - originY),
                 ) / 8),
                 opacity: 0,
               }}

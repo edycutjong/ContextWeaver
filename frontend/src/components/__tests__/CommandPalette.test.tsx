@@ -172,6 +172,41 @@ describe('CommandPalette', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
+  it('ignores unhandled keys', async () => {
+    render(<CommandPalette />);
+    
+    act(() => {
+      window.dispatchEvent(new CustomEvent('contextweaver:palette'));
+    });
+
+    const input = screen.getByPlaceholderText('Type a command or search...');
+    
+    act(() => {
+      fireEvent.keyDown(input, { key: 'Shift' });
+    });
+
+    // Should still be open
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('ArrowUp stops at 0', async () => {
+    render(<CommandPalette />);
+    
+    act(() => {
+      window.dispatchEvent(new CustomEvent('contextweaver:palette'));
+    });
+
+    const input = screen.getByPlaceholderText('Type a command or search...');
+    
+    act(() => {
+      fireEvent.keyDown(input, { key: 'ArrowUp' });
+    });
+
+    // Active item should remain the first one
+    const firstItem = screen.getByText('Home').closest('button');
+    expect(firstItem?.className).toContain('bg-cyan-500/10 text-white');
+  });
+
   it('executes item perform on click', async () => {
     render(<CommandPalette />);
     
@@ -299,16 +334,30 @@ describe('CommandPalette', () => {
 
     // Mock layout properties on the list container and item
     const input = screen.getByPlaceholderText('Type a command or search...');
-    const listbox = screen.getByRole('listbox');
+    const listbox = document.querySelector('.overflow-y-auto') as HTMLElement;
     
     Object.defineProperty(listbox, 'scrollTop', { value: 0, writable: true });
     Object.defineProperty(listbox, 'clientHeight', { value: 100, writable: true });
     
-    const items = listbox.querySelectorAll('[data-idx]');
-    // Mock offsetTop and offsetHeight for items
-    items.forEach((item, idx) => {
-      Object.defineProperty(item, 'offsetTop', { value: idx * 50, writable: true });
-      Object.defineProperty(item, 'offsetHeight', { value: 50, writable: true });
+    // Mock offsetTop and offsetHeight for items using prototype to ensure new queries get the values
+    const originalOffsetTop = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetTop');
+    const originalOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+    
+    Object.defineProperty(HTMLElement.prototype, 'offsetTop', {
+      get() {
+        const idx = this.getAttribute('data-idx');
+        if (idx !== null) return parseInt(idx) * 50;
+        return 0;
+      },
+      configurable: true
+    });
+    
+    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+      get() {
+        if (this.hasAttribute('data-idx')) return 50;
+        return 0;
+      },
+      configurable: true
     });
 
     // Move down multiple times to push the active item out of view
@@ -320,6 +369,13 @@ describe('CommandPalette', () => {
 
     // Verify scrollTop was updated
     expect(listbox.scrollTop).toBeGreaterThan(0);
+    
+    // Cleanup prototype
+    if (originalOffsetTop) Object.defineProperty(HTMLElement.prototype, 'offsetTop', originalOffsetTop);
+    else delete (HTMLElement.prototype as any).offsetTop;
+    
+    if (originalOffsetHeight) Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
+    else delete (HTMLElement.prototype as any).offsetHeight;
   });
 });
 

@@ -90,7 +90,7 @@ describe('ShortcutsOverlay', () => {
         <input type="text" data-testid="input" />
         <textarea data-testid="textarea" />
         <select data-testid="select"><option>1</option></select>
-        <div contentEditable={true} data-testid="contenteditable">edit me</div>
+        <div contentEditable={true} suppressContentEditableWarning={true} data-testid="contenteditable">edit me</div>
         <ShortcutsOverlay />
       </div>
     );

@@ -33,11 +33,11 @@ export default function HistoryPage() {
   const totalTokens = MOCK_HISTORY.reduce((a, h) => a + h.tokens, 0);
   const successRate = (successCount / MOCK_HISTORY.length) * 100;
 
-  const stats = [
-    { label: "Total Queries", value: MOCK_HISTORY.length, icon: Database, color: "cyan", decimals: 0, suffix: "" },
-    { label: "Avg Latency", value: avgLatency, icon: Zap, color: "purple", decimals: 0, suffix: "ms" },
+  const stats: Array<{ label: string; value: number; icon: any; color: string; decimals?: number; suffix?: string }> = [
+    { label: "Total Queries", value: MOCK_HISTORY.length, icon: Database, color: "cyan" },
+    { label: "Avg Latency", value: avgLatency, icon: Zap, color: "purple", suffix: "ms" },
     { label: "Success Rate", value: successRate, icon: TrendingUp, color: "emerald", decimals: 1, suffix: "%" },
-    { label: "Tokens Used", value: totalTokens, icon: Activity, color: "amber", decimals: 0, suffix: "" },
+    { label: "Tokens Used", value: totalTokens, icon: Activity, color: "amber" },
   ];
 
   const colorMap: Record<string, string> = {

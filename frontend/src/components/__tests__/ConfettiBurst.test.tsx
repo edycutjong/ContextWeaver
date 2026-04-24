@@ -165,9 +165,12 @@ describe('ConfettiBurst', () => {
   it('handles missing canvas ref gracefully', () => {
     const originalRef = React.useRef;
     jest.spyOn(React, 'useRef').mockImplementation((initialValue) => {
-      // If it's a canvas ref, return null
+      // If it's a canvas ref, return an object whose current is always null
       if (initialValue === null) {
-        return { current: null };
+        return {
+          get current() { return null; },
+          set current(_) {}
+        };
       }
       return originalRef(initialValue);
     });
@@ -194,5 +197,18 @@ describe('ConfettiBurst', () => {
     expect(cafSpy).toHaveBeenCalled();
     // And requested a new one
     expect(rafSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('returns early if trigger is the same as last trigger', () => {
+    const { rerender } = render(<ConfettiBurst trigger={0} />);
+    rerender(<ConfettiBurst trigger={1} />);
+    
+    const rafCalls = rafSpy.mock.calls.length;
+    
+    // Rerender with the same trigger
+    rerender(<ConfettiBurst trigger={1} />);
+    
+    // RAF should not have been called again
+    expect(rafSpy.mock.calls.length).toBe(rafCalls);
   });
 });

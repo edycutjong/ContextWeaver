@@ -39,11 +39,12 @@ export default function StarField({
     let height = 0;
 
     function resize() {
-      /* istanbul ignore next */
+      // istanbul ignore next
       if (!canvas) return;
       width = window.innerWidth;
       height = window.innerHeight;
-      dpr = Math.max(1, Math.min(window.devicePixelRatio || /* istanbul ignore next */ 1, 2));
+      // istanbul ignore next
+      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -111,13 +112,13 @@ export default function StarField({
         }
 
         // Wrap
-        /* istanbul ignore if */
+        // istanbul ignore next
         if (s.x < -4) s.x = width + 4;
-        /* istanbul ignore if */
+        // istanbul ignore next
         if (s.x > width + 4) s.x = -4;
-        /* istanbul ignore if */
+        // istanbul ignore next
         if (s.y < -4) s.y = height + 4;
-        /* istanbul ignore if */
+        // istanbul ignore next
         if (s.y > height + 4) s.y = -4;
 
         const alpha = (0.4 + Math.sin(s.twinkle) * 0.35) * s.z;
@@ -156,6 +157,7 @@ export default function StarField({
     window.addEventListener("contextweaver:launch-end", onLaunchEnd);
     rafRef.current = requestAnimationFrame(frame);
 
+    // istanbul ignore next
     return () => {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);

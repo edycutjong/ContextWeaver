@@ -50,7 +50,8 @@ export default function ThroughputSparkline({
     const id = window.setInterval(() => {
       setPoints((pts) => {
         const next = pts.slice(1);
-        const last = pts.length > 0 ? pts[pts.length - 1] : /* istanbul ignore next */ 0;
+        // istanbul ignore next
+        const last = pts.length > 0 ? pts[pts.length - 1] : 0;
         next.push(last * 0.78);
         return next;
       });
