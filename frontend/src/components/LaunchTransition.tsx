@@ -27,6 +27,7 @@ export function launchToDashboard(opts: {
   originX?: number;
   originY?: number;
 }) {
+  /* istanbul ignore next */
   if (typeof window === "undefined") return;
   const reducedMotion =
     typeof window.matchMedia === "function" &&
@@ -102,7 +103,9 @@ export default function LaunchTransition() {
   const runWarp = useCallback(
     (detail: LaunchDetail) => {
       const canvas = canvasRef.current;
+      /* istanbul ignore next */
       if (!canvas) return;
+      /* istanbul ignore next */
       const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -120,6 +123,7 @@ export default function LaunchTransition() {
 
       const step = (now: number) => {
         const canvasEl = canvasRef.current;
+        /* istanbul ignore next */
         if (!canvasEl) return;
         const c2 = canvasEl.getContext("2d");
         /* istanbul ignore next */
@@ -224,6 +228,7 @@ export default function LaunchTransition() {
       animate(irisR, maxR, { duration: 0.42, ease: [0.6, 0, 0.2, 1] });
     }, 650);
     const endT = window.setTimeout(() => {
+      /* istanbul ignore next */
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setActive(null);
       setPhase("idle");

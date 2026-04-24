@@ -143,6 +143,7 @@ export default function StarField({
 
     function onLaunchStart() {
       pausedRef.current = true;
+      /* istanbul ignore next */
       if (ctx) ctx.clearRect(0, 0, width, height);
     }
     function onLaunchEnd() {

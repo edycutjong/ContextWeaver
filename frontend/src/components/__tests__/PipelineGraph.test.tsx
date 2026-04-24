@@ -15,6 +15,7 @@ jest.mock('framer-motion', () => {
             onUpdate({ x: 10, y: 20 });
             onUpdate({ x: "15", y: "25" });
             onUpdate({ x: "invalid", y: "invalid" }); // test isNaN path
+            onUpdate({ x: undefined, y: undefined }); // test undefined path
         }
     }}>{allProps.children}</div>;
   });
@@ -104,6 +105,23 @@ describe('PipelineGraph', () => {
     ];
     const edges = [{ source: '1', target: '2' }];
     render(<PipelineGraph currentStep="init" nodes={nodes} edges={edges} />);
+  });
+
+  it('handles edge with target node at same position as source node', () => {
+    const nodes = [
+      { id: '1', label: '1', x: 100, y: 100 },
+      { id: '2', label: '2', x: 100, y: 100 }
+    ];
+    const edges = [{ source: '1', target: '2' }];
+    render(<PipelineGraph currentStep="init" nodes={nodes} edges={edges} />);
+  });
+
+  it('handles active node without position in state', () => {
+    const { rerender } = render(<PipelineGraph currentStep="init" />);
+    const newNodes = [
+      { id: 'chunker', label: 'Chunker', x: 200, y: 100 }
+    ];
+    rerender(<PipelineGraph currentStep="chunking" nodes={newNodes} />);
   });
 
   it('handles edge with missing node positions safely', () => {

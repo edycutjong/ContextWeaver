@@ -73,6 +73,10 @@ describe('StarField', () => {
   it('handles null context gracefully', () => {
     HTMLCanvasElement.prototype.getContext = jest.fn(() => null) as any;
     render(<StarField />);
+    act(() => {
+      window.dispatchEvent(new Event('contextweaver:launch-start'));
+      jest.advanceTimersByTime(50);
+    });
   });
 
   it('handles stars wrapping around screen', () => {

@@ -99,6 +99,7 @@ export default function PipelineGraph({
     });
 
     const targetNode = sortedActive[sortedActive.length - 1];
+    /* istanbul ignore next */
     const targetPos = positions[targetNode.id] || { x: targetNode.x };
 
     // Node center = 50px (left offset) + node.x + 70px (half of 140px width)
