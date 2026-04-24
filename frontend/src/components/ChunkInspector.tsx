@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Database, FileText } from 'lucide-react';
+import { X, Database, FileText, Hash, Type, AlignLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type ChunkData = {
   chunk_idx: string | number;
@@ -17,6 +17,8 @@ type ChunkData = {
 type InspectorProps = {
   chunkData: ChunkData | null;
   onClose: () => void;
+  onPrevious?: () => void;
+  onNext?: () => void;
 };
 
 function ConfidenceRing({ value }: { value: number }) {
@@ -59,7 +61,7 @@ const ENTITY_STYLES: Record<string, { bg: string, text: string, border: string }
 
 const DEFAULT_ENTITY_STYLE = ENTITY_STYLES.DEFAULT;
 
-export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
+export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext }: InspectorProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -78,6 +80,20 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
     };
   }, [chunkData]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && onPrevious) {
+        onPrevious();
+      } else if (e.key === 'ArrowRight' && onNext) {
+        onNext();
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onPrevious, onNext, onClose]);
+
   if (!mounted) return null;
 
   return createPortal(
@@ -89,16 +105,36 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
-          className="fixed inset-0 z-[99999] overflow-y-auto bg-black/60 backdrop-blur-sm p-4 sm:p-6"
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6"
         >
-          <div className="flex min-h-full items-start justify-center pt-10 pb-10">
+          <div className="relative w-full max-w-6xl flex justify-center items-center">
+            {onPrevious && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onPrevious(); }}
+                className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 bg-slate-800/80 hover:bg-slate-700 text-white rounded-full border border-slate-600 shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all hover:scale-110 z-50 flex items-center justify-center"
+                aria-label="Previous Chunk"
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+            )}
+            
+            {onNext && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onNext(); }}
+                className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 bg-slate-800/80 hover:bg-slate-700 text-white rounded-full border border-slate-600 shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all hover:scale-110 z-50 flex items-center justify-center"
+                aria-label="Next Chunk"
+              >
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            )}
+
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
               transition={{ type: 'spring', stiffness: 260, damping: 24 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-6xl flex flex-col shadow-[0_0_60px_rgba(6,182,212,0.15)] overflow-hidden relative shrink-0"
+              className="bg-slate-900 border border-slate-700 rounded-xl w-full max-h-[90vh] flex flex-col shadow-[0_0_60px_rgba(6,182,212,0.15)] overflow-hidden relative shrink-0"
             >
             {/* Subtle gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none" />
@@ -128,7 +164,7 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
             </div>
 
             {/* 3-Column Content */}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-0 text-sm relative z-10 md:h-[600px]">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-0 text-sm relative z-10 md:min-h-0 md:h-[600px] overflow-hidden">
               {/* Column 1: Raw Text */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -136,12 +172,61 @@ export default function ChunkInspector({ chunkData, onClose }: InspectorProps) {
                 transition={{ delay: 0.1 }}
                 className="border-r border-slate-700/50 flex flex-col bg-slate-900/50 min-h-0"
               >
-                <div className="px-4 py-3 bg-slate-800/40 border-b border-slate-700/50 font-semibold text-slate-300 flex items-center gap-2 shrink-0">
-                  <FileText className="w-4 h-4 text-slate-400" />
-                  Raw Source Text
+                <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex justify-between items-center shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded bg-slate-500/20 text-slate-300 text-xs flex items-center justify-center font-bold">1</span>
+                    <FileText className="w-4 h-4 text-slate-400" />
+                    Raw Source Text
+                  </div>
+                  <span className="text-xs bg-slate-700/60 text-slate-300 border border-slate-500/30 px-2 py-0.5 rounded-full">
+                    Chunk #{chunkData.chunk_idx}
+                  </span>
                 </div>
-                <div className="p-4 overflow-y-auto flex-1 font-mono text-xs leading-relaxed text-slate-400 whitespace-pre-wrap">
-                  {chunkData.raw_text}
+                {(() => {
+                  const text = chunkData.raw_text ?? '';
+                  const chars = text.length;
+                  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                  const lines = text ? text.split('\n').length : 0;
+                  const tokenEstimate = Math.max(1, Math.ceil(chars / 4));
+                  return (
+                    <div className="px-4 py-3 bg-slate-900/40 border-b border-slate-800/50 flex items-center justify-between gap-3 shrink-0 flex-wrap">
+                      <div className="flex items-center gap-3 text-slate-300 flex-wrap">
+                        <div className="flex items-center gap-1.5" title="Characters">
+                          <Hash className="w-3 h-3 text-slate-500" />
+                          <span className="font-mono tabular-nums text-xs">{chars.toLocaleString()}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">chars</span>
+                        </div>
+                        <div className="w-px h-4 bg-slate-800" />
+                        <div className="flex items-center gap-1.5" title="Words">
+                          <Type className="w-3 h-3 text-slate-500" />
+                          <span className="font-mono tabular-nums text-xs">{words.toLocaleString()}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">words</span>
+                        </div>
+                        <div className="w-px h-4 bg-slate-800" />
+                        <div className="flex items-center gap-1.5" title="Lines">
+                          <AlignLeft className="w-3 h-3 text-slate-500" />
+                          <span className="font-mono tabular-nums text-xs">{lines.toLocaleString()}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">lines</span>
+                        </div>
+                        <div className="w-px h-4 bg-slate-800" />
+                        <div className="flex items-center gap-1.5" title="Approximate token count (~4 chars/token)">
+                          <span className="font-mono tabular-nums text-xs text-cyan-300">~{tokenEstimate.toLocaleString()}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">tokens</span>
+                        </div>
+                      </div>
+                      {typeof chunkData.confidence === 'number' && (
+                        <div className="flex items-center gap-2 ml-auto" title="Annotation confidence for this chunk">
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">Conf</span>
+                          <ConfidenceRing value={chunkData.confidence} />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+                <div className="p-4 overflow-y-auto flex-1 font-mono text-xs leading-relaxed text-slate-300 whitespace-pre-wrap">
+                  {chunkData.raw_text || (
+                    <span className="text-slate-600 italic font-sans">This is a very long legal document</span>
+                  )}
                 </div>
               </motion.div>
 
