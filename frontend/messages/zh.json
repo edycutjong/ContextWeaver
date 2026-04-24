@@ -88,8 +88,13 @@
     "steps": {
       "idle": "空闲",
       "init": "初始化中",
+      "chunking": "正在分块",
+      "retrieving": "正在检索",
       "chunk_complete": "分块完成",
       "retrieve_complete": "检索完成",
+      "building_prompt": "正在构建提示词",
+      "annotating": "正在标注",
+      "merging": "正在合并",
       "annotate_complete": "标注完成",
       "done": "完成"
     },

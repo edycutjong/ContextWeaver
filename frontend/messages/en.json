@@ -88,8 +88,13 @@
     "steps": {
       "idle": "Idle",
       "init": "Initializing",
+      "chunking": "Chunking",
+      "retrieving": "Retrieving",
       "chunk_complete": "Chunking Complete",
       "retrieve_complete": "Retrieval Complete",
+      "building_prompt": "Building Prompt",
+      "annotating": "Annotating",
+      "merging": "Merging",
       "annotate_complete": "Annotation Complete",
       "done": "Done"
     },
