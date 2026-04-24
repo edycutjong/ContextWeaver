@@ -36,3 +36,5 @@ docs/assets/*
 htmlcov/
 
 frontend/lint-results.json
+scratch/
+frontend/scratch/
