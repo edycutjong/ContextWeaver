@@ -258,21 +258,36 @@ export default function LandingPage() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="flex justify-center items-center gap-4 mb-6 w-full"
         >
-          <Link
-            href="/dashboard"
-            onClick={(e) => {
-              // Preserve cmd/ctrl/shift/middle-click → new tab
-              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-              e.preventDefault();
-              const rect = e.currentTarget.getBoundingClientRect();
-              const ox = e.clientX || rect.left + rect.width / 2;
-              const oy = e.clientY || rect.top + rect.height / 2;
-              launchToDashboard({ href: "/dashboard", originX: ox, originY: oy });
-            }}
-            className="w-full sm:w-auto px-12 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all hover:scale-105"
+          <motion.div
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.97 }}
+            className="relative w-full sm:w-auto"
           >
-            {t('launchDashboard')}
-          </Link>
+            {/* Breathing glow halo */}
+            <motion.div
+              className="absolute -inset-1 rounded-full bg-linear-to-r from-cyan-500 via-blue-500 to-purple-600 blur-lg pointer-events-none"
+              animate={{ opacity: [0.45, 0.8, 0.45] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <Link
+              href="/dashboard"
+              onClick={(e) => {
+                // Preserve cmd/ctrl/shift/middle-click → new tab
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                e.preventDefault();
+                const rect = e.currentTarget.getBoundingClientRect();
+                const ox = e.clientX || rect.left + rect.width / 2;
+                const oy = e.clientY || rect.top + rect.height / 2;
+                launchToDashboard({ href: "/dashboard", originX: ox, originY: oy });
+              }}
+              className="relative flex items-center justify-center gap-3 w-full sm:w-auto px-12 py-4 rounded-full bg-linear-to-r from-cyan-500 via-blue-500 to-purple-600 font-bold text-lg text-white tracking-wide overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.5)] group"
+            >
+              {/* Shimmer sweep on hover */}
+              <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
+              <ZapIcon className="relative z-10 w-5 h-5" />
+              <span className="relative z-10">{t('launchDashboard')}</span>
+            </Link>
+          </motion.div>
         </motion.div>
 
         <motion.div

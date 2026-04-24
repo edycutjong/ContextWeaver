@@ -449,24 +449,51 @@ export default function Dashboard() {
               </h1>
               <p className="text-slate-400 font-medium tracking-wide">{t('subtitle')}</p>
             </div>
-            <button
-              onClick={startPipeline}
-              disabled={isRunning}
-              className={`relative z-10 px-8 py-3.5 rounded-xl font-bold tracking-wide transition-all overflow-hidden ${isRunning ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' : 'bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] border border-cyan-400/30'
-                }`}
+            <motion.div
+              whileHover={!isRunning ? { scale: 1.05 } : {}}
+              whileTap={!isRunning ? { scale: 0.97 } : {}}
+              className="relative z-10"
             >
-              {isRunning && (
-                <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+              {/* Breathing glow halo — idle only */}
+              {!isRunning && (
+                <motion.div
+                  className="absolute -inset-1 rounded-xl bg-linear-to-r from-cyan-500 via-blue-500 to-purple-600 blur-lg pointer-events-none"
+                  animate={{ opacity: [0.4, 0.75, 0.4] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                />
               )}
-              <span className="relative flex items-center">
-                {isRunning ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    {t('runButtonActive')}
-                  </>
-                ) : t('runButton')}
-              </span>
-            </button>
+              <button
+                onClick={startPipeline}
+                disabled={isRunning}
+                className={`relative px-8 py-3.5 rounded-xl font-bold tracking-wide overflow-hidden transition-shadow ${
+                  isRunning
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                    : 'bg-linear-to-r from-cyan-500 via-blue-500 to-purple-600 text-white shadow-[0_0_30px_rgba(6,182,212,0.5)] group'
+                }`}
+              >
+                {/* Hover shimmer — idle */}
+                {!isRunning && (
+                  <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
+                )}
+                {/* Running shimmer */}
+                {isRunning && (
+                  <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  {isRunning ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                      {t('runButtonActive')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5" />
+                      {t('runButton')}
+                    </>
+                  )}
+                </span>
+              </button>
+            </motion.div>
           </motion.div>
 
           {/* Graph Selector (Moved to Top) */}
