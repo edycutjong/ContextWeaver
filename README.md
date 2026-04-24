@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/og-image.png" alt="ContextWeaver Banner" width="100%">
+  <img src="frontend/src/app/opengraph-image.png" alt="ContextWeaver Banner" width="100%">
   <h1>ContextWeaver 🚀</h1>
   <p><em>Dynamic In-Context Learning Router for Intelligent Data Annotation</em></p>
   
