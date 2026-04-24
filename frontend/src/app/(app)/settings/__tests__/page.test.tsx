@@ -28,10 +28,28 @@ jest.mock('framer-motion', () => {
 describe('SettingsPage', () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    // Mock localStorage
+    const store: Record<string, string> = {
+      'contextweaver_settings': JSON.stringify({
+        topK: 10,
+        chunkSize: 1024,
+        chunkOverlap: 50,
+        activeModel: 'deep'
+      })
+    };
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn((key: string) => store[key] || null),
+        setItem: jest.fn((key: string, value: string) => { store[key] = value; }),
+        clear: jest.fn(() => { Object.keys(store).forEach(k => delete store[k]); })
+      },
+      writable: true
+    });
   });
 
   afterEach(() => {
     jest.useRealTimers();
+    jest.restoreAllMocks();
   });
 
   it('renders correctly', () => {
@@ -61,6 +79,18 @@ describe('SettingsPage', () => {
     fireEvent.click(getByText('3 Chunks'));
   });
 
+  it('updates model selection', () => {
+    const { getByText } = render(<SettingsPage />);
+    
+    // Switch to Fast Model
+    fireEvent.click(getByText('Fast Model'));
+    expect(getByText('Fast Model')).toBeInTheDocument();
+    
+    // Switch back to Deep Model
+    fireEvent.click(getByText('Deep Model'));
+    expect(getByText('Deep Model')).toBeInTheDocument();
+  });
+
   it('handles save configuration and shows toast', () => {
     const { getByText, queryByText } = render(<SettingsPage />);
     
@@ -82,5 +112,22 @@ describe('SettingsPage', () => {
     
     // Toast should disappear
     expect(queryByText('Saved successfully')).not.toBeInTheDocument();
+  });
+
+  it('handles empty local storage settings gracefully', () => {
+    // Override local storage to return empty object
+    window.localStorage.setItem('contextweaver_settings', JSON.stringify({}));
+    render(<SettingsPage />);
+  });
+
+  it('handles invalid JSON in local storage gracefully', () => {
+    // Override local storage to return invalid JSON
+    window.localStorage.setItem('contextweaver_settings', 'invalid-json');
+    render(<SettingsPage />);
+  });
+
+  it('handles null local storage settings gracefully', () => {
+    window.localStorage.clear();
+    render(<SettingsPage />);
   });
 });

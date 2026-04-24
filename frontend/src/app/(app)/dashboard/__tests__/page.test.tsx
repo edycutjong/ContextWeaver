@@ -107,6 +107,22 @@ describe('Dashboard', () => {
       return el;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }) as any;
+
+    // Mock localStorage
+    const store: Record<string, string> = {
+      'contextweaver_settings': JSON.stringify({
+        topK: 10,
+        chunkSize: 1024,
+        chunkOverlap: 50,
+        activeModel: 'deep'
+      })
+    };
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn((key: string) => store[key] || null),
+      },
+      writable: true
+    });
   });
 
   afterEach(() => {
@@ -135,10 +151,13 @@ describe('Dashboard', () => {
     const runBtn = getByText('Run Document Annotation');
     fireEvent.click(runBtn);
     
-    expect(global.EventSource).toHaveBeenCalledWith('http://localhost:8000/api/stream/123');
+    expect(global.EventSource).toHaveBeenCalledWith(expect.stringContaining('http://localhost:8000/api/stream/123'));
     
     act(() => {
       mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Started' }) });
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Success ✅' }) });
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Warning ⚠️' }) });
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Error ❌' }) });
     });
     
     // Advance timers for typewriter
@@ -168,6 +187,10 @@ describe('Dashboard', () => {
           } 
         }) 
       });
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(200);
     });
     
     expect(getByText('Annotation Complete')).toBeInTheDocument();
@@ -234,6 +257,35 @@ describe('Dashboard', () => {
     fireEvent.click(getByTestId('confidence-heatmap'));
     fireEvent.click(getByTestId('chunk-inspector'));
     
+    jest.useRealTimers();
+  });
+
+  it('starts pipeline from global window event', () => {
+    jest.useFakeTimers();
+    render(<Dashboard />);
+    
+    act(() => {
+      window.dispatchEvent(new Event('contextweaver:run'));
+    });
+    
+    expect(global.EventSource).toHaveBeenCalled();
+    jest.useRealTimers();
+  });
+
+  it('closes active EventSource when switching graphs', () => {
+    jest.useFakeTimers();
+    const { getByText } = render(<Dashboard />);
+    
+    // Start pipeline
+    const runBtn = getByText('Run Document Annotation');
+    fireEvent.click(runBtn);
+    expect(global.EventSource).toHaveBeenCalled();
+
+    // Switch graph to trigger the reset state
+    fireEvent.click(getByText('Standard RAG'));
+    
+    // Check that close was called
+    expect(mockEventSource.close).toHaveBeenCalled();
     jest.useRealTimers();
   });
 });
