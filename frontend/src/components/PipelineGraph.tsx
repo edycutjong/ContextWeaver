@@ -260,7 +260,7 @@ export default function PipelineGraph({
                     }
                   }
                 }}
-                className={`group absolute top-[50px] left-[50px] cursor-default hover:cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] max-w-[140px] flex-shrink-0 min-w-[140px] h-[50px] min-h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${active
+                className={`group absolute top-[50px] left-[50px] cursor-default hover:cursor-grab active:cursor-grabbing flex flex-col items-center justify-center w-[140px] max-w-[140px] shrink-0 min-w-[140px] h-[50px] min-h-[50px] rounded-lg border-2 pointer-events-auto transition-colors duration-300 ${active
                   ? 'bg-cyan-950 border-cyan-400 text-white z-20 shadow-lg'
                   : 'bg-slate-800 border-slate-600 text-slate-300 z-10 shadow-md'
                   }`}

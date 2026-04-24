@@ -89,7 +89,7 @@ export default function ToastLayer() {
   if (!mounted) return null;
 
   return createPortal(
-    <div className="fixed top-20 right-4 z-[99997] flex flex-col gap-2 pointer-events-none">
+    <div className="fixed top-20 right-4 z-99997 flex flex-col gap-2 pointer-events-none">
       <AnimatePresence initial={false}>
         {toasts.map((t) => {
           const { icon: Icon, accent, glow, ring } = KIND_STYLE[t.kind];

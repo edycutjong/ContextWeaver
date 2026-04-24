@@ -254,7 +254,7 @@ export default function LaunchTransition() {
           key="launch-overlay"
           role="presentation"
           aria-hidden
-          className="fixed inset-0 z-[100000] pointer-events-none overflow-hidden"
+          className="fixed inset-0 z-100000 pointer-events-none overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
