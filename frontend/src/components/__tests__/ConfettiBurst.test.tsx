@@ -4,7 +4,7 @@ import { render, act } from '@testing-library/react';
 import ConfettiBurst from '../ConfettiBurst';
 
 describe('ConfettiBurst', () => {
-  let mockContext: unknown;
+  let mockContext: any;
   let rafSpy: jest.SpyInstance;
   let cafSpy: jest.SpyInstance;
   
@@ -42,7 +42,7 @@ describe('ConfettiBurst', () => {
       shadowBlur: 0
     };
     
-    window.HTMLCanvasElement.prototype.getContext = jest.fn(() => mockContext) as unknown;
+    window.HTMLCanvasElement.prototype.getContext = jest.fn(() => mockContext) as any;
     
     // Setup RAF mocks
     let rafCallbacks: FrameRequestCallback[] = [];
@@ -59,7 +59,7 @@ describe('ConfettiBurst', () => {
     });
 
     // Helper to manually run the next frame
-    (global as unknown).triggerRaf = () => {
+    (global as any).triggerRaf = () => {
       const callbacksToRun = [...rafCallbacks];
       rafCallbacks = [];
       callbacksToRun.forEach(cb => cb(performance.now()));
@@ -69,7 +69,7 @@ describe('ConfettiBurst', () => {
   afterEach(() => {
     jest.useRealTimers();
     jest.restoreAllMocks();
-    delete (global as unknown).triggerRaf;
+    delete (global as any).triggerRaf;
   });
 
   it('renders canvas element', () => {
@@ -104,7 +104,7 @@ describe('ConfettiBurst', () => {
     
     // Trigger one frame
     act(() => {
-      (global as unknown).triggerRaf();
+      (global as any).triggerRaf();
     });
     
     // Clear rect should have been called
@@ -116,7 +116,7 @@ describe('ConfettiBurst', () => {
     // Let's advance it enough times to kill all particles.
     act(() => {
       for (let i = 0; i < 150; i++) {
-        (global as unknown).triggerRaf();
+        (global as any).triggerRaf();
       }
     });
     
@@ -124,7 +124,7 @@ describe('ConfettiBurst', () => {
     const currentRafCalls = rafSpy.mock.calls.length;
     
     act(() => {
-      (global as unknown).triggerRaf(); // If there were unknown pending
+      (global as any).triggerRaf(); // If there were pending
     });
     
     expect(rafSpy.mock.calls.length).toBe(currentRafCalls); // No new RAFs scheduled
@@ -143,7 +143,7 @@ describe('ConfettiBurst', () => {
 
   it('handles null canvas gracefully', () => {
     // Override getContext to return null to test edge case
-    window.HTMLCanvasElement.prototype.getContext = jest.fn(() => null) as unknown;
+    window.HTMLCanvasElement.prototype.getContext = jest.fn(() => null) as any;
     
     const { rerender } = render(<ConfettiBurst trigger={0} />);
     rerender(<ConfettiBurst trigger={1} />);

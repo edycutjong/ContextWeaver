@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
+  useRouter: () => ({ refresh: jest.fn() }),
 }));
 
 // Mock CommandPaletteHint to avoid complexity

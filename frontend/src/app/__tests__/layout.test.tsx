@@ -8,6 +8,7 @@ jest.mock('next/font/google', () => ({
   Geist: () => ({ variable: '--font-geist-sans' }),
   Geist_Mono: () => ({ variable: '--font-geist-mono' }),
   Orbitron: () => ({ variable: '--font-orbitron' }),
+  Noto_Sans_SC: () => ({ variable: '--font-noto-sans-sc' }),
 }));
 
 jest.mock('@/components/LaunchTransition', () => {
@@ -17,13 +18,15 @@ jest.mock('@/components/LaunchTransition', () => {
 });
 
 describe('RootLayout', () => {
-  it('renders children within html and body tags', () => {
+  it('renders children within html and body tags', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const { getByText } = render(
-      <RootLayout>
-        <div>Test Child</div>
-      </RootLayout>
-    );
+    
+    // RootLayout is an async component, so we must await it before rendering
+    const LayoutResolved = await RootLayout({
+      children: <div>Test Child</div>
+    });
+    
+    const { getByText } = render(LayoutResolved);
 
     expect(getByText('Test Child')).toBeInTheDocument();
     consoleSpy.mockRestore();
