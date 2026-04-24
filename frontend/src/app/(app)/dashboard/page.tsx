@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import PipelineGraph from '@/components/PipelineGraph';
 import ChunkInspector from '@/components/ChunkInspector';
 import ConfidenceHeatmap from '@/components/ConfidenceHeatmap';
@@ -9,6 +10,7 @@ import { NodeData, EdgeData } from '@/components/PipelineGraph';
 import ThroughputSparkline from '@/components/ThroughputSparkline';
 import ConfettiBurst from '@/components/ConfettiBurst';
 import { pushToast } from '@/components/ToastLayer';
+import { translateSseMessage } from '@/i18n/sseMessages';
 import {
   FileText, Scissors, Database, FileEdit, BarChart, Search, Calculator, Bot, ClipboardList, TrafficCone, UserSearch, Code2, CheckSquare, Combine, Target, PenTool, Scale, Sparkles, Inbox, Compass, Activity, Dumbbell, Waves,
   CheckCircle2, XCircle, AlertTriangle, Loader2
@@ -17,15 +19,21 @@ import { ChromaIcon, QwenIcon } from '@/components/CustomIcons';
 
 type GraphType = 'contextweaver' | 'standard-rag' | 'multi-agent' | 'evaluator-optimizer' | 'routing-agent';
 
-const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeActive: (nodeId: string, step: string) => boolean }> = {
+type GraphDef = {
+  nodes: { id: string; nodeKey: string; literal?: string; x: number; y: number; icon: NodeData['icon'] }[];
+  edges: EdgeData[];
+  isNodeActive: (nodeId: string, step: string) => boolean;
+};
+
+const graphDefs: Record<GraphType, GraphDef> = {
   'contextweaver': {
     nodes: [
-      { id: 'doc', label: 'Document', x: 0, y: 100, icon: FileText },
-      { id: 'chunker', label: 'Chunker', x: 250, y: 100, icon: Scissors },
-      { id: 'vectordb', label: 'ChromaDB', x: 500, y: 20, icon: ChromaIcon },
-      { id: 'prompt', label: 'Prompt Builder', x: 500, y: 200, icon: FileEdit },
-      { id: 'qwen', label: 'Qwen3-4B', x: 750, y: 100, icon: QwenIcon },
-      { id: 'results', label: 'Results', x: 1000, y: 100, icon: BarChart },
+      { id: 'doc', nodeKey: 'document', x: 0, y: 100, icon: FileText },
+      { id: 'chunker', nodeKey: 'chunker', x: 250, y: 100, icon: Scissors },
+      { id: 'vectordb', nodeKey: 'chromadb', literal: 'ChromaDB', x: 500, y: 20, icon: ChromaIcon },
+      { id: 'prompt', nodeKey: 'promptBuilder', x: 500, y: 200, icon: FileEdit },
+      { id: 'qwen', nodeKey: 'qwen', literal: 'Qwen3-4B', x: 750, y: 100, icon: QwenIcon },
+      { id: 'results', nodeKey: 'results', x: 1000, y: 100, icon: BarChart },
     ],
     edges: [
       { source: 'doc', target: 'chunker' },
@@ -47,11 +55,11 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'standard-rag': {
     nodes: [
-      { id: 'query', label: 'User Query', x: 0, y: 100, icon: Search },
-      { id: 'embed', label: 'Embeddings', x: 250, y: 100, icon: Calculator },
-      { id: 'vectordb', label: 'Vector DB', x: 500, y: 100, icon: Database },
-      { id: 'llm', label: 'LLM', x: 750, y: 100, icon: Bot },
-      { id: 'output', label: 'Output', x: 1000, y: 100, icon: FileText },
+      { id: 'query', nodeKey: 'userQuery', x: 0, y: 100, icon: Search },
+      { id: 'embed', nodeKey: 'embeddings', x: 250, y: 100, icon: Calculator },
+      { id: 'vectordb', nodeKey: 'vectorDb', x: 500, y: 100, icon: Database },
+      { id: 'llm', nodeKey: 'llm', literal: 'LLM', x: 750, y: 100, icon: Bot },
+      { id: 'output', nodeKey: 'output', x: 1000, y: 100, icon: FileText },
     ],
     edges: [
       { source: 'query', target: 'embed' },
@@ -70,13 +78,13 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'multi-agent': {
     nodes: [
-      { id: 'task', label: 'Task', x: 0, y: 100, icon: ClipboardList },
-      { id: 'router', label: 'Router Agent', x: 220, y: 100, icon: TrafficCone },
-      { id: 'agent1', label: 'Researcher', x: 440, y: 20, icon: UserSearch },
-      { id: 'agent2', label: 'Coder', x: 440, y: 100, icon: Code2 },
-      { id: 'agent3', label: 'Reviewer', x: 440, y: 210, icon: CheckSquare },
-      { id: 'merger', label: 'Synthesizer', x: 660, y: 100, icon: Combine },
-      { id: 'results', label: 'Final Output', x: 880, y: 100, icon: Target },
+      { id: 'task', nodeKey: 'task', x: 0, y: 100, icon: ClipboardList },
+      { id: 'router', nodeKey: 'routerAgent', x: 220, y: 100, icon: TrafficCone },
+      { id: 'agent1', nodeKey: 'researcher', x: 440, y: 20, icon: UserSearch },
+      { id: 'agent2', nodeKey: 'coder', x: 440, y: 100, icon: Code2 },
+      { id: 'agent3', nodeKey: 'reviewer', x: 440, y: 210, icon: CheckSquare },
+      { id: 'merger', nodeKey: 'synthesizer', x: 660, y: 100, icon: Combine },
+      { id: 'results', nodeKey: 'finalOutput', x: 880, y: 100, icon: Target },
     ],
     edges: [
       { source: 'task', target: 'router' },
@@ -99,10 +107,10 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'evaluator-optimizer': {
     nodes: [
-      { id: 'task', label: 'Task', x: 0, y: 100, icon: ClipboardList },
-      { id: 'generator', label: 'Generator', x: 300, y: 100, icon: PenTool },
-      { id: 'evaluator', label: 'Evaluator', x: 600, y: 100, icon: Scale },
-      { id: 'results', label: 'Results', x: 900, y: 100, icon: Sparkles },
+      { id: 'task', nodeKey: 'task', x: 0, y: 100, icon: ClipboardList },
+      { id: 'generator', nodeKey: 'generator', x: 300, y: 100, icon: PenTool },
+      { id: 'evaluator', nodeKey: 'evaluator', x: 600, y: 100, icon: Scale },
+      { id: 'results', nodeKey: 'results', x: 900, y: 100, icon: Sparkles },
     ],
     edges: [
       { source: 'task', target: 'generator' },
@@ -121,12 +129,12 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
   },
   'routing-agent': {
     nodes: [
-      { id: 'input', label: 'Input', x: 0, y: 100, icon: Inbox },
-      { id: 'classifier', label: 'Classifier', x: 300, y: 100, icon: Compass },
-      { id: 'expert_a', label: 'Expert A', x: 600, y: 20, icon: Activity },
-      { id: 'expert_b', label: 'Expert B', x: 600, y: 100, icon: Dumbbell },
-      { id: 'expert_c', label: 'Expert C', x: 600, y: 210, icon: Waves },
-      { id: 'results', label: 'Results', x: 900, y: 100, icon: BarChart },
+      { id: 'input', nodeKey: 'input', x: 0, y: 100, icon: Inbox },
+      { id: 'classifier', nodeKey: 'classifier', x: 300, y: 100, icon: Compass },
+      { id: 'expert_a', nodeKey: 'expertA', x: 600, y: 20, icon: Activity },
+      { id: 'expert_b', nodeKey: 'expertB', x: 600, y: 100, icon: Dumbbell },
+      { id: 'expert_c', nodeKey: 'expertC', x: 600, y: 210, icon: Waves },
+      { id: 'results', nodeKey: 'results', x: 900, y: 100, icon: BarChart },
     ],
     edges: [
       { source: 'input', target: 'classifier' },
@@ -174,6 +182,27 @@ function AnimatedNumber({ value, decimals = 0, suffix = '' }: { value: number; d
 }
 
 export default function Dashboard() {
+  const t = useTranslations('dashboard');
+  const tNodes = useTranslations('dashboard.nodes');
+  const tSse = useTranslations('sseLog');
+  const graphs: Record<GraphType, { nodes: NodeData[]; edges: EdgeData[]; isNodeActive: GraphDef['isNodeActive'] }> = React.useMemo(() => {
+    const out = {} as Record<GraphType, { nodes: NodeData[]; edges: EdgeData[]; isNodeActive: GraphDef['isNodeActive'] }>;
+    (Object.keys(graphDefs) as GraphType[]).forEach((k) => {
+      const def = graphDefs[k];
+      out[k] = {
+        edges: def.edges,
+        isNodeActive: def.isNodeActive,
+        nodes: def.nodes.map((n) => ({
+          id: n.id,
+          label: n.literal ?? tNodes(n.nodeKey),
+          x: n.x,
+          y: n.y,
+          icon: n.icon,
+        })),
+      };
+    });
+    return out;
+  }, [tNodes]);
   const [pipelineStep, setPipelineStep] = useState<string>('idle');
   const [selectedGraph, setSelectedGraph] = useState<GraphType>('contextweaver');
   const [logMessages, setLogMessages] = useState<string[]>([]);
@@ -282,11 +311,11 @@ export default function Dashboard() {
     if (isRunning) return;
     setIsRunning(true);
     setPipelineStep('init');
-    setLogMessages(['Starting ContextWeaver annotation pipeline...']);
+    setLogMessages([t('log.starting')]);
     setDisplayedLogs([]);
     setProcessedChunks([]);
     setFinalResult(null);
-    pushToast({ kind: 'info', title: 'Pipeline started', description: 'Streaming annotation events from Qwen3-4B' });
+    pushToast({ kind: 'info', title: t('toast.startedTitle'), description: t('toast.startedDescription') });
 
     let queryParams = "";
     const savedSettings = localStorage.getItem('contextweaver_settings');
@@ -313,7 +342,8 @@ export default function Dashboard() {
       setPipelineStep(data.step);
 
       if (data.message) {
-        setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${data.message}`]);
+        const localized = translateSseMessage(data.message, (k, vars) => tSse(k, vars));
+        setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${localized}`]);
       }
 
       if (data.step === 'chunk_complete') {
@@ -342,15 +372,16 @@ export default function Dashboard() {
 
       if (data.step === 'done') {
         setFinalResult(data.final_result);
-        setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ✅ Pipeline complete! Accuracy optimized.`]);
+        setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${t('log.complete')}`]);
         setIsRunning(false);
         eventSource.close();
         setBurstTrigger((n) => n + 1);
         const entityCount = data.final_result?.merged_entities?.length ?? 0;
+        const conf = (((data.final_result?.mean_confidence ?? 0) * 100) || 0).toFixed(1);
         pushToast({
           kind: 'success',
-          title: 'Pipeline complete',
-          description: `Extracted ${entityCount} entities · avg confidence ${(((data.final_result?.mean_confidence ?? 0) * 100) || 0).toFixed(1)}%`,
+          title: t('toast.completeTitle'),
+          description: t('toast.completeDescription', { count: entityCount, conf }),
           duration: 5000,
         });
         setTimeout(() => {
@@ -361,10 +392,10 @@ export default function Dashboard() {
 
     eventSource.onerror = (error) => {
       console.error('EventSource failed:', error);
-      setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ❌ Connection error.`]);
+      setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${t('log.connectionError')}`]);
       setIsRunning(false);
       eventSource.close();
-      pushToast({ kind: 'error', title: 'Stream error', description: 'Lost connection to the pipeline backend.' });
+      pushToast({ kind: 'error', title: t('toast.errorTitle'), description: t('toast.errorDescription') });
     };
   };
 
@@ -411,9 +442,9 @@ export default function Dashboard() {
           >
             <div>
               <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
-                Pipeline Overview
+                {t('title')}
               </h1>
-              <p className="text-slate-400 font-medium tracking-wide">Dynamic In-Context Learning Router</p>
+              <p className="text-slate-400 font-medium tracking-wide">{t('subtitle')}</p>
             </div>
             <button
               onClick={startPipeline}
@@ -428,9 +459,9 @@ export default function Dashboard() {
                 {isRunning ? (
                   <>
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    Pipeline Active...
+                    {t('runButtonActive')}
                   </>
-                ) : 'Run Document Annotation'}
+                ) : t('runButton')}
               </span>
             </button>
           </motion.div>
@@ -446,31 +477,31 @@ export default function Dashboard() {
               onClick={() => setSelectedGraph('contextweaver')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all border ${selectedGraph === 'contextweaver' ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
             >
-              ContextWeaver Flow
+              {t('tabs.contextweaver')}
             </button>
             <button
               onClick={() => setSelectedGraph('standard-rag')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all border ${selectedGraph === 'standard-rag' ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
             >
-              Standard RAG
+              {t('tabs.standardRag')}
             </button>
             <button
               onClick={() => setSelectedGraph('multi-agent')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all border ${selectedGraph === 'multi-agent' ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
             >
-              Multi-Agent System
+              {t('tabs.multiAgent')}
             </button>
             <button
               onClick={() => setSelectedGraph('evaluator-optimizer')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all border ${selectedGraph === 'evaluator-optimizer' ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
             >
-              Evaluator-Optimizer
+              {t('tabs.evaluatorOptimizer')}
             </button>
             <button
               onClick={() => setSelectedGraph('routing-agent')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all border ${selectedGraph === 'routing-agent' ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
             >
-              Routing Agent
+              {t('tabs.routingAgent')}
             </button>
           </motion.div>
 
@@ -537,7 +568,7 @@ export default function Dashboard() {
                   />
                   <div className="p-4 border-b border-slate-800 bg-slate-900/50 rounded-t-xl font-semibold flex items-center relative z-10">
                     <div className={`w-2 h-2 rounded-full mr-3 ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-slate-600'}`}></div>
-                    Terminal Logs
+                    {t('terminalTitle')}
                   </div>
                   <div ref={logsContainerRef} className="flex-1 p-4 font-mono text-xs text-slate-400 overflow-y-auto space-y-1.5 scroll-smooth relative z-10">
                     {displayedLogs.map((msg, i) => {
@@ -605,28 +636,28 @@ export default function Dashboard() {
                   <div className="w-full overflow-y-auto min-h-0 pr-1 pb-2 flex flex-col flex-1">
                     <h3 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2 shrink-0">
                       {finalResult ? (
-                        <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
+                        <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> {t('panel.complete')}</>
                       ) : isRunning ? (
-                        <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Processing...</>
+                        <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> {t('panel.processing')}</>
                       ) : (
-                        <><Target className="w-6 h-6 text-cyan-400" /> Ready</>
+                        <><Target className="w-6 h-6 text-cyan-400" /> {t('panel.ready')}</>
                       )}
                     </h3>
 
                     {/* Live running metrics */}
                     <div className="grid grid-cols-2 gap-2 mb-3 shrink-0">
                       <div className="bg-slate-900/70 border border-cyan-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 overflow-hidden">
-                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
+                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{t('metrics.stage')}</p>
                         <p className={`text-sm font-bold font-mono mt-0.5 truncate ${/* istanbul ignore next -- this block only renders when pipelineStep !== 'idle' */ pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`} title={pipelineStep}>{pipelineStep}</p>
                       </div>
                       <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
-                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>
+                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{t('metrics.chunks')}</p>
                         <p className={`text-sm font-bold font-mono mt-0.5 ${processedChunks.length > 0 ? 'text-purple-300' : 'text-slate-500'}`}>
                           <AnimatedNumber value={processedChunks.length} />
                         </p>
                       </div>
                       <div className="bg-slate-900/70 border border-emerald-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
-                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Avg Conf</p>
+                        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{t('metrics.avgConf')}</p>
                         <p className={`text-sm font-bold font-mono mt-0.5 ${processedChunks.length > 0 ? 'text-emerald-300' : 'text-slate-500'}`}>
                           <AnimatedNumber
                             value={(() => {
@@ -641,7 +672,7 @@ export default function Dashboard() {
                       </div>
                       <div className="bg-slate-900/70 border border-amber-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 flex items-center justify-between">
                         <div>
-                          <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Elapsed</p>
+                          <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{t('metrics.elapsed')}</p>
                           <p className={`text-sm font-bold font-mono mt-0.5 tabular-nums ${isRunning || finalResult ? 'text-amber-300' : 'text-slate-500'}`}>
                             {(elapsedMs / 1000).toFixed(1)}s
                           </p>
@@ -674,7 +705,7 @@ export default function Dashboard() {
                     {finalResult ? (
                       <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 mt-2">
                         <p className="text-slate-400 text-sm mb-3">
-                          Extracted Entities (<AnimatedNumber value={finalResult.merged_entities?.length || 0} />)
+                          {t('entitiesLabel', { count: finalResult.merged_entities?.length || 0 })}
                         </p>
                         <div className="flex flex-wrap gap-2 pb-2">
                           <AnimatePresence>
@@ -708,7 +739,7 @@ export default function Dashboard() {
                           <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '64%' }} />
                         </div>
                         <p className="text-slate-500 text-xs text-center mt-3">
-                          {isRunning ? 'Streaming annotations…' : 'Waiting for results...'}
+                          {isRunning ? t('skeleton.streaming') : t('skeleton.waiting')}
                         </p>
                       </div>
                     )}
@@ -731,9 +762,9 @@ export default function Dashboard() {
                       {isRunning ? (
                         <>
                           <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                          Preparing Export...
+                          {t('export.preparing')}
                         </>
-                      ) : 'Export JSON'}
+                      ) : t('export.label')}
                     </span>
                   </button>
                 </motion.div>

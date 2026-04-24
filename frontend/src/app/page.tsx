@@ -3,26 +3,32 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Header from "@/components/Header";
 import { QwenIcon } from "@/components/CustomIcons";
 import { ZapIcon, Cpu, FileText, Scissors, Database, BarChart, Workflow } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { launchToDashboard } from "@/components/LaunchTransition";
 
-const PREVIEW_STEPS = [
-  { id: 'doc', label: 'Document', icon: FileText },
-  { id: 'chunker', label: 'Chunker', icon: Scissors },
-  { id: 'retrieve', label: 'Retrieve', icon: Database },
-  { id: 'qwen', label: 'Qwen3-4B', icon: QwenIcon },
-  { id: 'results', label: 'Results', icon: BarChart },
+const PREVIEW_STEP_DEFS = [
+  { id: 'doc', labelKey: 'doc', icon: FileText },
+  { id: 'chunker', labelKey: 'chunker', icon: Scissors },
+  { id: 'retrieve', labelKey: 'retrieve', icon: Database },
+  { id: 'qwen', labelKey: null as string | null, icon: QwenIcon, literal: 'Qwen3-4B' },
+  { id: 'results', labelKey: 'results', icon: BarChart },
 ];
 
 function PipelinePreview() {
+  const t = useTranslations('landing.preview');
   const [activeIdx, setActiveIdx] = useState(0);
+  const PREVIEW_STEPS = PREVIEW_STEP_DEFS.map((s) => ({
+    ...s,
+    label: s.labelKey ? t(s.labelKey) : (s.literal ?? ''),
+  }));
 
   useEffect(() => {
     const id = setInterval(() => {
-      setActiveIdx((i) => (i + 1) % PREVIEW_STEPS.length);
+      setActiveIdx((i) => (i + 1) % PREVIEW_STEP_DEFS.length);
     }, 2000);
     return () => clearInterval(id);
   }, []);
@@ -40,7 +46,7 @@ function PipelinePreview() {
       
       <div className="relative z-10 flex flex-col items-center">
         <p className="text-xs uppercase tracking-[0.3em] text-cyan-400 mb-12 font-bold drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]">
-          Live Telemetry Stream
+          {t('label')}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center w-full max-w-5xl mx-auto">
@@ -89,7 +95,7 @@ function PipelinePreview() {
                     animate={{ opacity: active ? 1 : 0, y: active ? 0 : 10 }}
                     className="absolute -bottom-8 whitespace-nowrap text-[10px] uppercase font-mono text-cyan-400 tracking-wider hidden sm:block"
                   >
-                    {active ? "Processing..." : ""}
+                    {active ? t('processing') : ""}
                   </motion.div>
                 </motion.div>
 
@@ -186,6 +192,7 @@ function TiltCard({ children, className }: { children: React.ReactNode; classNam
 }
 
 export default function LandingPage() {
+  const t = useTranslations('landing');
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -224,7 +231,7 @@ export default function LandingPage() {
           transition={{ duration: 0.6 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-medium text-sm mb-8"
         >
-          <ZapIcon className="w-4 h-4" /> FlagOS Open Computing Global Challenge
+          <ZapIcon className="w-4 h-4" /> {t('badge')}
         </motion.div>
 
         <motion.h1
@@ -233,7 +240,7 @@ export default function LandingPage() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-br from-white to-slate-500 mb-8 w-full max-w-none mx-auto leading-normal px-2 sm:px-0 py-2"
         >
-          <span className="md:whitespace-nowrap">Dynamic In-Context</span> <br /> <span className="md:whitespace-nowrap">Learning Router.</span>
+          <span className="md:whitespace-nowrap">{t('titleLine1')}</span> <br /> <span className="md:whitespace-nowrap">{t('titleLine2')}</span>
         </motion.h1>
 
         <motion.p
@@ -242,7 +249,7 @@ export default function LandingPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-xl text-slate-400 max-w-2xl mb-12 leading-relaxed"
         >
-          Optimize LLM accuracy through visual transparency and real-time visualization. Built for high-performance AI orchestration.
+          {t('subtitle')}
         </motion.p>
 
         <motion.div
@@ -264,7 +271,7 @@ export default function LandingPage() {
             }}
             className="w-full sm:w-auto px-12 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all hover:scale-105"
           >
-            Launch Dashboard
+            {t('launchDashboard')}
           </Link>
         </motion.div>
 
@@ -275,7 +282,7 @@ export default function LandingPage() {
           className="flex flex-col items-center justify-center gap-3 text-sm text-slate-400 mb-20"
         >
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <div className="text-slate-500">Jointly hosted by:</div>
+            <div className="text-slate-500">{t('jointlyHostedBy')}</div>
             <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">FlagOS Community</span>
             <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">BAAI</span>
             <span className="px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50">CCF ODTC</span>
@@ -294,9 +301,9 @@ export default function LandingPage() {
             <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/50 flex items-center justify-center mb-6">
               <Cpu className="w-6 h-6 text-blue-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Sub-millisecond Routing</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{t('features.routingTitle')}</h3>
             <p className="text-slate-400 leading-relaxed">
-              Intelligently route chunks to specific models based on latency constraints and complexity scores.
+              {t('features.routingDesc')}
             </p>
           </TiltCard>
         </motion.div>
@@ -310,9 +317,9 @@ export default function LandingPage() {
             <div className="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center mb-6">
               <Workflow className="w-6 h-6 text-cyan-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Visual Pipeline</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{t('features.visualTitle')}</h3>
             <p className="text-slate-400 leading-relaxed">
-              Watch the RAG process happen in real-time. Full transparency into chunking, retrieval, and generation.
+              {t('features.visualDesc')}
             </p>
           </TiltCard>
         </motion.div>
@@ -326,9 +333,9 @@ export default function LandingPage() {
             <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/50 flex items-center justify-center mb-6">
               <QwenIcon className="w-6 h-6 text-purple-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">ChromaDB + Qwen3</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{t('features.chromaTitle')}</h3>
             <p className="text-slate-400 leading-relaxed">
-              Enterprise-grade vector storage tightly integrated with local Qwen3-4B inference.
+              {t('features.chromaDesc')}
             </p>
           </TiltCard>
         </motion.div>

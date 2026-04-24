@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { X, Database, FileText, Hash, Type, AlignLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type ChunkData = {
@@ -56,6 +57,7 @@ function ConfidenceRing({ value }: { value: number }) {
 }
 
 export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext }: InspectorProps) {
+  const t = useTranslations('inspector');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -106,7 +108,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
               <button
                 onClick={(e) => { e.stopPropagation(); onPrevious(); }}
                 className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 bg-slate-800/80 hover:bg-slate-700 text-white rounded-full border border-slate-600 shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all hover:scale-110 z-50 flex items-center justify-center"
-                aria-label="Previous Chunk"
+                aria-label={t('ariaPrev')}
               >
                 <ChevronLeft className="w-8 h-8" />
               </button>
@@ -116,7 +118,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
               <button
                 onClick={(e) => { e.stopPropagation(); onNext(); }}
                 className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 bg-slate-800/80 hover:bg-slate-700 text-white rounded-full border border-slate-600 shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all hover:scale-110 z-50 flex items-center justify-center"
-                aria-label="Next Chunk"
+                aria-label={t('ariaNext')}
               >
                 <ChevronRight className="w-8 h-8" />
               </button>
@@ -140,9 +142,9 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                   <Database className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white tracking-wide">Chunk Inspector</h2>
+                  <h2 className="text-xl font-bold text-white tracking-wide">{t('title')}</h2>
                   <p className="text-sm text-slate-400">
-                    Viewing details for Chunk <span className="text-cyan-300 font-mono font-bold">#{chunkData.chunk_idx}</span>
+                    {t('viewing')} <span className="text-cyan-300 font-mono font-bold">#{chunkData.chunk_idx}</span>
                   </p>
                 </div>
               </div>
@@ -151,7 +153,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
                 className="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-                aria-label="Close"
+                aria-label={t('ariaClose')}
               >
                 <X className="w-4 h-4" />
               </motion.button>
@@ -170,10 +172,10 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                   <div className="flex items-center gap-2">
                     <span className="w-5 h-5 rounded bg-slate-500/20 text-slate-300 text-xs flex items-center justify-center font-bold">1</span>
                     <FileText className="w-4 h-4 text-slate-400" />
-                    Raw Source Text
+                    {t('columns.rawText')}
                   </div>
                   <span className="text-xs bg-slate-700/60 text-slate-300 border border-slate-500/30 px-2 py-0.5 rounded-full">
-                    Chunk #{chunkData.chunk_idx}
+                    {t('chunkBadge', { idx: chunkData.chunk_idx })}
                   </span>
                 </div>
                 {(() => {
@@ -185,32 +187,32 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                   return (
                     <div className="px-4 py-3 bg-slate-900/40 border-b border-slate-800/50 flex items-center justify-between gap-3 shrink-0 flex-wrap">
                       <div className="flex items-center gap-3 text-slate-300 flex-wrap">
-                        <div className="flex items-center gap-1.5" title="Characters">
+                        <div className="flex items-center gap-1.5" title={t('stats.charsTitle')}>
                           <Hash className="w-3 h-3 text-slate-500" />
                           <span className="font-mono tabular-nums text-xs">{chars.toLocaleString()}</span>
-                          <span className="text-[10px] uppercase tracking-wider text-slate-500">chars</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">{t('stats.chars')}</span>
                         </div>
                         <div className="w-px h-4 bg-slate-800" />
-                        <div className="flex items-center gap-1.5" title="Words">
+                        <div className="flex items-center gap-1.5" title={t('stats.wordsTitle')}>
                           <Type className="w-3 h-3 text-slate-500" />
                           <span className="font-mono tabular-nums text-xs">{words.toLocaleString()}</span>
-                          <span className="text-[10px] uppercase tracking-wider text-slate-500">words</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">{t('stats.words')}</span>
                         </div>
                         <div className="w-px h-4 bg-slate-800" />
-                        <div className="flex items-center gap-1.5" title="Lines">
+                        <div className="flex items-center gap-1.5" title={t('stats.linesTitle')}>
                           <AlignLeft className="w-3 h-3 text-slate-500" />
                           <span className="font-mono tabular-nums text-xs">{lines.toLocaleString()}</span>
-                          <span className="text-[10px] uppercase tracking-wider text-slate-500">lines</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">{t('stats.lines')}</span>
                         </div>
                         <div className="w-px h-4 bg-slate-800" />
-                        <div className="flex items-center gap-1.5" title="Approximate token count (~4 chars/token)">
+                        <div className="flex items-center gap-1.5" title={t('stats.tokensTitle')}>
                           <span className="font-mono tabular-nums text-xs text-cyan-300">~{tokenEstimate.toLocaleString()}</span>
-                          <span className="text-[10px] uppercase tracking-wider text-slate-500">tokens</span>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">{t('stats.tokens')}</span>
                         </div>
                       </div>
                       {typeof chunkData.confidence === 'number' && (
-                        <div className="flex items-center gap-2 ml-auto" title="Annotation confidence for this chunk">
-                          <span className="text-[10px] uppercase tracking-wider text-slate-500">Conf</span>
+                        <div className="flex items-center gap-2 ml-auto" title={t('stats.confTitle')}>
+                          <span className="text-[10px] uppercase tracking-wider text-slate-500">{t('stats.conf')}</span>
                           <ConfidenceRing value={chunkData.confidence} />
                         </div>
                       )}
@@ -219,7 +221,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                 })()}
                 <div className="p-4 overflow-y-auto flex-1 font-mono text-xs leading-relaxed text-slate-300 whitespace-pre-wrap">
                   {chunkData.raw_text || (
-                    <span className="text-slate-600 italic font-sans">This is a very long legal document</span>
+                    <span className="text-slate-600 italic font-sans">{t('placeholder')}</span>
                   )}
                 </div>
               </motion.div>
@@ -234,9 +236,9 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                 <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex justify-between items-center shrink-0">
                   <div className="flex items-center gap-2">
                     <span className="w-5 h-5 rounded bg-cyan-500/20 text-cyan-400 text-xs flex items-center justify-center font-bold">2</span>
-                    Retrieved ICL Examples
+                    {t('columns.examples')}
                   </div>
-                  <span className="text-xs bg-cyan-900/60 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full">ChromaDB Top-3</span>
+                  <span className="text-xs bg-cyan-900/60 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full">{t('topBadge')}</span>
                 </div>
                 <div className="p-4 overflow-y-auto flex-1 space-y-3">
                   {chunkData.examples?.map((ex, i: number) => {
@@ -251,7 +253,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                         className="bg-slate-800/60 rounded-lg p-3 border border-slate-700 transition-colors"
                       >
                         <div className="flex justify-between text-xs mb-2 text-slate-400">
-                          <span className="font-medium">Example {i + 1}</span>
+                          <span className="font-medium">{t('exampleNum', { n: i + 1 })}</span>
                           <span className="text-cyan-400 font-mono">{simPct.toFixed(1)}%</span>
                         </div>
                         <div className="h-1 rounded-full bg-slate-900 mb-2 overflow-hidden">
@@ -280,17 +282,17 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                 <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex justify-between items-center shrink-0">
                   <div className="flex items-center gap-2">
                     <span className="w-5 h-5 rounded bg-purple-500/20 text-purple-400 text-xs flex items-center justify-center font-bold">3</span>
-                    Model Response
+                    {t('columns.response')}
                   </div>
                   <span className="text-xs bg-purple-900/60 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">Qwen3-4B</span>
                 </div>
                 <div className="p-4 overflow-y-auto flex-1">
-                  <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">Prompt Sent</h4>
+                  <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">{t('prompt')}</h4>
                   <div className="bg-slate-950 p-2 rounded text-slate-400 font-mono text-[11px] mb-4 max-h-40 overflow-y-auto border border-slate-800 leading-relaxed">
                     {chunkData.prompt}
                   </div>
 
-                  <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">Extracted JSON</h4>
+                  <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">{t('extractedJson')}</h4>
                   <div className="bg-slate-950 p-3 rounded text-green-400 font-mono text-[11px] whitespace-pre-wrap border border-green-500/20 shadow-[inset_0_0_20px_rgba(34,197,94,0.05)] leading-relaxed">
                     {chunkData.annotation}
                   </div>

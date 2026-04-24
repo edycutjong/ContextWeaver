@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Search, Clock, CheckCircle2, AlertCircle, TrendingUp, Zap, Database, Activity } from "lucide-react";
 import { motion, useMotionValue, animate } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 const MOCK_HISTORY = [
   { id: "1", query: "What are the core features of FlagOS?", time: "2 mins ago", latency: 245, status: "success", tokens: 124 },
@@ -26,6 +27,7 @@ function AnimatedStat({ value, decimals = 0, suffix = '' }: { value: number; dec
 }
 
 export default function HistoryPage() {
+  const t = useTranslations('history');
   const [search, setSearch] = useState("");
   const filtered = MOCK_HISTORY.filter((h) => h.query.toLowerCase().includes(search.toLowerCase()));
   const successCount = MOCK_HISTORY.filter((h) => h.status === "success").length;
@@ -34,10 +36,10 @@ export default function HistoryPage() {
   const successRate = (successCount / MOCK_HISTORY.length) * 100;
 
   const stats: Array<{ label: string; value: number; icon: React.ElementType; color: string; decimals?: number; suffix?: string }> = [
-    { label: "Total Queries", value: MOCK_HISTORY.length, icon: Database, color: "cyan" },
-    { label: "Avg Latency", value: avgLatency, icon: Zap, color: "purple", suffix: "ms" },
-    { label: "Success Rate", value: successRate, icon: TrendingUp, color: "emerald", decimals: 1, suffix: "%" },
-    { label: "Tokens Used", value: totalTokens, icon: Activity, color: "amber" },
+    { label: t('stats.totalQueries'), value: MOCK_HISTORY.length, icon: Database, color: "cyan" },
+    { label: t('stats.avgLatency'), value: avgLatency, icon: Zap, color: "purple", suffix: "ms" },
+    { label: t('stats.successRate'), value: successRate, icon: TrendingUp, color: "emerald", decimals: 1, suffix: "%" },
+    { label: t('stats.tokensUsed'), value: totalTokens, icon: Activity, color: "amber" },
   ];
 
   const colorMap: Record<string, string> = {
@@ -53,9 +55,9 @@ export default function HistoryPage() {
         <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
           <div>
             <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
-              Query History
+              {t('title')}
             </h1>
-            <p className="text-slate-400 font-medium tracking-wide">View past RAG queries, generation latency, and token usage.</p>
+            <p className="text-slate-400 font-medium tracking-wide">{t('subtitle')}</p>
           </div>
 
           <div className="relative group" suppressHydrationWarning>
@@ -64,7 +66,7 @@ export default function HistoryPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search history..."
+              placeholder={t('search')}
               className="bg-slate-900/50 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 focus:shadow-[0_0_20px_rgba(6,182,212,0.2)] w-72 transition-all"
               suppressHydrationWarning
             />
@@ -101,11 +103,11 @@ export default function HistoryPage() {
           <table className="w-full text-left">
             <thead className="bg-slate-900/80 border-b border-slate-800 text-slate-400 text-sm">
               <tr>
-                <th className="px-6 py-4 font-medium">Status</th>
-                <th className="px-6 py-4 font-medium">Query</th>
-                <th className="px-6 py-4 font-medium">Time</th>
-                <th className="px-6 py-4 font-medium">Latency</th>
-                <th className="px-6 py-4 font-medium">Tokens</th>
+                <th className="px-6 py-4 font-medium">{t('table.status')}</th>
+                <th className="px-6 py-4 font-medium">{t('table.query')}</th>
+                <th className="px-6 py-4 font-medium">{t('table.time')}</th>
+                <th className="px-6 py-4 font-medium">{t('table.latency')}</th>
+                <th className="px-6 py-4 font-medium">{t('table.tokens')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
@@ -123,11 +125,11 @@ export default function HistoryPage() {
                     <td className="px-6 py-4">
                       {item.status === "success" ? (
                         <div className="flex items-center gap-2 text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md text-xs font-medium w-fit border border-emerald-400/20 group-hover:shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-shadow">
-                          <CheckCircle2 className="w-3 h-3" /> Success
+                          <CheckCircle2 className="w-3 h-3" /> {t('status.success')}
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 text-amber-400 bg-amber-400/10 px-2 py-1 rounded-md text-xs font-medium w-fit border border-amber-400/20 group-hover:shadow-[0_0_12px_rgba(251,191,36,0.3)] transition-shadow">
-                          <AlertCircle className="w-3 h-3" /> Filtered
+                          <AlertCircle className="w-3 h-3" /> {t('status.filtered')}
                         </div>
                       )}
                     </td>
@@ -152,7 +154,7 @@ export default function HistoryPage() {
             </tbody>
           </table>
           {filtered.length === 0 && (
-            <div className="p-10 text-center text-slate-500">No queries match &quot;{search}&quot;</div>
+            <div className="p-10 text-center text-slate-500">{t('empty', { q: search })}</div>
           )}
         </div>
       </div>

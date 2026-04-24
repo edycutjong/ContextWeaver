@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import {
   Search,
   LayoutDashboard,
@@ -30,6 +31,7 @@ type CommandItem = {
 };
 
 export default function CommandPalette() {
+  const t = useTranslations('palette');
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -49,18 +51,18 @@ export default function CommandPalette() {
     () => [
       {
         id: "nav-home",
-        label: "Home",
-        hint: "Landing page",
-        section: "Navigate",
+        label: t('items.homeLabel'),
+        hint: t('items.homeHint'),
+        section: t('sections.navigate'),
         icon: Home,
         keywords: "landing home start",
         perform: () => router.push("/"),
       },
       {
         id: "nav-dashboard",
-        label: "Dashboard",
-        hint: "Live pipeline view",
-        section: "Navigate",
+        label: t('items.dashboardLabel'),
+        hint: t('items.dashboardHint'),
+        section: t('sections.navigate'),
         icon: LayoutDashboard,
         keywords: "pipeline graph run annotate",
         shortcut: "G D",
@@ -68,9 +70,9 @@ export default function CommandPalette() {
       },
       {
         id: "nav-history",
-        label: "Query History",
-        hint: "Past queries and metrics",
-        section: "Navigate",
+        label: t('items.historyLabel'),
+        hint: t('items.historyHint'),
+        section: t('sections.navigate'),
         icon: History,
         keywords: "history queries logs",
         shortcut: "G H",
@@ -78,9 +80,9 @@ export default function CommandPalette() {
       },
       {
         id: "nav-settings",
-        label: "Router Settings",
-        hint: "Chunking and routing config",
-        section: "Navigate",
+        label: t('items.settingsLabel'),
+        hint: t('items.settingsHint'),
+        section: t('sections.navigate'),
         icon: Settings,
         keywords: "settings chunk size top k model router",
         shortcut: "G S",
@@ -88,9 +90,9 @@ export default function CommandPalette() {
       },
       {
         id: "action-run",
-        label: "Run Annotation Pipeline",
-        hint: "Trigger the live pipeline",
-        section: "Actions",
+        label: t('items.runLabel'),
+        hint: t('items.runHint'),
+        section: t('sections.actions'),
         icon: Play,
         keywords: "run start pipeline annotate",
         shortcut: "R",
@@ -98,9 +100,9 @@ export default function CommandPalette() {
       },
       {
         id: "action-shortcuts",
-        label: "Show Keyboard Shortcuts",
-        hint: "View all hotkeys",
-        section: "Help",
+        label: t('items.shortcutsLabel'),
+        hint: t('items.shortcutsHint'),
+        section: t('sections.help'),
         icon: Keyboard,
         keywords: "shortcuts help keybindings hotkeys",
         shortcut: "?",
@@ -108,16 +110,16 @@ export default function CommandPalette() {
       },
       {
         id: "link-github",
-        label: "Open GitHub Repository",
-        hint: "github.com/edycutjong/contextweaver",
-        section: "Help",
+        label: t('items.githubLabel'),
+        hint: t('items.githubHint'),
+        section: t('sections.help'),
         icon: Code2,
         keywords: "source code github repo",
         perform: () =>
           window.open("https://github.com/edycutjong/contextweaver", "_blank", "noopener,noreferrer"),
       },
     ],
-    [router, runPipeline],
+    [router, runPipeline, t],
   );
 
   const filtered = useMemo(() => {
@@ -225,7 +227,7 @@ export default function CommandPalette() {
           onClick={() => setOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label="Command palette"
+          aria-label={t('ariaDialog')}
         >
           <motion.div
             initial={{ opacity: 0, y: -12, scale: 0.96 }}
@@ -247,9 +249,9 @@ export default function CommandPalette() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={onInputKey}
-                  placeholder="Type a command or search..."
+                  placeholder={t('placeholder')}
                   className="flex-1 bg-transparent outline-none text-slate-100 placeholder:text-slate-500 text-sm"
-                  aria-label="Command search"
+                  aria-label={t('ariaSearch')}
                   suppressHydrationWarning
                 />
                 <kbd className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono text-slate-500 border border-slate-800 rounded px-1.5 py-0.5">
@@ -261,7 +263,7 @@ export default function CommandPalette() {
               <div ref={listRef} className="relative max-h-[50vh] overflow-y-auto py-2">
                 {filtered.length === 0 ? (
                   <div className="py-10 text-center text-sm text-slate-500">
-                    No commands match &quot;{query}&quot;
+                    {t('noMatch', { q: query })}
                   </div>
                 ) : (
                   grouped.map(([section, rows]) => (
@@ -323,11 +325,11 @@ export default function CommandPalette() {
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1.5">
                     <kbd className="font-mono border border-slate-800 rounded px-1 py-0.5">↑↓</kbd>
-                    navigate
+                    {t('footer.navigate')}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <kbd className="font-mono border border-slate-800 rounded px-1 py-0.5">↵</kbd>
-                    select
+                    {t('footer.select')}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -345,12 +347,13 @@ export default function CommandPalette() {
 }
 
 export function CommandPaletteHint() {
+  const t = useTranslations('palette');
   return (
     <button
       type="button"
       onClick={() => window.dispatchEvent(new CustomEvent("contextweaver:palette"))}
       className="hidden md:inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-400 border border-slate-800/80 bg-slate-900/40 hover:bg-slate-900/70 hover:text-slate-200 rounded-md px-2 py-1 transition-colors"
-      aria-label="Open command palette"
+      aria-label={t('hintAria')}
     >
       <CommandIcon className="w-3 h-3" />
       <span>K</span>

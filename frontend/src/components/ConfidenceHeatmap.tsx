@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 type HeatmapChunk = {
   confidence?: number;
@@ -22,6 +23,7 @@ const LEGEND = [
 ];
 
 function ChunkCell({ chunk, i, onSelectChunk }: { chunk: HeatmapChunk, i: number, onSelectChunk: (chunk: HeatmapChunk) => void }) {
+  const t = useTranslations('heatmap');
   const confidence = chunk.confidence || chunk.result?.confidence || 0;
   let bgColor = 'bg-slate-800';
   let borderTint = 'border-slate-500/40';
@@ -48,7 +50,7 @@ function ChunkCell({ chunk, i, onSelectChunk }: { chunk: HeatmapChunk, i: number
   return (
     <motion.button
       onClick={() => onSelectChunk(chunk)}
-      className="w-full aspect-square rounded hover:ring-2 ring-white transition-colors group relative hover:z-[100]"
+      className="w-full aspect-square rounded hover:ring-2 ring-white transition-colors group relative hover:z-100"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0, opacity: 0 }}
@@ -63,21 +65,25 @@ function ChunkCell({ chunk, i, onSelectChunk }: { chunk: HeatmapChunk, i: number
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       />
       <span
-        className={`opacity-0 group-hover:opacity-100 absolute ${tooltipPosition} left-1/2 -translate-x-1/2 bg-slate-950/95 backdrop-blur-sm border ${borderTint} text-xs text-white px-2 py-1 rounded-md pointer-events-none z-[100] whitespace-nowrap shadow-lg transition-opacity`}
+        className={`opacity-0 group-hover:opacity-100 absolute ${tooltipPosition} left-1/2 -translate-x-1/2 bg-slate-950/95 backdrop-blur-sm border ${borderTint} text-xs text-white px-2 py-1 rounded-md pointer-events-none z-100 whitespace-nowrap shadow-lg transition-opacity`}
       >
-        Chunk {i + 1}: {confidence ? `${(confidence * 100).toFixed(0)}%` : 'Processing...'}
+        {t('chunk', { 
+          i: i + 1, 
+          confidence: confidence ? `${(confidence * 100).toFixed(0)}%` : t('processing') 
+        })}
       </span>
     </motion.button>
   );
 }
 
 export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProps) {
+  const t = useTranslations('heatmap');
   if (!chunks || chunks.length === 0) return null;
 
   return (
     <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 flex flex-col h-full">
       <h3 className="text-white font-semibold mb-4 flex items-center shrink-0">
-        <span className="mr-2">🔥</span> Confidence Heatmap
+        <span className="mr-2">🔥</span> {t('title')}
       </h3>
       <div className="flex-1 pr-2 pb-2">
         <div className="grid grid-cols-10 gap-2 pb-2">
@@ -94,7 +100,7 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
       </div>
 
       <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-slate-500 shrink-0 border-t border-slate-800 pt-3">
-        <span className="uppercase tracking-wider font-medium">Legend</span>
+        <span className="uppercase tracking-wider font-medium">{t('legend')}</span>
         {LEGEND.map((item) => (
           <div key={item.label} className="flex items-center gap-1.5">
             <span aria-hidden className={`w-2.5 h-2.5 rounded-sm ${item.className}`} />

@@ -4,37 +4,39 @@ import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Keyboard, X } from "lucide-react";
-
-const GROUPS: { title: string; items: { keys: string[]; label: string }[] }[] = [
-  {
-    title: "Global",
-    items: [
-      { keys: ["⌘", "K"], label: "Open command palette" },
-      { keys: ["Ctrl", "K"], label: "Open command palette (Win/Linux)" },
-      { keys: ["?"], label: "Show this overlay" },
-      { keys: ["Esc"], label: "Close overlays" },
-    ],
-  },
-  {
-    title: "Navigation",
-    items: [
-      { keys: ["G", "D"], label: "Go to Dashboard" },
-      { keys: ["G", "H"], label: "Go to History" },
-      { keys: ["G", "S"], label: "Go to Settings" },
-      { keys: ["G", "L"], label: "Go to Landing" },
-    ],
-  },
-  {
-    title: "Dashboard",
-    items: [
-      { keys: ["R"], label: "Run annotation pipeline" },
-    ],
-  },
-];
+import { useTranslations } from "next-intl";
 
 export default function ShortcutsOverlay() {
+  const t = useTranslations('shortcuts');
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const GROUPS = [
+    {
+      title: t('groups.global'),
+      items: [
+        { keys: ["⌘", "K"], label: t('items.openPalette') },
+        { keys: ["Ctrl", "K"], label: t('items.openPaletteWin') },
+        { keys: ["?"], label: t('items.showOverlay') },
+        { keys: ["Esc"], label: t('items.closeOverlays') },
+      ],
+    },
+    {
+      title: t('groups.navigation'),
+      items: [
+        { keys: ["G", "D"], label: t('items.goDashboard') },
+        { keys: ["G", "H"], label: t('items.goHistory') },
+        { keys: ["G", "S"], label: t('items.goSettings') },
+        { keys: ["G", "L"], label: t('items.goLanding') },
+      ],
+    },
+    {
+      title: t('groups.dashboard'),
+      items: [
+        { keys: ["R"], label: t('items.runPipeline') },
+      ],
+    },
+  ];
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
@@ -81,11 +83,11 @@ export default function ShortcutsOverlay() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-[99996] bg-black/60 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-99996 bg-black/60 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label="Keyboard shortcuts"
+          aria-label={t('ariaDialog')}
         >
           <motion.div
             initial={{ opacity: 0, y: 12, scale: 0.96 }}
@@ -98,12 +100,12 @@ export default function ShortcutsOverlay() {
             <div className="flex items-center justify-between px-5 py-3 border-b border-slate-800/80">
               <div className="flex items-center gap-2">
                 <Keyboard className="w-4 h-4 text-purple-300" />
-                <span className="text-sm font-semibold tracking-wide text-white">Keyboard Shortcuts</span>
+                <span className="text-sm font-semibold tracking-wide text-white">{t('title')}</span>
               </div>
               <button
                 onClick={() => setOpen(false)}
                 className="text-slate-400 hover:text-white"
-                aria-label="Close"
+                aria-label={t('closeAria')}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -140,7 +142,13 @@ export default function ShortcutsOverlay() {
             </div>
 
             <div className="px-5 py-2 border-t border-slate-800/80 text-[11px] text-slate-500 flex items-center justify-between">
-              <span>Press <kbd className="font-mono border border-slate-800 rounded px-1 py-0.5">?</kbd> anywhere to toggle this overlay.</span>
+              <span>
+                {t.rich('footer', {
+                  key: () => (
+                    <kbd className="font-mono border border-slate-800 rounded px-1 py-0.5">?</kbd>
+                  )
+                })}
+              </span>
               <span className="font-orbitron tracking-wider text-slate-400">ContextWeaver</span>
             </div>
           </motion.div>

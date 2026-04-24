@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Database, Cpu, Save, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -66,6 +67,7 @@ function SliderField({
 }
 
 export default function SettingsPage() {
+  const t = useTranslations('settings');
   const [topK, setTopK] = useState(3);
   const [chunkSize, setChunkSize] = useState(512);
   const [chunkOverlap, setChunkOverlap] = useState(20);
@@ -97,10 +99,10 @@ export default function SettingsPage() {
     <div className="w-full flex-1 flex flex-col font-sans relative p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto w-full pb-12">
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
-            Router Settings
+          <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
+            {t('title')}
           </h1>
-          <p className="text-slate-400 font-medium tracking-wide">Configure embedding parameters and model routing thresholds.</p>
+          <p className="text-slate-400 font-medium tracking-wide">{t('subtitle')}</p>
         </div>
 
         <div className="space-y-6">
@@ -117,17 +119,17 @@ export default function SettingsPage() {
                 <Database className="w-5 h-5 text-cyan-400" />
               </div>
               <div>
-                <h2 className="text-xl font-orbitron font-semibold text-white">Retrieval Engine (ChromaDB)</h2>
-                <p className="text-xs text-slate-400">Tune semantic search behaviour</p>
+                <h2 className="text-xl font-orbitron font-semibold text-white">{t('chroma.title')}</h2>
+                <p className="text-xs text-slate-400">{t('chroma.subtitle')}</p>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 relative z-10">
-              <SliderField label="Chunk Size" min={256} max={2048} value={chunkSize} onChange={setChunkSize} unit="tokens" />
-              <SliderField label="Chunk Overlap" min={0} max={500} value={chunkOverlap} onChange={setChunkOverlap} unit="tokens" />
+              <SliderField label={t('fields.chunkSize')} min={256} max={2048} value={chunkSize} onChange={setChunkSize} unit={t('fields.tokens')} />
+              <SliderField label={t('fields.chunkOverlap')} min={0} max={500} value={chunkOverlap} onChange={setChunkOverlap} unit={t('fields.tokens')} />
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-300 mb-3">Top-K Retrieval</label>
+                <label className="block text-sm font-medium text-slate-300 mb-3">{t('fields.topK')}</label>
                 <div className="grid grid-cols-3 gap-3">
                   {[3, 5, 10].map((k) => (
                     <motion.button
@@ -148,7 +150,7 @@ export default function SettingsPage() {
                           transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                         />
                       )}
-                      <span className="relative z-10">{k} Chunks</span>
+                      <span className="relative z-10">{t('fields.chunks', { k })}</span>
                     </motion.button>
                   ))}
                 </div>
@@ -169,8 +171,8 @@ export default function SettingsPage() {
                 <Cpu className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <h2 className="text-xl font-orbitron font-semibold text-white">Model Routing</h2>
-                <p className="text-xs text-slate-400">Pick which model handles each chunk</p>
+                <h2 className="text-xl font-orbitron font-semibold text-white">{t('routing.title')}</h2>
+                <p className="text-xs text-slate-400">{t('routing.subtitle')}</p>
               </div>
             </div>
 
@@ -184,12 +186,12 @@ export default function SettingsPage() {
                 <div className="flex justify-between items-center mb-3 relative">
                   <div className="flex items-center gap-2">
                     <Sparkles className={`w-4 h-4 ${activeModel === 'fast' ? 'text-cyan-400' : 'text-slate-400'}`} />
-                    <span className="text-white font-semibold">Fast Model</span>
+                    <span className="text-white font-semibold">{t('model.fastName')}</span>
                   </div>
-                  {activeModel === 'fast' && <span className="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-1 rounded">Active</span>}
+                  {activeModel === 'fast' && <span className="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-1 rounded">{t('model.active')}</span>}
                 </div>
                 <div className={`text-xs font-mono mb-2 relative ${activeModel === 'fast' ? 'text-cyan-300' : 'text-slate-500'}`}>Qwen3-4B</div>
-                <p className="text-sm text-slate-400 relative">Used for low-complexity queries and rapid extraction.</p>
+                <p className="text-sm text-slate-400 relative">{t('model.fastDesc')}</p>
                 {activeModel === 'fast' && (
                   <div className="mt-3 flex gap-1 relative">
                     {[...Array(8)].map((_, i) => (
@@ -214,12 +216,12 @@ export default function SettingsPage() {
                 <div className="flex justify-between items-center mb-3 relative">
                   <div className="flex items-center gap-2">
                     <Cpu className={`w-4 h-4 ${activeModel === 'deep' ? 'text-amber-400' : 'text-slate-400'}`} />
-                    <span className="text-white font-semibold">Deep Model</span>
+                    <span className="text-white font-semibold">{t('model.deepName')}</span>
                   </div>
-                  {activeModel === 'deep' && <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2 py-1 rounded">Active</span>}
+                  {activeModel === 'deep' && <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2 py-1 rounded">{t('model.active')}</span>}
                 </div>
                 <div className={`text-xs font-mono mb-2 relative ${activeModel === 'deep' ? 'text-amber-300' : 'text-slate-500'}`}>Llama-3-70B</div>
-                <p className="text-sm text-slate-400 relative">Used for complex reasoning and multi-hop synthesis.</p>
+                <p className="text-sm text-slate-400 relative">{t('model.deepDesc')}</p>
                 {activeModel === 'deep' && (
                   <div className="mt-3 flex gap-1 relative">
                     {[...Array(8)].map((_, i) => (
@@ -246,7 +248,7 @@ export default function SettingsPage() {
                   exit={{ opacity: 0, x: 20, scale: 0.9 }}
                   className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-2 rounded-lg text-sm shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                 >
-                  <Sparkles className="w-4 h-4" /> Saved successfully
+                  <Sparkles className="w-4 h-4" /> {t('save.success')}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -258,7 +260,7 @@ export default function SettingsPage() {
               className="flex items-center gap-2 bg-linear-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-bold px-6 py-3 rounded-lg shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-shadow relative overflow-hidden"
             >
               <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:animate-[shimmer_1.5s_infinite]" />
-              <Save className="w-4 h-4 relative" /> <span className="relative">Save Configuration</span>
+              <Save className="w-4 h-4 relative" /> <span className="relative">{t('save.button')}</span>
             </motion.button>
           </div>
         </div>
