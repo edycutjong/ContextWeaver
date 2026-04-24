@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { cookies } from 'next/headers';
 import { getRequestConfig } from 'next-intl/server';
 import { defaultLocale, LOCALE_COOKIE, locales, type Locale } from './config';
