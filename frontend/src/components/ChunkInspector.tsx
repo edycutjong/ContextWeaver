@@ -20,7 +20,7 @@ type InspectorProps = {
   onClose: () => void;
   onPrevious?: () => void;
   onNext?: () => void;
-  modelKey?: 'qwen' | 'llama';
+  modelKey?: 'qwen' | 'llama' | (string & {});
 };
 
 function ConfidenceRing({ value }: { value: number }) {
@@ -282,10 +282,11 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext,
                 className="flex flex-col bg-slate-900/50 min-h-0 overflow-hidden"
               >
                 {(() => {
-                  const modelConfig = {
+                  const modelConfigs: Record<string, { color: string; label: string }> = {
                     qwen: { color: 'purple', label: tCommon('qwen') },
                     llama: { color: 'amber', label: tCommon('llama') }
-                  }[modelKey] || { color: 'slate', label: modelKey };
+                  };
+                  const modelConfig = modelConfigs[modelKey] || { color: 'slate', label: modelKey };
 
                   return (
                     <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex justify-between items-center shrink-0">
