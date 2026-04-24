@@ -131,17 +131,22 @@ describe('LandingPage', () => {
     const { getByText } = render(<LandingPage />);
     const link = getByText('Launch Dashboard');
     
-    // Ignore with metaKey
+    // Ignore with modifier keys
     fireEvent.click(link, { metaKey: true });
+    fireEvent.click(link, { ctrlKey: true });
+    fireEvent.click(link, { shiftKey: true });
+    fireEvent.click(link, { altKey: true });
+    fireEvent.click(link, { button: 1 }); // Middle click
     expect(launchToDashboard).not.toHaveBeenCalled();
 
     // Normal click
     fireEvent.click(link, { clientX: 100, clientY: 100, button: 0 });
-    expect(launchToDashboard).toHaveBeenCalledWith(expect.objectContaining({ href: '/dashboard' }));
+    expect(launchToDashboard).toHaveBeenCalledWith(expect.objectContaining({ href: '/dashboard', originX: 100, originY: 100 }));
     
     // Click without clientX/clientY (fallback to rect center)
     launchToDashboard.mockClear();
     fireEvent.click(link, { button: 0 });
-    expect(launchToDashboard).toHaveBeenCalled();
+    // Based on our mock getBoundingClientRect (100x100 at 0,0), center is 50,50
+    expect(launchToDashboard).toHaveBeenCalledWith(expect.objectContaining({ originX: 50, originY: 50 }));
   });
 });
