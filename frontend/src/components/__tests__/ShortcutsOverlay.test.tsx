@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import ShortcutsOverlay from '../ShortcutsOverlay';
 

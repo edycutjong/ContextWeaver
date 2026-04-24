@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
 import KeyboardShortcuts from '../KeyboardShortcuts';

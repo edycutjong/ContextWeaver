@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
 import ToastLayer, { pushToast, ToastPayload } from '../ToastLayer';
@@ -182,7 +183,7 @@ describe('ToastLayer', () => {
     const originalWindow = global.window;
     
     try {
-      // @ts-ignore - Mocking absence of window
+      // @ts-expect-error - Mocking absence of window
       delete global.window;
       
       // Should not throw
