@@ -127,6 +127,11 @@ describe('ChunkInspector', () => {
     // Test Escape
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(mockOnClose).toHaveBeenCalledTimes(1);
+    
+    // Test arbitrary key
+    fireEvent.keyDown(window, { key: 'Enter' });
+    // No additional calls
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('handles next and previous button clicks', () => {

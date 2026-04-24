@@ -189,6 +189,21 @@ describe('CommandPalette', () => {
 
     expect(mockPush).toHaveBeenCalledWith('/dashboard');
     
+    // Reopen and test Home
+    act(() => window.dispatchEvent(new CustomEvent('contextweaver:palette')));
+    act(() => fireEvent.click(screen.getByText('Home').closest('button')!));
+    expect(mockPush).toHaveBeenCalledWith('/');
+    
+    // Reopen and test History
+    act(() => window.dispatchEvent(new CustomEvent('contextweaver:palette')));
+    act(() => fireEvent.click(screen.getByText('Query History').closest('button')!));
+    expect(mockPush).toHaveBeenCalledWith('/history');
+    
+    // Reopen and test Settings
+    act(() => window.dispatchEvent(new CustomEvent('contextweaver:palette')));
+    act(() => fireEvent.click(screen.getByText('Router Settings').closest('button')!));
+    expect(mockPush).toHaveBeenCalledWith('/settings');
+    
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -273,6 +288,38 @@ describe('CommandPalette', () => {
 
     // Check if the item gets the active styling class
     expect(dashboardBtn?.className).toContain('bg-cyan-500/10 text-white');
+  });
+
+  it('scrolls container to keep active row in view when moving down', () => {
+    render(<CommandPalette />);
+    
+    act(() => {
+      window.dispatchEvent(new CustomEvent('contextweaver:palette'));
+    });
+
+    // Mock layout properties on the list container and item
+    const input = screen.getByPlaceholderText('Type a command or search...');
+    const listbox = screen.getByRole('listbox');
+    
+    Object.defineProperty(listbox, 'scrollTop', { value: 0, writable: true });
+    Object.defineProperty(listbox, 'clientHeight', { value: 100, writable: true });
+    
+    const items = listbox.querySelectorAll('[data-idx]');
+    // Mock offsetTop and offsetHeight for items
+    items.forEach((item, idx) => {
+      Object.defineProperty(item, 'offsetTop', { value: idx * 50, writable: true });
+      Object.defineProperty(item, 'offsetHeight', { value: 50, writable: true });
+    });
+
+    // Move down multiple times to push the active item out of view
+    act(() => {
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+    });
+
+    // Verify scrollTop was updated
+    expect(listbox.scrollTop).toBeGreaterThan(0);
   });
 });
 
