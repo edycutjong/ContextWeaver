@@ -49,6 +49,7 @@ const KIND_STYLE: Record<
 };
 
 export function pushToast(payload: ToastPayload) {
+  /* istanbul ignore if */
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent<ToastPayload>("contextweaver:toast", { detail: payload }));
 }
