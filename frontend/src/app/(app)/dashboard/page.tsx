@@ -149,10 +149,10 @@ const graphs: Record<GraphType, { nodes: NodeData[], edges: EdgeData[], isNodeAc
 };
 
 const ENTITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  ORG:    { bg: 'bg-blue-500/20',   text: 'text-blue-300',   border: 'border-blue-500/30' },
+  ORG: { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
   PERSON: { bg: 'bg-purple-500/20', text: 'text-purple-300', border: 'border-purple-500/30' },
-  LOC:    { bg: 'bg-green-500/20',  text: 'text-green-300',  border: 'border-green-500/30' },
-  DATE:   { bg: 'bg-amber-500/20',  text: 'text-amber-300',  border: 'border-amber-500/30' },
+  LOC: { bg: 'bg-green-500/20', text: 'text-green-300', border: 'border-green-500/30' },
+  DATE: { bg: 'bg-amber-500/20', text: 'text-amber-300', border: 'border-amber-500/30' },
 };
 const DEFAULT_ENTITY_STYLE = { bg: 'bg-slate-700/50', text: 'text-slate-300', border: 'border-slate-600' };
 
@@ -166,7 +166,7 @@ function AnimatedNumber({ value, decimals = 0, suffix = '' }: { value: number; d
     );
     const ctrl = animate(motionVal, value, { duration: 1.5, ease: 'easeOut' });
     return () => { ctrl.stop(); unsub(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   return <>{display}{suffix}</>;
@@ -295,7 +295,7 @@ export default function Dashboard() {
         if (parsed.chunkOverlap) params.append('chunk_overlap', parsed.chunkOverlap.toString());
         if (parsed.topK) params.append('top_k', parsed.topK.toString());
         queryParams = `?${params.toString()}`;
-      } catch {}
+      } catch { }
     }
 
     const eventSource = new EventSource(`http://localhost:8000/api/stream/123${queryParams}`);
@@ -415,9 +415,8 @@ export default function Dashboard() {
             <button
               onClick={startPipeline}
               disabled={isRunning}
-              className={`relative z-10 px-8 py-3.5 rounded-xl font-bold tracking-wide transition-all overflow-hidden ${
-                isRunning ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' : 'bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] border border-cyan-400/30'
-              }`}
+              className={`relative z-10 px-8 py-3.5 rounded-xl font-bold tracking-wide transition-all overflow-hidden ${isRunning ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' : 'bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] border border-cyan-400/30'
+                }`}
             >
               {isRunning && (
                 <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
@@ -480,38 +479,55 @@ export default function Dashboard() {
             className="space-y-6"
           >
 
-              {/* Pipeline graph with animated shimmer ring when running */}
-              <div className="relative rounded-xl">
-                {isRunning && (
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute -inset-1 rounded-xl bg-linear-to-r from-cyan-500/30 via-purple-500/30 to-cyan-500/30 animate-pulse blur-sm"
-                  />
-                )}
-                <div className="relative z-10 rounded-xl bg-slate-900">
-                  <PipelineGraph
-                    key={selectedGraph}
-                    currentStep={pipelineStep}
-                    nodes={graphs[selectedGraph].nodes}
-                    edges={graphs[selectedGraph].edges}
-                    isNodeActive={graphs[selectedGraph].isNodeActive}
-                  />
-                </div>
+            {/* Pipeline graph with animated shimmer ring when running */}
+            <div className="relative rounded-xl">
+              {isRunning && (
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -inset-1 rounded-xl bg-linear-to-r from-cyan-500/30 via-purple-500/30 to-cyan-500/30 animate-pulse blur-sm"
+                />
+              )}
+              <div className="relative z-10 rounded-xl bg-slate-900">
+                <PipelineGraph
+                  key={selectedGraph}
+                  currentStep={pipelineStep}
+                  nodes={graphs[selectedGraph].nodes}
+                  edges={graphs[selectedGraph].edges}
+                  isNodeActive={graphs[selectedGraph].isNodeActive}
+                />
               </div>
+            </div>
 
 
-            </motion.div>
+          </motion.div>
 
-            {/* Bottom Section: Split Pane */}
-            {pipelineStep !== 'idle' && (
-              <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                
-                {selectedChunk && (
-                  <ChunkInspector chunkData={selectedChunk} onClose={() => setSelectedChunk(null)} />
-                )}
+          {/* Bottom Section: Split Pane */}
+          {pipelineStep !== 'idle' && (
+            <div ref={resultsRef} className="flex flex-col gap-6 w-full">
 
-                {/* Terminal Logs (Column 1) */}
-                <div className="lg:col-span-1 bg-slate-950 border border-slate-700 rounded-xl flex flex-col h-[700px] relative overflow-hidden z-20">
+              {selectedChunk && (() => {
+                const selectedIndex = processedChunks.findIndex(c => c.chunk_idx === selectedChunk.chunk_idx);
+                const handlePrevious = selectedIndex > 0 ? () => setSelectedChunk(processedChunks[selectedIndex - 1]) : undefined;
+                const handleNext = selectedIndex >= 0 && selectedIndex < processedChunks.length - 1 ? () => setSelectedChunk(processedChunks[selectedIndex + 1]) : undefined;
+                return (
+                  <ChunkInspector
+                    chunkData={selectedChunk}
+                    onClose={() => setSelectedChunk(null)}
+                    onPrevious={handlePrevious}
+                    onNext={handleNext}
+                  />
+                );
+              })()}
+
+              {/* Single Row Layout: Logs, Heatmap, Results */}
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start h-[380px]">
+                {/* Column 1: Terminal Logs */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.0, ease: 'easeOut' }}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl flex flex-col h-full relative overflow-hidden z-20"
+                >
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.06),transparent_60%)]"
@@ -553,8 +569,8 @@ export default function Dashboard() {
                           className="flex items-start gap-1"
                         >
                           <span className={`${promptColor} select-none shrink-0`}>{'>'}</span>
-                          <span className="break-all flex items-center gap-1.5 flex-wrap">
-                            {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClass}`} />}
+                          <span className="break-words whitespace-pre-wrap leading-tight flex items-start gap-1.5 flex-1 min-w-0">
+                            {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClass} mt-[1px]`} />}
                             {cleanMsg}
                           </span>
                           {i === displayedLogs.length - 1 && isTyping && (
@@ -564,12 +580,27 @@ export default function Dashboard() {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Annotation Complete / Final Results Panel (Column 2) */}
-                <div className="lg:col-span-1 bg-linear-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-6 shadow-xl flex flex-col h-[700px] z-20">
-                  <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-2 flex flex-col">
-                    <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2 shrink-0">
+                {/* Column 2: Confidence Heatmap */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.4, ease: 'easeOut' }}
+                  className="w-full h-full relative z-20 min-h-0"
+                >
+                  <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
+                </motion.div>
+
+                {/* Column 3: Annotation Complete / Final Results Panel */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.8, ease: 'easeOut' }}
+                  className="w-full h-full bg-linear-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-4 shadow-xl flex flex-col z-20 overflow-hidden"
+                >
+                  <div className="w-full overflow-y-auto min-h-0 pr-1 pb-2 flex flex-col flex-1">
+                    <h3 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2 shrink-0">
                       {finalResult ? (
                         <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
                       ) : isRunning ? (
@@ -578,17 +609,13 @@ export default function Dashboard() {
                         <><Target className="w-6 h-6 text-cyan-400" /> Ready</>
                       )}
                     </h3>
-                    
+
                     {/* Live running metrics */}
-                    <div className="grid grid-cols-2 gap-3 mb-4 shrink-0">
-                      <div className="col-span-2 bg-slate-900/70 border border-cyan-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
+                    <div className="grid grid-cols-2 gap-2 mb-3 shrink-0">
+                      <div className="bg-slate-900/70 border border-cyan-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 overflow-hidden">
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
-                        <p className={`text-sm font-bold font-mono mt-0.5 truncate ${pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`}>{pipelineStep}</p>
+                        <p className={`text-sm font-bold font-mono mt-0.5 truncate ${pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`} title={pipelineStep}>{pipelineStep}</p>
                       </div>
-                      <ThroughputSparkline
-                        value={processedChunks.filter((c) => typeof c.confidence === 'number').length}
-                        active={isRunning}
-                      />
                       <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>
                         <p className={`text-sm font-bold font-mono mt-0.5 ${processedChunks.length > 0 ? 'text-purple-300' : 'text-slate-500'}`}>
@@ -609,7 +636,7 @@ export default function Dashboard() {
                           />
                         </p>
                       </div>
-                      <div className="col-span-2 bg-slate-900/70 border border-amber-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 flex items-center justify-between">
+                      <div className="bg-slate-900/70 border border-amber-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 flex items-center justify-between">
                         <div>
                           <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Elapsed</p>
                           <p className={`text-sm font-bold font-mono mt-0.5 tabular-nums ${isRunning || finalResult ? 'text-amber-300' : 'text-slate-500'}`}>
@@ -633,14 +660,20 @@ export default function Dashboard() {
                           ))}
                         </div>
                       </div>
+                      <div className="col-span-2">
+                        <ThroughputSparkline
+                          value={processedChunks.filter((c) => typeof c.confidence === 'number').length}
+                          active={isRunning}
+                        />
+                      </div>
                     </div>
 
                     {finalResult ? (
-                      <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 flex flex-col flex-1 min-h-0">
-                        <p className="text-slate-400 text-sm mb-2 shrink-0">
+                      <div className="bg-slate-950 p-4 rounded-lg border border-slate-800 mt-2">
+                        <p className="text-slate-400 text-sm mb-3">
                           Extracted Entities (<AnimatedNumber value={finalResult.merged_entities?.length || 0} />)
                         </p>
-                        <div className="flex flex-wrap gap-1.5 overflow-y-auto content-start pb-4">
+                        <div className="flex flex-wrap gap-2 pb-2">
                           <AnimatePresence>
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             {(finalResult.merged_entities || []).slice(0, 20).map((entity: any, i: number) => {
@@ -664,7 +697,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                     ) : (
-                      <div className="rounded-lg border border-slate-800/60 bg-slate-950/40 p-4 flex flex-col justify-center gap-3 flex-1">
+                      <div className="rounded-lg border border-slate-800/60 bg-slate-950/40 p-4 flex flex-col justify-center gap-3 flex-1 mt-2">
                         <div className="space-y-2">
                           <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '100%' }} />
                           <div className={`h-2.5 rounded bg-slate-800/70 ${isRunning ? 'animate-pulse' : ''}`} style={{ width: '82%' }} />
@@ -677,16 +710,15 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  <button 
-                    onClick={handleExport} 
+                  <button
+                    onClick={handleExport}
                     disabled={!finalResult || isRunning}
-                    className={`w-full mt-4 shrink-0 py-2 rounded transition-all border relative z-10 font-medium overflow-hidden ${
-                      finalResult 
-                        ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700 cursor-pointer' 
-                        : isRunning
-                          ? 'bg-slate-800 text-slate-500 cursor-not-allowed border-slate-700'
-                          : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed opacity-50'
-                    }`}
+                    className={`mt-4 w-full shrink-0 py-2 rounded transition-all border relative z-10 font-medium overflow-hidden ${finalResult
+                      ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700 cursor-pointer'
+                      : isRunning
+                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed border-slate-700'
+                        : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed opacity-50'
+                      }`}
                   >
                     {isRunning && (
                       <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
@@ -700,16 +732,12 @@ export default function Dashboard() {
                       ) : 'Export JSON'}
                     </span>
                   </button>
-                </div>
-
-                {/* Confidence Heatmap (Column 3) */}
-                <div className="lg:col-span-1 h-[700px] relative z-20">
-                  <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
-                </div>
+                </motion.div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+      </div>
     </>
   );
 }
