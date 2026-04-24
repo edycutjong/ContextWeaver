@@ -1,0 +1,277 @@
+{
+  "landing": {
+    "badge": "FlagOS 开放计算全球挑战赛",
+    "titleLine1": "动态上下文学习",
+    "titleLine2": "智能路由器。",
+    "subtitle": "通过过程透明化与实时可视化，优化大模型准确率。专为高性能 AI 编排打造。",
+    "launchDashboard": "进入仪表盘",
+    "jointlyHostedBy": "联合主办：",
+    "preview": {
+      "label": "实时遥测数据流",
+      "processing": "处理中...",
+      "doc": "文档",
+      "chunker": "分块器",
+      "retrieve": "检索",
+      "results": "结果"
+    },
+    "features": {
+      "routingTitle": "亚毫秒级路由",
+      "routingDesc": "根据延迟约束与复杂度评分，智能地将分块路由到特定模型。",
+      "visualTitle": "可视化流水线",
+      "visualDesc": "实时观察 RAG 流程，完整透视分块、检索与生成的每一步。",
+      "chromaTitle": "ChromaDB + Qwen3",
+      "chromaDesc": "企业级向量存储与本地 Qwen3-4B 推理深度集成。"
+    }
+  },
+  "dashboard": {
+    "title": "流水线概览",
+    "subtitle": "动态上下文学习智能路由器",
+    "runButton": "运行文档标注",
+    "runButtonActive": "流水线运行中...",
+    "tabs": {
+      "contextweaver": "ContextWeaver 流程",
+      "standardRag": "标准 RAG",
+      "multiAgent": "多智能体系统",
+      "evaluatorOptimizer": "评估器-优化器",
+      "routingAgent": "路由智能体"
+    },
+    "nodes": {
+      "document": "文档",
+      "chunker": "分块器",
+      "chromadb": "ChromaDB",
+      "promptBuilder": "提示词构建器",
+      "qwen": "Qwen3-4B",
+      "results": "结果",
+      "userQuery": "用户查询",
+      "embeddings": "向量嵌入",
+      "vectorDb": "向量数据库",
+      "llm": "大语言模型",
+      "output": "输出",
+      "task": "任务",
+      "routerAgent": "路由智能体",
+      "researcher": "研究员",
+      "coder": "程序员",
+      "reviewer": "审查员",
+      "synthesizer": "综合器",
+      "finalOutput": "最终输出",
+      "generator": "生成器",
+      "evaluator": "评估器",
+      "input": "输入",
+      "classifier": "分类器",
+      "expertA": "专家 A",
+      "expertB": "专家 B",
+      "expertC": "专家 C"
+    },
+    "terminalTitle": "终端日志",
+    "panel": {
+      "complete": "标注完成",
+      "processing": "处理中...",
+      "ready": "就绪"
+    },
+    "metrics": {
+      "stage": "阶段",
+      "chunks": "分块数",
+      "avgConf": "平均置信度",
+      "elapsed": "耗时"
+    },
+    "entitiesLabel": "已抽取实体（{count}）",
+    "skeleton": {
+      "streaming": "正在流式生成标注...",
+      "waiting": "等待结果..."
+    },
+    "export": {
+      "label": "导出 JSON",
+      "preparing": "准备导出..."
+    },
+    "log": {
+      "starting": "正在启动 ContextWeaver 标注流水线...",
+      "complete": "✅ 流水线完成！准确率已优化。",
+      "connectionError": "❌ 连接错误。"
+    },
+    "toast": {
+      "startedTitle": "流水线已启动",
+      "startedDescription": "正在从 Qwen3-4B 流式接收标注事件",
+      "completeTitle": "流水线完成",
+      "completeDescription": "已抽取 {count} 个实体 · 平均置信度 {conf}%",
+      "errorTitle": "数据流错误",
+      "errorDescription": "与流水线后端的连接已丢失。"
+    }
+  },
+  "settings": {
+    "title": "路由器设置",
+    "subtitle": "配置嵌入参数与模型路由阈值。",
+    "chroma": {
+      "title": "检索引擎（ChromaDB）",
+      "subtitle": "调整语义搜索行为"
+    },
+    "fields": {
+      "chunkSize": "分块大小",
+      "chunkOverlap": "分块重叠",
+      "topK": "Top-K 检索",
+      "tokens": "Tokens",
+      "chunks": "{k} 个分块"
+    },
+    "routing": {
+      "title": "模型路由",
+      "subtitle": "选择处理每个分块的模型"
+    },
+    "model": {
+      "fastName": "快速模型",
+      "fastDesc": "用于低复杂度查询与快速抽取。",
+      "deepName": "深度模型",
+      "deepDesc": "用于复杂推理与多跳综合任务。",
+      "active": "已激活"
+    },
+    "save": {
+      "button": "保存配置",
+      "success": "保存成功"
+    },
+    "language": {
+      "title": "显示语言",
+      "subtitle": "选择界面语言",
+      "english": "English",
+      "chinese": "中文",
+      "englishDesc": "英文界面",
+      "chineseDesc": "简体中文界面"
+    }
+  },
+  "history": {
+    "title": "查询历史",
+    "subtitle": "查看过往 RAG 查询、生成延迟与 Token 使用情况。",
+    "search": "搜索历史...",
+    "stats": {
+      "totalQueries": "查询总数",
+      "avgLatency": "平均延迟",
+      "successRate": "成功率",
+      "tokensUsed": "Token 消耗量"
+    },
+    "table": {
+      "id": "ID",
+      "status": "状态",
+      "query": "查询",
+      "time": "时间",
+      "latency": "延迟",
+      "tokens": "Token",
+      "actions": "操作"
+    },
+    "status": {
+      "success": "成功",
+      "failed": "失败",
+      "pending": "等待中",
+      "filtered": "已过滤"
+    },
+    "empty": "未找到与“{q}”匹配的查询"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "history": "历史",
+    "settings": "设置",
+    "source": "源代码",
+    "iconAlt": "ContextWeaver 图标",
+    "languageAria": "切换语言",
+    "languageEn": "English",
+    "languageZh": "中文"
+  },
+  "palette": {
+    "placeholder": "输入命令或搜索...",
+    "noMatch": "未找到与“{q}”匹配的命令",
+    "sections": {
+      "navigate": "导航",
+      "actions": "操作",
+      "help": "帮助"
+    },
+    "items": {
+      "homeLabel": "首页",
+      "homeHint": "落地页",
+      "dashboardLabel": "仪表盘",
+      "dashboardHint": "实时流水线视图",
+      "historyLabel": "查询历史",
+      "historyHint": "过往查询与指标",
+      "settingsLabel": "路由器设置",
+      "settingsHint": "分块与路由配置",
+      "runLabel": "运行标注流水线",
+      "runHint": "触发实时流水线",
+      "shortcutsLabel": "显示键盘快捷键",
+      "shortcutsHint": "查看所有快捷键",
+      "githubLabel": "打开 GitHub 仓库",
+      "githubHint": "github.com/edycutjong/contextweaver"
+    },
+    "footer": {
+      "navigate": "导航",
+      "select": "选择"
+    },
+    "ariaDialog": "命令面板",
+    "ariaSearch": "命令搜索",
+    "hintAria": "打开命令面板"
+  },
+  "shortcuts": {
+    "title": "键盘快捷键",
+    "groups": {
+      "global": "全局",
+      "navigation": "导航",
+      "dashboard": "仪表盘",
+      "actions": "操作"
+    },
+    "items": {
+      "openPalette": "打开命令面板",
+      "openPaletteWin": "打开命令面板 (Win/Linux)",
+      "showOverlay": "显示此浮层",
+      "closeOverlays": "关闭浮层",
+      "goDashboard": "前往仪表盘",
+      "goHistory": "前往历史",
+      "goSettings": "前往设置",
+      "goLanding": "前往落地页",
+      "runPipeline": "运行标注流水线"
+    },
+    "footer": "在任意位置按 {key} 切换此浮层。",
+    "closeAria": "关闭",
+    "ariaDialog": "键盘快捷键"
+  },
+  "inspector": {
+    "title": "分块检查器",
+    "viewing": "正在查看分块详情",
+    "columns": {
+      "rawText": "原始文本",
+      "examples": "检索到的 ICL 示例",
+      "response": "模型响应"
+    },
+    "chunkBadge": "分块 #{idx}",
+    "topBadge": "ChromaDB Top-3",
+    "stats": {
+      "chars": "字符",
+      "words": "单词",
+      "lines": "行",
+      "tokens": "Token",
+      "conf": "置信度",
+      "charsTitle": "字符数",
+      "wordsTitle": "单词数",
+      "linesTitle": "行数",
+      "tokensTitle": "预估 Token 数（约 4 个字符/Token）",
+      "confTitle": "此分块的标注置信度"
+    },
+    "placeholder": "这是一份很长的法律文档",
+    "exampleNum": "示例 {n}",
+    "prompt": "已发送提示词",
+    "extractedJson": "抽取的 JSON",
+    "ariaPrev": "上一个分块",
+    "ariaNext": "下一个分块",
+    "ariaClose": "关闭"
+  },
+  "toast": {
+    "dismiss": "关闭"
+  },
+  "sseLog": {
+    "started": "流水线已启动",
+    "chunking": "正在分块文档（大小：{size}，重叠：{overlap}）...",
+    "retrieving": "正在为分块 {i} 检索前 {k} 个示例...",
+    "buildingPrompt": "正在为分块 {i} 构建提示词...",
+    "annotating": "正在标注分块 {i}...",
+    "merging": "正在合并分块标注..."
+  },
+  "heatmap": {
+    "title": "置信度热力图",
+    "legend": "图例",
+    "chunk": "分块 {i}：{confidence}",
+    "processing": "处理中..."
+  }
+}

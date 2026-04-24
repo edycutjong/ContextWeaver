@@ -1,0 +1,277 @@
+{
+  "landing": {
+    "badge": "FlagOS Open Computing Global Challenge",
+    "titleLine1": "Dynamic In-Context",
+    "titleLine2": "Learning Router.",
+    "subtitle": "Optimize LLM accuracy through visual transparency and real-time visualization. Built for high-performance AI orchestration.",
+    "launchDashboard": "Launch Dashboard",
+    "jointlyHostedBy": "Jointly hosted by:",
+    "preview": {
+      "label": "Live Telemetry Stream",
+      "processing": "Processing...",
+      "doc": "Document",
+      "chunker": "Chunker",
+      "retrieve": "Retrieve",
+      "results": "Results"
+    },
+    "features": {
+      "routingTitle": "Sub-millisecond Routing",
+      "routingDesc": "Intelligently route chunks to specific models based on latency constraints and complexity scores.",
+      "visualTitle": "Visual Pipeline",
+      "visualDesc": "Watch the RAG process happen in real-time. Full transparency into chunking, retrieval, and generation.",
+      "chromaTitle": "ChromaDB + Qwen3",
+      "chromaDesc": "Enterprise-grade vector storage tightly integrated with local Qwen3-4B inference."
+    }
+  },
+  "dashboard": {
+    "title": "Pipeline Overview",
+    "subtitle": "Dynamic In-Context Learning Router",
+    "runButton": "Run Document Annotation",
+    "runButtonActive": "Pipeline Active...",
+    "tabs": {
+      "contextweaver": "ContextWeaver Flow",
+      "standardRag": "Standard RAG",
+      "multiAgent": "Multi-Agent System",
+      "evaluatorOptimizer": "Evaluator-Optimizer",
+      "routingAgent": "Routing Agent"
+    },
+    "nodes": {
+      "document": "Document",
+      "chunker": "Chunker",
+      "chromadb": "ChromaDB",
+      "promptBuilder": "Prompt Builder",
+      "qwen": "Qwen3-4B",
+      "results": "Results",
+      "userQuery": "User Query",
+      "embeddings": "Embeddings",
+      "vectorDb": "Vector DB",
+      "llm": "LLM",
+      "output": "Output",
+      "task": "Task",
+      "routerAgent": "Router Agent",
+      "researcher": "Researcher",
+      "coder": "Coder",
+      "reviewer": "Reviewer",
+      "synthesizer": "Synthesizer",
+      "finalOutput": "Final Output",
+      "generator": "Generator",
+      "evaluator": "Evaluator",
+      "input": "Input",
+      "classifier": "Classifier",
+      "expertA": "Expert A",
+      "expertB": "Expert B",
+      "expertC": "Expert C"
+    },
+    "terminalTitle": "Terminal Logs",
+    "panel": {
+      "complete": "Annotation Complete",
+      "processing": "Processing...",
+      "ready": "Ready"
+    },
+    "metrics": {
+      "stage": "Stage",
+      "chunks": "Chunks",
+      "avgConf": "Avg Conf",
+      "elapsed": "Elapsed"
+    },
+    "entitiesLabel": "Extracted Entities ({count})",
+    "skeleton": {
+      "streaming": "Streaming annotations…",
+      "waiting": "Waiting for results..."
+    },
+    "export": {
+      "label": "Export JSON",
+      "preparing": "Preparing Export..."
+    },
+    "log": {
+      "starting": "Starting ContextWeaver annotation pipeline...",
+      "complete": "✅ Pipeline complete! Accuracy optimized.",
+      "connectionError": "❌ Connection error."
+    },
+    "toast": {
+      "startedTitle": "Pipeline started",
+      "startedDescription": "Streaming annotation events from Qwen3-4B",
+      "completeTitle": "Pipeline complete",
+      "completeDescription": "Extracted {count} entities · avg confidence {conf}%",
+      "errorTitle": "Stream error",
+      "errorDescription": "Lost connection to the pipeline backend."
+    }
+  },
+  "settings": {
+    "title": "Router Settings",
+    "subtitle": "Configure embedding parameters and model routing thresholds.",
+    "chroma": {
+      "title": "Retrieval Engine (ChromaDB)",
+      "subtitle": "Tune semantic search behaviour"
+    },
+    "fields": {
+      "chunkSize": "Chunk Size",
+      "chunkOverlap": "Chunk Overlap",
+      "topK": "Top-K Retrieval",
+      "tokens": "tokens",
+      "chunks": "{k} Chunks"
+    },
+    "routing": {
+      "title": "Model Routing",
+      "subtitle": "Pick which model handles each chunk"
+    },
+    "model": {
+      "fastName": "Fast Model",
+      "fastDesc": "Used for low-complexity queries and rapid extraction.",
+      "deepName": "Deep Model",
+      "deepDesc": "Used for complex reasoning and multi-hop synthesis.",
+      "active": "Active"
+    },
+    "save": {
+      "button": "Save Configuration",
+      "success": "Saved successfully"
+    },
+    "language": {
+      "title": "Display Language",
+      "subtitle": "Choose the interface language",
+      "english": "English",
+      "chinese": "中文",
+      "englishDesc": "English UI",
+      "chineseDesc": "Simplified Chinese UI"
+    }
+  },
+  "history": {
+    "title": "Query History",
+    "subtitle": "View past RAG queries, generation latency, and token usage.",
+    "search": "Search history...",
+    "stats": {
+      "totalQueries": "Total Queries",
+      "avgLatency": "Avg Latency",
+      "successRate": "Success Rate",
+      "tokensUsed": "Tokens Used"
+    },
+    "table": {
+      "id": "ID",
+      "status": "Status",
+      "query": "Query",
+      "time": "Time",
+      "latency": "Latency",
+      "tokens": "Tokens",
+      "actions": "Actions"
+    },
+    "status": {
+      "success": "Success",
+      "failed": "Failed",
+      "pending": "Pending",
+      "filtered": "Filtered"
+    },
+    "empty": "No queries match \"{q}\""
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "history": "History",
+    "settings": "Settings",
+    "source": "Source",
+    "iconAlt": "ContextWeaver Icon",
+    "languageAria": "Change language",
+    "languageEn": "English",
+    "languageZh": "中文"
+  },
+  "palette": {
+    "placeholder": "Type a command or search...",
+    "noMatch": "No commands match \"{q}\"",
+    "sections": {
+      "navigate": "Navigate",
+      "actions": "Actions",
+      "help": "Help"
+    },
+    "items": {
+      "homeLabel": "Home",
+      "homeHint": "Landing page",
+      "dashboardLabel": "Dashboard",
+      "dashboardHint": "Live pipeline view",
+      "historyLabel": "Query History",
+      "historyHint": "Past queries and metrics",
+      "settingsLabel": "Router Settings",
+      "settingsHint": "Chunking and routing config",
+      "runLabel": "Run Annotation Pipeline",
+      "runHint": "Trigger the live pipeline",
+      "shortcutsLabel": "Show Keyboard Shortcuts",
+      "shortcutsHint": "View all hotkeys",
+      "githubLabel": "Open GitHub Repository",
+      "githubHint": "github.com/edycutjong/contextweaver"
+    },
+    "footer": {
+      "navigate": "navigate",
+      "select": "select"
+    },
+    "ariaDialog": "Command palette",
+    "ariaSearch": "Command search",
+    "hintAria": "Open command palette"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "groups": {
+      "global": "Global",
+      "navigation": "Navigation",
+      "dashboard": "Dashboard",
+      "actions": "Actions"
+    },
+    "items": {
+      "openPalette": "Open command palette",
+      "openPaletteWin": "Open command palette (Win/Linux)",
+      "showOverlay": "Show this overlay",
+      "closeOverlays": "Close overlays",
+      "goDashboard": "Go to Dashboard",
+      "goHistory": "Go to History",
+      "goSettings": "Go to Settings",
+      "goLanding": "Go to Landing",
+      "runPipeline": "Run annotation pipeline"
+    },
+    "footer": "Press {key} anywhere to toggle this overlay.",
+    "closeAria": "Close",
+    "ariaDialog": "Keyboard shortcuts"
+  },
+  "inspector": {
+    "title": "Chunk Inspector",
+    "viewing": "Viewing details for Chunk",
+    "columns": {
+      "rawText": "Raw Source Text",
+      "examples": "Retrieved ICL Examples",
+      "response": "Model Response"
+    },
+    "chunkBadge": "Chunk #{idx}",
+    "topBadge": "ChromaDB Top-3",
+    "stats": {
+      "chars": "chars",
+      "words": "words",
+      "lines": "lines",
+      "tokens": "tokens",
+      "conf": "Conf",
+      "charsTitle": "Characters",
+      "wordsTitle": "Words",
+      "linesTitle": "Lines",
+      "tokensTitle": "Approximate token count (~4 chars/token)",
+      "confTitle": "Annotation confidence for this chunk"
+    },
+    "placeholder": "This is a very long legal document",
+    "exampleNum": "Example {n}",
+    "prompt": "Prompt Sent",
+    "extractedJson": "Extracted JSON",
+    "ariaPrev": "Previous Chunk",
+    "ariaNext": "Next Chunk",
+    "ariaClose": "Close"
+  },
+  "toast": {
+    "dismiss": "Dismiss"
+  },
+  "sseLog": {
+    "started": "Pipeline started",
+    "chunking": "Chunking document (size: {size}, overlap: {overlap})...",
+    "retrieving": "Retrieving top {k} examples for chunk {i}...",
+    "buildingPrompt": "Building prompt for chunk {i}...",
+    "annotating": "Annotating chunk {i}...",
+    "merging": "Merging chunk annotations..."
+  },
+  "heatmap": {
+    "title": "Confidence Heatmap",
+    "legend": "Legend",
+    "chunk": "Chunk {i}: {confidence}",
+    "processing": "Processing..."
+  }
+}

@@ -5,5 +5,8 @@
     "ci": "npm run ci --prefix frontend",
     "dev": "make docker-up",
     "test": "make test"
+  },
+  "dependencies": {
+    "next-intl": "^4.9.1"
   }
 }
