@@ -52,13 +52,20 @@ jest.mock('@/components/ConfidenceHeatmap', () => {
 
 // Mock framer-motion
 jest.mock('framer-motion', () => {
-  const MockDiv = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ children, ...props }, ref) => <div ref={ref} {...props}>{children}</div>);
+  const MOTION_PROPS = new Set(['whileHover','whileTap','whileInView','initial','animate','exit','transition','variants','layoutId','layout','onAnimationStart','onAnimationComplete','drag','dragConstraints','dragElastic','dragMomentum','onDrag','onDragEnd','onDragStart']);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function strip(props: any) { const p: any = {}; for (const k of Object.keys(props)) { if (!MOTION_PROPS.has(k)) p[k] = props[k]; } return p; }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const MockDiv = React.forwardRef<HTMLDivElement, any>(({ children, ...props }, ref) => <div ref={ref} {...strip(props)}>{children}</div>);
   MockDiv.displayName = 'motion.div';
 
-  const MockSpan = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(({ children, ...props }, ref) => <span ref={ref} {...props}>{children}</span>);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const MockSpan = React.forwardRef<HTMLSpanElement, any>(({ children, ...props }, ref) => <span ref={ref} {...strip(props)}>{children}</span>);
   MockSpan.displayName = 'motion.span';
 
-  const MockButton = React.forwardRef<HTMLButtonElement, React.HTMLAttributes<HTMLButtonElement>>(({ children, ...props }, ref) => <button ref={ref} {...props}>{children}</button>);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const MockButton = React.forwardRef<HTMLButtonElement, any>(({ children, ...props }, ref) => <button ref={ref} {...strip(props)}>{children}</button>);
   MockButton.displayName = 'motion.button';
 
    
