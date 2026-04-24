@@ -177,7 +177,7 @@ describe('Dashboard', () => {
     const runBtn = getByText('Run Document Annotation');
     fireEvent.click(runBtn);
     
-    expect(global.EventSource).toHaveBeenCalledWith(expect.stringContaining('http://localhost:8000/api/stream/123'));
+    expect(global.EventSource).toHaveBeenCalledWith(expect.stringContaining('/api/stream/123'));
     
     act(() => {
       mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Pipeline started' }) });
@@ -343,8 +343,7 @@ describe('Dashboard', () => {
     jest.useFakeTimers();
     const { getByText } = render(<Dashboard />);
     fireEvent.click(getByText('Run Document Annotation'));
-    expect(global.EventSource).toHaveBeenCalledWith('http://localhost:8000/api/stream/123');
-    jest.useRealTimers();
+    expect(global.EventSource).toHaveBeenCalledWith('/api/stream/123');
   });
 
   it('runs pipeline with empty settings object (skips each query param)', () => {
@@ -355,8 +354,7 @@ describe('Dashboard', () => {
     jest.useFakeTimers();
     const { getByText } = render(<Dashboard />);
     fireEvent.click(getByText('Run Document Annotation'));
-    expect(global.EventSource).toHaveBeenCalledWith('http://localhost:8000/api/stream/123?');
-    jest.useRealTimers();
+    expect(global.EventSource).toHaveBeenCalledWith('/api/stream/123?');
   });
 
   it('swallows JSON parse errors from corrupt settings', () => {
@@ -367,8 +365,7 @@ describe('Dashboard', () => {
     jest.useFakeTimers();
     const { getByText } = render(<Dashboard />);
     fireEvent.click(getByText('Run Document Annotation'));
-    expect(global.EventSource).toHaveBeenCalledWith('http://localhost:8000/api/stream/123');
-    jest.useRealTimers();
+    expect(global.EventSource).toHaveBeenCalledWith('/api/stream/123');
   });
 
   it('handles done event with missing mean_confidence (uses default 0%)', () => {

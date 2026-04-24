@@ -333,7 +333,7 @@ export default function Dashboard() {
       } catch { }
     }
 
-    const eventSource = new EventSource(`http://localhost:8000/api/stream/123${queryParams}`);
+    const eventSource = new EventSource(`/api/stream/123${queryParams}`);
     eventSourceRef.current = eventSource;
 
     setTimeout(() => {
