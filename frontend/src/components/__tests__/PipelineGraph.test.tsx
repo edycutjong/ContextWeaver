@@ -36,12 +36,17 @@ jest.mock('framer-motion', () => {
   };
 });
 
+beforeAll(() => {
+  // Mock scrollTo since JSDOM doesn't implement it
+  HTMLElement.prototype.scrollTo = jest.fn();
+});
+
 describe('PipelineGraph', () => {
   it('renders default nodes', () => {
     render(<PipelineGraph currentStep="init" />);
-    expect(screen.getByText('📄 Document')).toBeInTheDocument();
-    expect(screen.getByText('✂️ Chunker')).toBeInTheDocument();
-    expect(screen.getByText('🗄️ ChromaDB')).toBeInTheDocument();
+    expect(screen.getByText('Document')).toBeInTheDocument();
+    expect(screen.getByText('Chunker')).toBeInTheDocument();
+    expect(screen.getByText('ChromaDB')).toBeInTheDocument();
   });
 
   it('tests default isNodeActive logic through rendering', () => {

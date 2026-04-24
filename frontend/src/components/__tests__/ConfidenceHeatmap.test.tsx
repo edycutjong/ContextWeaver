@@ -29,11 +29,11 @@ describe('ConfidenceHeatmap', () => {
     expect(buttons).toHaveLength(5);
     
     // Check colors
-    expect(buttons[0]).toHaveClass('bg-green-500'); // 0.95
-    expect(buttons[1]).toHaveClass('bg-green-400'); // 0.85
-    expect(buttons[2]).toHaveClass('bg-amber-400'); // 0.75
-    expect(buttons[3]).toHaveClass('bg-red-500');   // 0.50
-    expect(buttons[4]).toHaveClass('bg-slate-800'); // 0
+    expect(buttons[0].firstChild).toHaveClass('bg-green-500'); // 0.95
+    expect(buttons[1].firstChild).toHaveClass('bg-green-400'); // 0.85
+    expect(buttons[2].firstChild).toHaveClass('bg-amber-400'); // 0.75
+    expect(buttons[3].firstChild).toHaveClass('bg-red-500');   // 0.50
+    expect(buttons[4].firstChild).toHaveClass('bg-slate-800'); // 0
   });
 
   it('calls onSelectChunk when a chunk is clicked', () => {

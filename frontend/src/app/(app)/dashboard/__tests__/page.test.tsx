@@ -73,6 +73,11 @@ jest.mock('framer-motion', () => {
   };
 });
 
+beforeAll(() => {
+  // Mock scrollIntoView since JSDOM doesn't implement it
+  HTMLElement.prototype.scrollIntoView = jest.fn();
+});
+
 describe('Dashboard', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockEventSource: any;
@@ -108,7 +113,7 @@ describe('Dashboard', () => {
 
   it('renders correctly', () => {
     const { getByText, getByTestId } = render(<Dashboard />);
-    expect(getByText('ContextWeaver')).toBeInTheDocument();
+    expect(getByText('Pipeline Overview')).toBeInTheDocument();
     expect(getByTestId('pipeline-graph')).toBeInTheDocument();
   });
 
@@ -212,8 +217,21 @@ describe('Dashboard', () => {
   });
 
   it('handles chunk selection and inspector close', () => {
-    const { getByTestId } = render(<Dashboard />);
+    jest.useFakeTimers();
+    const { getByTestId, getByText } = render(<Dashboard />);
+    
+    // Start pipeline
+    const runBtn = getByText('Run Document Annotation');
+    fireEvent.click(runBtn);
+    
+    // Send chunk_complete so the heatmap renders
+    act(() => {
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'chunk_complete', chunks: ['chunk1'] }) });
+    });
+    
     fireEvent.click(getByTestId('confidence-heatmap'));
     fireEvent.click(getByTestId('chunk-inspector'));
+    
+    jest.useRealTimers();
   });
 });
