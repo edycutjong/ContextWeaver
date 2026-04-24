@@ -65,7 +65,8 @@ export default function ConfettiBurst({ trigger }: { trigger: number }) {
     partsRef.current = fresh;
 
     function step() {
-      ctx.clearRect(0, 0, rect.width, rect.height);
+      const c = ctx as CanvasRenderingContext2D;
+      c.clearRect(0, 0, rect.width, rect.height);
       const parts = partsRef.current;
       let alive = 0;
       for (const p of parts) {
@@ -79,26 +80,26 @@ export default function ConfettiBurst({ trigger }: { trigger: number }) {
         p.rotation += p.vr;
 
         const t = 1 - p.life / p.maxLife;
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, Math.min(1, t));
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation);
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 6;
+        c.save();
+        c.globalAlpha = Math.max(0, Math.min(1, t));
+        c.translate(p.x, p.y);
+        c.rotate(p.rotation);
+        c.fillStyle = p.color;
+        c.shadowColor = p.color;
+        c.shadowBlur = 6;
         if (p.shape === "rect") {
-          ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size / 1.5);
+          c.fillRect(-p.size / 2, -p.size / 3, p.size, p.size / 1.5);
         } else {
-          ctx.beginPath();
-          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-          ctx.fill();
+          c.beginPath();
+          c.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          c.fill();
         }
-        ctx.restore();
+        c.restore();
       }
       if (alive > 0) {
         rafRef.current = requestAnimationFrame(step);
       } else {
-        ctx.clearRect(0, 0, rect.width, rect.height);
+        c.clearRect(0, 0, rect.width, rect.height);
         rafRef.current = null;
       }
     }
@@ -115,7 +116,7 @@ export default function ConfettiBurst({ trigger }: { trigger: number }) {
     <canvas
       ref={canvasRef}
       aria-hidden
-      className="fixed inset-0 pointer-events-none z-[9999]"
+      className="fixed inset-0 pointer-events-none z-9999"
       style={{ width: "100%", height: "100%" }}
     />
   );

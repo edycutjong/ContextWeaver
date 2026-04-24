@@ -71,7 +71,7 @@ describe('KeyboardShortcuts', () => {
 
     // Test contenteditable
     const div = document.createElement('div');
-    div.isContentEditable = true;
+    div.setAttribute('contenteditable', 'true');
     document.body.appendChild(div);
     fireEvent.keyDown(div, { key: 'g' });
     expect(mockPush).not.toHaveBeenCalled();

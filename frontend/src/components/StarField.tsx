@@ -78,11 +78,12 @@ export default function StarField({
       }
       const dt = Math.min(33, now - last) / 16.67;
       last = now;
-      ctx.clearRect(0, 0, width, height);
+      const c = ctx as CanvasRenderingContext2D;
+      c.clearRect(0, 0, width, height);
 
       // Additive blending gives stars a glow halo for free without the
       // per-star shadowBlur that was the hot path.
-      ctx.globalCompositeOperation = "lighter";
+      c.globalCompositeOperation = "lighter";
 
       const stars = starsRef.current;
       const mx = mouseRef.current.x;
@@ -116,19 +117,19 @@ export default function StarField({
         const radius = s.r * s.z;
 
         // Core dot.
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${s.hue}, 90%, 75%, ${alpha})`;
-        ctx.fill();
+        c.beginPath();
+        c.arc(s.x, s.y, radius, 0, Math.PI * 2);
+        c.fillStyle = `hsla(${s.hue}, 90%, 75%, ${alpha})`;
+        c.fill();
 
         // Halo — larger translucent disc that blooms via additive blending.
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, radius * 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${s.hue}, 95%, 65%, ${alpha * 0.18})`;
-        ctx.fill();
+        c.beginPath();
+        c.arc(s.x, s.y, radius * 2.6, 0, Math.PI * 2);
+        c.fillStyle = `hsla(${s.hue}, 95%, 65%, ${alpha * 0.18})`;
+        c.fill();
       }
 
-      ctx.globalCompositeOperation = "source-over";
+      c.globalCompositeOperation = "source-over";
       rafRef.current = requestAnimationFrame(frame);
     }
 
