@@ -155,7 +155,7 @@ describe('Dashboard', () => {
     });
     
     act(() => {
-      mockEventSource.onmessage({ data: JSON.stringify({ step: 'annotate_complete', chunk_idx: 0, result: { entity: 'test' } }) });
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'annotate_complete', chunk_idx: 0, result: { entity: 'test', confidence: 0.9 } }) });
     });
     
     act(() => {

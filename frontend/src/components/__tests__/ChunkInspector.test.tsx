@@ -109,4 +109,44 @@ describe('ChunkInspector', () => {
     unmount();
     expect(document.body.style.overflow).toBe('');
   });
+
+  it('handles keyboard navigation when onPrevious and onNext are provided', () => {
+    const mockPrevious = jest.fn();
+    const mockNext = jest.fn();
+    
+    render(<ChunkInspector chunkData={mockChunkData} onClose={mockOnClose} onPrevious={mockPrevious} onNext={mockNext} />);
+    
+    // Test ArrowLeft
+    fireEvent.keyDown(window, { key: 'ArrowLeft' });
+    expect(mockPrevious).toHaveBeenCalledTimes(1);
+    
+    // Test ArrowRight
+    fireEvent.keyDown(window, { key: 'ArrowRight' });
+    expect(mockNext).toHaveBeenCalledTimes(1);
+    
+    // Test Escape
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles next and previous button clicks', () => {
+    const mockPrevious = jest.fn();
+    const mockNext = jest.fn();
+    
+    render(<ChunkInspector chunkData={mockChunkData} onClose={mockOnClose} onPrevious={mockPrevious} onNext={mockNext} />);
+    
+    const prevButton = screen.getByLabelText('Previous Chunk');
+    fireEvent.click(prevButton);
+    expect(mockPrevious).toHaveBeenCalledTimes(1);
+    
+    const nextButton = screen.getByLabelText('Next Chunk');
+    fireEvent.click(nextButton);
+    expect(mockNext).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles missing raw_text', () => {
+    const { raw_text, ...dataWithoutText } = mockChunkData;
+    render(<ChunkInspector chunkData={dataWithoutText} onClose={mockOnClose} />);
+    expect(screen.getByText('This is a very long legal document')).toBeInTheDocument();
+  });
 });

@@ -47,4 +47,18 @@ describe('ConfidenceHeatmap', () => {
     
     expect(onSelectChunk).toHaveBeenCalledWith(chunks[0]);
   });
+
+  it('renders tooltips with correct positions for first and subsequent rows', () => {
+    const chunks = Array.from({ length: 15 }).map((_, i) => ({ id: i, confidence: 0.8 }));
+    render(<ConfidenceHeatmap chunks={chunks} onSelectChunk={jest.fn()} />);
+    
+    const tooltips = screen.getAllByText(/Chunk \d+:/);
+    expect(tooltips).toHaveLength(15);
+    
+    // First row (index 0)
+    expect(tooltips[0]).toHaveClass('-bottom-9');
+    
+    // Second row (index 10)
+    expect(tooltips[10]).toHaveClass('-top-9');
+  });
 });

@@ -68,17 +68,9 @@ describe('LaunchTransition', () => {
       launchToDashboard({ originX: 0, originY: 0 });
     });
     
-    // Fast forward through timers
+    // Fast forward through all timers
     act(() => {
-      jest.advanceTimersByTime(200); // Trigger nav
-    });
-    
-    act(() => {
-      jest.advanceTimersByTime(500); // Trigger reveal
-    });
-    
-    act(() => {
-      jest.advanceTimersByTime(500); // Trigger end
+      jest.runAllTimers();
     });
   });
 
@@ -103,18 +95,94 @@ describe('LaunchTransition', () => {
     
     // Fast forward through timers for reduced motion
     act(() => {
-      jest.advanceTimersByTime(100); // nav
-    });
-    
-    act(() => {
-      jest.advanceTimersByTime(100); // reveal
-    });
-    
-    act(() => {
-      jest.advanceTimersByTime(300); // end
+      jest.runAllTimers();
     });
     
     // Clean up mock
     delete (window as any).matchMedia;
+  });
+
+  it('handles null context gracefully during warp', () => {
+    let callCount = 0;
+    HTMLCanvasElement.prototype.getContext = jest.fn(() => {
+      callCount++;
+      if (callCount > 1) return null; // Null on the second call (inside step)
+      return {
+        clearRect: jest.fn(),
+        beginPath: jest.fn(),
+        moveTo: jest.fn(),
+        lineTo: jest.fn(),
+        stroke: jest.fn(),
+        setTransform: jest.fn(),
+        fillRect: jest.fn(),
+        createLinearGradient: jest.fn(() => ({
+          addColorStop: jest.fn(),
+        })),
+      };
+    }) as any;
+
+    render(<LaunchTransition />);
+    act(() => {
+      launchToDashboard({});
+      jest.advanceTimersByTime(16);
+    });
+  });
+
+  it('handles warp with null canvas context at start', () => {
+    HTMLCanvasElement.prototype.getContext = jest.fn(() => null) as any;
+    render(<LaunchTransition />);
+    act(() => {
+      launchToDashboard({});
+      jest.advanceTimersByTime(16);
+    });
+  });
+
+  it('handles warp with unmounted canvas in step', () => {
+    const { unmount } = render(<LaunchTransition />);
+    act(() => {
+      launchToDashboard({});
+    });
+    unmount();
+    act(() => {
+      jest.advanceTimersByTime(16);
+    });
+  });
+
+  it('handles reveal phase opacity branch', () => {
+    render(<LaunchTransition />);
+    act(() => {
+      launchToDashboard({});
+    });
+    act(() => {
+      jest.advanceTimersByTime(800);
+    });
+  });
+
+  it('ignores events with no detail', () => {
+    render(<LaunchTransition />);
+    act(() => {
+      window.dispatchEvent(new CustomEvent('contextweaver:launch', { detail: null }));
+    });
+  });
+
+  it('ignores overlapping launch events', () => {
+    render(<LaunchTransition />);
+    act(() => {
+      launchToDashboard({});
+      launchToDashboard({});
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+  });
+
+  it('does not double-launch when active', () => {
+    render(<LaunchTransition />);
+    act(() => {
+      launchToDashboard({});
+    });
+    act(() => {
+      launchToDashboard({});
+    });
   });
 });

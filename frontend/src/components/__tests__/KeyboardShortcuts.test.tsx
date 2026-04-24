@@ -48,17 +48,41 @@ describe('KeyboardShortcuts', () => {
   it('ignores events from editable elements', () => {
     render(<KeyboardShortcuts />);
     
+    // Test input
     const input = document.createElement('input');
     document.body.appendChild(input);
     fireEvent.keyDown(input, { key: 'g' });
-    
     expect(mockPush).not.toHaveBeenCalled();
     document.body.removeChild(input);
+
+    // Test textarea
+    const textarea = document.createElement('textarea');
+    document.body.appendChild(textarea);
+    fireEvent.keyDown(textarea, { key: 'g' });
+    expect(mockPush).not.toHaveBeenCalled();
+    document.body.removeChild(textarea);
+
+    // Test select
+    const select = document.createElement('select');
+    document.body.appendChild(select);
+    fireEvent.keyDown(select, { key: 'g' });
+    expect(mockPush).not.toHaveBeenCalled();
+    document.body.removeChild(select);
+
+    // Test contenteditable
+    const div = document.createElement('div');
+    div.isContentEditable = true;
+    document.body.appendChild(div);
+    fireEvent.keyDown(div, { key: 'g' });
+    expect(mockPush).not.toHaveBeenCalled();
+    document.body.removeChild(div);
   });
 
   it('handles navigation shortcuts: g -> d', () => {
     render(<KeyboardShortcuts />);
     
+    fireEvent.keyDown(window, { key: 'g' });
+    // Press g again to test clearing existing timer
     fireEvent.keyDown(window, { key: 'g' });
     fireEvent.keyDown(window, { key: 'd' });
     

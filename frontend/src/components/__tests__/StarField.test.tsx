@@ -70,6 +70,29 @@ describe('StarField', () => {
     });
   });
 
+  it('handles null context gracefully', () => {
+    HTMLCanvasElement.prototype.getContext = jest.fn(() => null) as any;
+    render(<StarField />);
+  });
+
+  it('handles stars wrapping around screen', () => {
+    // Force initial positions out of bounds
+    const originalRandom = Math.random;
+    Math.random = jest.fn().mockReturnValue(1.5);
+    render(<StarField density={0.001} />);
+    
+    act(() => {
+      jest.advanceTimersByTime(50);
+    });
+
+    Math.random = jest.fn().mockReturnValue(-1.5);
+    act(() => {
+      jest.advanceTimersByTime(50);
+    });
+
+    Math.random = originalRandom;
+  });
+
   it('unmounts cleanly', () => {
     const { unmount } = render(<StarField />);
     unmount();

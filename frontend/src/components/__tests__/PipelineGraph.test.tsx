@@ -88,6 +88,24 @@ describe('PipelineGraph', () => {
     fireEvent.click(motionDivs[0]);
   });
 
+  it('handles edge with target node above source node', () => {
+    const nodes = [
+      { id: '1', label: '1', x: 100, y: 100 },
+      { id: '2', label: '2', x: 100, y: 50 }
+    ];
+    const edges = [{ source: '1', target: '2' }];
+    render(<PipelineGraph currentStep="init" nodes={nodes} edges={edges} />);
+  });
+
+  it('handles edge with target node below source node', () => {
+    const nodes = [
+      { id: '1', label: '1', x: 100, y: 100 },
+      { id: '2', label: '2', x: 100, y: 150 }
+    ];
+    const edges = [{ source: '1', target: '2' }];
+    render(<PipelineGraph currentStep="init" nodes={nodes} edges={edges} />);
+  });
+
   it('handles edge with missing node positions safely', () => {
     const edges = [{ source: 'doc', target: 'nonexistent' }];
     render(<PipelineGraph currentStep="init" edges={edges} />);

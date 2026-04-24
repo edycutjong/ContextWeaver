@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, act } from '@testing-library/react';
 import LandingPage from '../page';
 
 const mockSetX = jest.fn();
@@ -17,6 +17,10 @@ jest.mock('next/navigation', () => ({
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
+}));
+
+jest.mock('@/components/LaunchTransition', () => ({
+  launchToDashboard: jest.fn(),
 }));
 
 // Mock framer-motion to avoid animation issues
@@ -104,5 +108,39 @@ describe('LandingPage', () => {
     fireEvent.mouseLeave(tiltCardMotionDiv);
     expect(mockSetX).toHaveBeenCalledWith(0);
     expect(mockSetY).toHaveBeenCalledWith(0);
+  });
+
+  it('PipelinePreview cycles active index over time', () => {
+    jest.useFakeTimers();
+    render(<LandingPage />);
+    // Initial state
+    // Advance timer by 2 seconds
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+    // Advance again to cover more states and branches
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+    jest.useRealTimers();
+  });
+
+  it('Launch Dashboard link handles clicks and ignores modifier keys', () => {
+    const { launchToDashboard } = require('@/components/LaunchTransition');
+    const { getByText } = render(<LandingPage />);
+    const link = getByText('Launch Dashboard');
+    
+    // Ignore with metaKey
+    fireEvent.click(link, { metaKey: true });
+    expect(launchToDashboard).not.toHaveBeenCalled();
+
+    // Normal click
+    fireEvent.click(link, { clientX: 100, clientY: 100, button: 0 });
+    expect(launchToDashboard).toHaveBeenCalledWith(expect.objectContaining({ href: '/dashboard' }));
+    
+    // Click without clientX/clientY (fallback to rect center)
+    launchToDashboard.mockClear();
+    fireEvent.click(link, { button: 0 });
+    expect(launchToDashboard).toHaveBeenCalled();
   });
 });

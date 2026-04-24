@@ -165,10 +165,10 @@ describe('ToastLayer', () => {
     render(<ToastLayer />);
 
     act(() => {
-      pushToast({ title: 'Success', kind: 'success', duration: 0 });
-      pushToast({ title: 'Info', kind: 'info', duration: 0 });
-      pushToast({ title: 'Warning', kind: 'warning', duration: 0 });
-      pushToast({ title: 'Error', kind: 'error', duration: 0 });
+      pushToast({ title: 'Success', kind: 'success', duration: 1000 });
+      pushToast({ title: 'Info', kind: 'info', duration: 1000 });
+      pushToast({ title: 'Warning', kind: 'warning', duration: 1000 });
+      pushToast({ title: 'Error', kind: 'error', duration: 1000 });
     });
 
     expect(screen.getByText('Success')).toBeInTheDocument();
