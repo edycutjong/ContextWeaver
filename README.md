@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/src/app/icon.svg" alt="ContextWeaver Logo" width="150">
+  <img src="docs/assets/og-image.png" alt="ContextWeaver Banner" width="100%">
   <h1>ContextWeaver 🚀</h1>
   <p><em>Dynamic In-Context Learning Router for Intelligent Data Annotation</em></p>
   
@@ -14,6 +14,7 @@
   [![Qwen](https://img.shields.io/badge/Qwen-3--4B-blueviolet)](https://github.com/QwenLM/Qwen)
   [![Docker](https://img.shields.io/badge/Docker-24.0-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
   [![GNU Make](https://img.shields.io/badge/GNU_Make-4.3-424242?logo=gnu&logoColor=white)](https://www.gnu.org/software/make/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 </div>
 
 ---
@@ -114,19 +115,31 @@ sequenceDiagram
 * **FlagOS Open Computing Global Challenge**: Submitted to **Track 3 — Automatic Data Annotation with Large Models in Long-Context Scenarios**. We effectively optimize the context window for Qwen3-4B.
 
 **Jointly hosted by:**
+* DoraHacks
 * FlagOS Community
 * Beijing Academy of Artificial Intelligence (BAAI)
 * CCF Open Source Development Technology Committee (ODTC)
 
 ## 🚀 Run it Locally (For Judges)
 
-We have made running the project as frictionless as possible. Just use the included Makefile:
+We have made running the project as frictionless as possible. You can run it via Docker or locally using Make:
 
+### Option A: Docker (Recommended)
+1. **Clone the repo:** `git clone https://github.com/edycutjong/contextweaver.git`
+2. **Navigate to directory:** `cd contextweaver`
+3. **Run with Docker Compose:** `docker-compose up --build`
+*(The backend runs on port 8000 and the frontend on port 3000)*
+
+### Option B: Local Make
 1. **Clone the repo:** `git clone https://github.com/edycutjong/contextweaver.git`
 2. **Navigate to directory:** `cd contextweaver`
 3. **Install dependencies:** `make install`
 4. **Run the app:** `make dev`
 
 > **Note for Judges:** 
-> The `make dev` command will start both the FastAPI backend (Port 8000) and the Next.js frontend (Port 3000) concurrently.
+> Both options start the FastAPI backend and Next.js frontend concurrently.
 > Simply navigate to **http://localhost:3000** in your browser and click "Run Document Annotation" to see the live simulation!
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

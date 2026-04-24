@@ -18,7 +18,7 @@ backend:
 
 # Run frontend only
 frontend:
-	cd frontend && source ~/.nvm/nvm.sh && npm run dev
+	cd frontend && source ~/.nvm/nvm.sh && unset INIT_CWD && npm run dev
 
 # Run tests for both backend and frontend
 test: test-backend test-frontend
