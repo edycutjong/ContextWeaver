@@ -68,6 +68,7 @@ function SliderField({
 
 export default function SettingsPage() {
   const t = useTranslations('settings');
+  const tCommon = useTranslations('common');
   const [topK, setTopK] = useState(3);
   const [chunkSize, setChunkSize] = useState(512);
   const [chunkOverlap, setChunkOverlap] = useState(20);
@@ -177,65 +178,55 @@ export default function SettingsPage() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 relative z-10">
-              <motion.div
-                onClick={() => setActiveModel('fast')}
-                whileHover={{ y: -4, scale: 1.01 }}
-                className={`p-5 rounded-lg border cursor-pointer relative overflow-hidden transition-all ${activeModel === 'fast' ? 'bg-cyan-950/50 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]' : 'bg-slate-900/40 border-slate-800'}`}
-              >
-                <div className="absolute top-0 right-0 w-20 h-20 bg-cyan-500/20 blur-2xl pointer-events-none" />
-                <div className="flex justify-between items-center mb-3 relative">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className={`w-4 h-4 ${activeModel === 'fast' ? 'text-cyan-400' : 'text-slate-400'}`} />
-                    <span className="text-white font-semibold">{t('model.fastName')}</span>
-                  </div>
-                  {activeModel === 'fast' && <span className="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-1 rounded">{t('model.active')}</span>}
-                </div>
-                <div className={`text-xs font-mono mb-2 relative ${activeModel === 'fast' ? 'text-cyan-300' : 'text-slate-500'}`}>Qwen3-4B</div>
-                <p className="text-sm text-slate-400 relative">{t('model.fastDesc')}</p>
-                {activeModel === 'fast' && (
-                  <div className="mt-3 flex gap-1 relative">
-                    {[...Array(8)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ scaleY: 0.3 }}
-                        animate={{ scaleY: [0.3, 1, 0.3] }}
-                        transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.1 }}
-                        className="w-1 h-4 bg-cyan-400/70 rounded-full origin-bottom"
-                      />
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-
-              <motion.div
-                onClick={() => setActiveModel('deep')}
-                whileHover={{ y: -4, scale: 1.01 }}
-                className={`p-5 rounded-lg border cursor-pointer relative overflow-hidden transition-all ${activeModel === 'deep' ? 'bg-amber-950/50 border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]' : 'bg-slate-900/40 border-slate-800'}`}
-              >
-                <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/20 blur-2xl pointer-events-none" />
-                <div className="flex justify-between items-center mb-3 relative">
-                  <div className="flex items-center gap-2">
-                    <Cpu className={`w-4 h-4 ${activeModel === 'deep' ? 'text-amber-400' : 'text-slate-400'}`} />
-                    <span className="text-white font-semibold">{t('model.deepName')}</span>
-                  </div>
-                  {activeModel === 'deep' && <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2 py-1 rounded">{t('model.active')}</span>}
-                </div>
-                <div className={`text-xs font-mono mb-2 relative ${activeModel === 'deep' ? 'text-amber-300' : 'text-slate-500'}`}>Llama-3-70B</div>
-                <p className="text-sm text-slate-400 relative">{t('model.deepDesc')}</p>
-                {activeModel === 'deep' && (
-                  <div className="mt-3 flex gap-1 relative">
-                    {[...Array(8)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ scaleY: 0.3 }}
-                        animate={{ scaleY: [0.3, 1, 0.3] }}
-                        transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.1 }}
-                        className="w-1 h-4 bg-amber-400/70 rounded-full origin-bottom"
-                      />
-                    ))}
-                  </div>
-                )}
-              </motion.div>
+              {[
+                { id: 'fast', icon: Sparkles, color: 'cyan', commonKey: 'qwen' },
+                { id: 'deep', icon: Cpu, color: 'amber', commonKey: 'llama' }
+              ].map((model) => {
+                const Icon = model.icon;
+                const isActive = activeModel === model.id;
+                return (
+                  <motion.div
+                    key={model.id}
+                    onClick={() => setActiveModel(model.id)}
+                    whileHover={{ y: -4, scale: 1.01 }}
+                    className={`p-5 rounded-lg border cursor-pointer relative overflow-hidden transition-all ${
+                      isActive 
+                        ? `bg-${model.color}-950/50 border-${model.color}-500/30 shadow-[0_0_20px_rgba(${model.color === 'cyan' ? '6,182,212' : '245,158,11'},0.15)]` 
+                        : 'bg-slate-900/40 border-slate-800'
+                    }`}
+                  >
+                    <div className={`absolute top-0 right-0 w-20 h-20 bg-${model.color}-500/20 blur-2xl pointer-events-none`} />
+                    <div className="flex justify-between items-center mb-3 relative">
+                      <div className="flex items-center gap-2">
+                        <Icon className={`w-4 h-4 ${isActive ? `text-${model.color}-400` : 'text-slate-400'}`} />
+                        <span className="text-white font-semibold">{t(`model.${model.id}Name`)}</span>
+                      </div>
+                      {isActive && (
+                        <span className={`text-xs bg-${model.color}-500/20 text-${model.color}-${model.color === 'cyan' ? '300' : '400'} border border-${model.color}-500/40 px-2 py-1 rounded`}>
+                          {t('model.active')}
+                        </span>
+                      )}
+                    </div>
+                    <div className={`text-xs font-mono mb-2 relative ${isActive ? `text-${model.color}-300` : 'text-slate-500'}`}>
+                      {tCommon(model.commonKey)}
+                    </div>
+                    <p className="text-sm text-slate-400 relative">{t(`model.${model.id}Desc`)}</p>
+                    {isActive && (
+                      <div className="mt-3 flex gap-1 relative">
+                        {[...Array(8)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ scaleY: 0.3 }}
+                            animate={{ scaleY: [0.3, 1, 0.3] }}
+                            transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.1 }}
+                            className={`w-1 h-4 bg-${model.color}-400/70 rounded-full origin-bottom`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.section>
 

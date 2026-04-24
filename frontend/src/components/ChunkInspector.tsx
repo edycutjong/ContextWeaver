@@ -20,6 +20,7 @@ type InspectorProps = {
   onClose: () => void;
   onPrevious?: () => void;
   onNext?: () => void;
+  modelKey?: 'qwen' | 'llama';
 };
 
 function ConfidenceRing({ value }: { value: number }) {
@@ -56,8 +57,9 @@ function ConfidenceRing({ value }: { value: number }) {
   );
 }
 
-export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext }: InspectorProps) {
+export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext, modelKey = 'qwen' }: InspectorProps) {
   const t = useTranslations('inspector');
+  const tCommon = useTranslations('common');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -279,13 +281,24 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                 transition={{ delay: 0.35 }}
                 className="flex flex-col bg-slate-900/50 min-h-0 overflow-hidden"
               >
-                <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex justify-between items-center shrink-0">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded bg-purple-500/20 text-purple-400 text-xs flex items-center justify-center font-bold">3</span>
-                    {t('columns.response')}
-                  </div>
-                  <span className="text-xs bg-purple-900/60 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full">Qwen3-4B</span>
-                </div>
+                {(() => {
+                  const modelConfig = {
+                    qwen: { color: 'purple', label: tCommon('qwen') },
+                    llama: { color: 'amber', label: tCommon('llama') }
+                  }[modelKey] || { color: 'slate', label: modelKey };
+
+                  return (
+                    <div className="p-3 bg-slate-800/50 font-semibold text-slate-300 border-b border-slate-800 flex justify-between items-center shrink-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-5 h-5 rounded bg-${modelConfig.color}-500/20 text-${modelConfig.color}-400 text-xs flex items-center justify-center font-bold`}>3</span>
+                        {t('columns.response')}
+                      </div>
+                      <span className={`text-xs bg-${modelConfig.color}-900/60 text-${modelConfig.color}-300 border border-${modelConfig.color}-500/30 px-2 py-0.5 rounded-full`}>
+                        {modelConfig.label}
+                      </span>
+                    </div>
+                  );
+                })()}
                 <div className="p-4 overflow-y-auto flex-1">
                   <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">{t('prompt')}</h4>
                   <div className="bg-slate-950 p-2 rounded text-slate-400 font-mono text-[11px] mb-4 max-h-40 overflow-y-auto border border-slate-800 leading-relaxed">
