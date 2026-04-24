@@ -15,11 +15,11 @@ type HeatmapProps = {
   onSelectChunk: (chunk: HeatmapChunk) => void;
 };
 
-const LEGEND = [
-  { label: '≥90%', className: 'bg-green-500' },
-  { label: '≥80%', className: 'bg-green-400' },
-  { label: '≥70%', className: 'bg-amber-400' },
-  { label: '<70%', className: 'bg-red-500' },
+const LEGEND_KEYS = [
+  { key: 'high', className: 'bg-green-500' },
+  { key: 'midHigh', className: 'bg-green-400' },
+  { key: 'midLow', className: 'bg-amber-400' },
+  { key: 'low', className: 'bg-red-500' },
 ];
 
 function ChunkCell({ chunk, i, onSelectChunk }: { chunk: HeatmapChunk, i: number, onSelectChunk: (chunk: HeatmapChunk) => void }) {
@@ -101,10 +101,10 @@ export default function ConfidenceHeatmap({ chunks, onSelectChunk }: HeatmapProp
 
       <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-slate-500 shrink-0 border-t border-slate-800 pt-3">
         <span className="uppercase tracking-wider font-medium">{t('legend')}</span>
-        {LEGEND.map((item) => (
-          <div key={item.label} className="flex items-center gap-1.5">
+        {LEGEND_KEYS.map((item) => (
+          <div key={item.key} className="flex items-center gap-1.5">
             <span aria-hidden className={`w-2.5 h-2.5 rounded-sm ${item.className}`} />
-            <span>{item.label}</span>
+            <span>{t(`legendLabels.${item.key}`)}</span>
           </div>
         ))}
       </div>

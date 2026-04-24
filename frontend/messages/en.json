@@ -1,4 +1,21 @@
 {
+  "common": {
+    "ms": "ms",
+    "s": "s",
+    "kb": "KB",
+    "percent": "%",
+    "chromadb": "ChromaDB",
+    "qwen": "Qwen3-4B",
+    "llama": "Llama-3-70B",
+    "llm": "LLM",
+    "entities": {
+      "org": "ORG",
+      "person": "PERSON",
+      "loc": "LOC",
+      "date": "DATE",
+      "default": "ENTITY"
+    }
+  },
   "landing": {
     "badge": "FlagOS Open Computing Global Challenge",
     "titleLine1": "Dynamic In-Context",
@@ -67,6 +84,14 @@
       "complete": "Annotation Complete",
       "processing": "Processing...",
       "ready": "Ready"
+    },
+    "steps": {
+      "idle": "Idle",
+      "init": "Initializing",
+      "chunk_complete": "Chunking Complete",
+      "retrieve_complete": "Retrieval Complete",
+      "annotate_complete": "Annotation Complete",
+      "done": "Done"
     },
     "metrics": {
       "stage": "Stage",
@@ -160,7 +185,17 @@
       "pending": "Pending",
       "filtered": "Filtered"
     },
-    "empty": "No queries match \"{q}\""
+    "empty": "No queries match \"{q}\"",
+    "mock": {
+      "q1": "What are the core features of FlagOS?",
+      "q2": "How does the ContextWeaver router work?",
+      "q3": "Explain ChromaDB integration",
+      "q4": "What is the capital of France?",
+      "t1": "2 mins ago",
+      "t2": "15 mins ago",
+      "t3": "1 hour ago",
+      "t4": "2 hours ago"
+    }
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -272,6 +307,12 @@
     "title": "Confidence Heatmap",
     "legend": "Legend",
     "chunk": "Chunk {i}: {confidence}",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "legendLabels": {
+      "high": "90-100%",
+      "midHigh": "70-89%",
+      "midLow": "40-69%",
+      "low": "< 40%"
+    }
   }
 }

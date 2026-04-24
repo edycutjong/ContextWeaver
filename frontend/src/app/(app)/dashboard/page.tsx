@@ -30,9 +30,9 @@ const graphDefs: Record<GraphType, GraphDef> = {
     nodes: [
       { id: 'doc', nodeKey: 'document', x: 0, y: 100, icon: FileText },
       { id: 'chunker', nodeKey: 'chunker', x: 250, y: 100, icon: Scissors },
-      { id: 'vectordb', nodeKey: 'chromadb', literal: 'ChromaDB', x: 500, y: 20, icon: ChromaIcon },
+      { id: 'vectordb', nodeKey: 'chromadb', x: 500, y: 20, icon: ChromaIcon },
       { id: 'prompt', nodeKey: 'promptBuilder', x: 500, y: 200, icon: FileEdit },
-      { id: 'qwen', nodeKey: 'qwen', literal: 'Qwen3-4B', x: 750, y: 100, icon: QwenIcon },
+      { id: 'qwen', nodeKey: 'qwen', x: 750, y: 100, icon: QwenIcon },
       { id: 'results', nodeKey: 'results', x: 1000, y: 100, icon: BarChart },
     ],
     edges: [
@@ -58,7 +58,7 @@ const graphDefs: Record<GraphType, GraphDef> = {
       { id: 'query', nodeKey: 'userQuery', x: 0, y: 100, icon: Search },
       { id: 'embed', nodeKey: 'embeddings', x: 250, y: 100, icon: Calculator },
       { id: 'vectordb', nodeKey: 'vectorDb', x: 500, y: 100, icon: Database },
-      { id: 'llm', nodeKey: 'llm', literal: 'LLM', x: 750, y: 100, icon: Bot },
+      { id: 'llm', nodeKey: 'llm', x: 750, y: 100, icon: Bot },
       { id: 'output', nodeKey: 'output', x: 1000, y: 100, icon: FileText },
     ],
     edges: [
@@ -184,6 +184,7 @@ function AnimatedNumber({ value, decimals = 0, suffix = '' }: { value: number; d
 export default function Dashboard() {
   const t = useTranslations('dashboard');
   const tNodes = useTranslations('dashboard.nodes');
+  const tCommon = useTranslations('common');
   const tSse = useTranslations('sseLog');
   const graphs: Record<GraphType, { nodes: NodeData[]; edges: EdgeData[]; isNodeActive: GraphDef['isNodeActive'] }> = React.useMemo(() => {
     const out = {} as Record<GraphType, { nodes: NodeData[]; edges: EdgeData[]; isNodeActive: GraphDef['isNodeActive'] }>;
@@ -204,6 +205,7 @@ export default function Dashboard() {
     return out;
   }, [tNodes]);
   const [pipelineStep, setPipelineStep] = useState<string>('idle');
+  const [activeModel, setActiveModel] = useState<string>('fast');
   const [selectedGraph, setSelectedGraph] = useState<GraphType>('contextweaver');
   const [logMessages, setLogMessages] = useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -549,6 +551,7 @@ export default function Dashboard() {
                     onClose={() => setSelectedChunk(null)}
                     onPrevious={handlePrevious}
                     onNext={handleNext}
+                    modelKey={activeModel === 'deep' ? 'llama' : 'qwen'}
                   />
                 );
               })()}
@@ -648,7 +651,9 @@ export default function Dashboard() {
                     <div className="grid grid-cols-2 gap-2 mb-3 shrink-0">
                       <div className="bg-slate-900/70 border border-cyan-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 overflow-hidden">
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{t('metrics.stage')}</p>
-                        <p className={`text-sm font-bold font-mono mt-0.5 truncate ${/* istanbul ignore next -- this block only renders when pipelineStep !== 'idle' */ pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`} title={pipelineStep}>{pipelineStep}</p>
+                        <p className={`text-sm font-bold font-mono mt-0.5 truncate ${/* istanbul ignore next -- this block only renders when pipelineStep !== 'idle' */ pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`} title={pipelineStep}>
+                          {t(`steps.${pipelineStep}`, { defaultValue: pipelineStep })}
+                        </p>
                       </div>
                       <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{t('metrics.chunks')}</p>
@@ -666,7 +671,7 @@ export default function Dashboard() {
                               return (scored.reduce((a, c) => a + c.confidence, 0) / scored.length) * 100;
                             })()}
                             decimals={1}
-                            suffix="%"
+                            suffix={tCommon('percent')}
                           />
                         </p>
                       </div>
@@ -674,7 +679,7 @@ export default function Dashboard() {
                         <div>
                           <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{t('metrics.elapsed')}</p>
                           <p className={`text-sm font-bold font-mono mt-0.5 tabular-nums ${isRunning || finalResult ? 'text-amber-300' : 'text-slate-500'}`}>
-                            {(elapsedMs / 1000).toFixed(1)}s
+                            {(elapsedMs / 1000).toFixed(1)}{tCommon('s')}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
@@ -722,7 +727,9 @@ export default function Dashboard() {
                                   transition={{ delay: i * 0.05, type: 'spring', stiffness: 350, damping: 22 }}
                                   className={`inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
                                 >
-                                  <span className="text-[10px] font-bold opacity-60">{label}</span>
+                                  <span className="text-[10px] font-bold opacity-60">
+                                    {tCommon(`entities.${label.toLowerCase()}`, { defaultValue: label })}
+                                  </span>
                                   {entity.value || entity}
                                 </motion.span>
                               );

@@ -1,4 +1,21 @@
 {
+  "common": {
+    "ms": "ms",
+    "s": "秒",
+    "kb": "KB",
+    "percent": "%",
+    "chromadb": "ChromaDB",
+    "qwen": "Qwen3-4B",
+    "llama": "Llama-3-70B",
+    "llm": "大语言模型",
+    "entities": {
+      "org": "组织",
+      "person": "人员",
+      "loc": "地点",
+      "date": "日期",
+      "default": "实体"
+    }
+  },
   "landing": {
     "badge": "FlagOS 开放计算全球挑战赛",
     "titleLine1": "动态上下文学习",
@@ -67,6 +84,14 @@
       "complete": "标注完成",
       "processing": "处理中...",
       "ready": "就绪"
+    },
+    "steps": {
+      "idle": "空闲",
+      "init": "初始化中",
+      "chunk_complete": "分块完成",
+      "retrieve_complete": "检索完成",
+      "annotate_complete": "标注完成",
+      "done": "完成"
     },
     "metrics": {
       "stage": "阶段",
@@ -160,7 +185,17 @@
       "pending": "等待中",
       "filtered": "已过滤"
     },
-    "empty": "未找到与“{q}”匹配的查询"
+    "empty": "没有找到与 \"{q}\" 匹配的查询",
+    "mock": {
+      "q1": "FlagOS 的核心功能是什么？",
+      "q2": "ContextWeaver 路由器是如何工作的？",
+      "q3": "解释 ChromaDB 的集成方式",
+      "q4": "法国的首都是哪里？",
+      "t1": "2 分钟前",
+      "t2": "15 分钟前",
+      "t3": "1 小时前",
+      "t4": "2 小时前"
+    }
   },
   "nav": {
     "dashboard": "仪表盘",
@@ -272,6 +307,12 @@
     "title": "置信度热力图",
     "legend": "图例",
     "chunk": "分块 {i}：{confidence}",
-    "processing": "处理中..."
+    "processing": "处理中...",
+    "legendLabels": {
+      "high": "90-100%",
+      "midHigh": "70-89%",
+      "midLow": "40-69%",
+      "low": "< 40%"
+    }
   }
 }

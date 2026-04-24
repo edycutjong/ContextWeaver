@@ -5,12 +5,6 @@ import { Search, Clock, CheckCircle2, AlertCircle, TrendingUp, Zap, Database, Ac
 import { motion, useMotionValue, animate } from "framer-motion";
 import { useTranslations } from "next-intl";
 
-const MOCK_HISTORY = [
-  { id: "1", query: "What are the core features of FlagOS?", time: "2 mins ago", latency: 245, status: "success", tokens: 124 },
-  { id: "2", query: "How does the ContextWeaver router work?", time: "15 mins ago", latency: 312, status: "success", tokens: 342 },
-  { id: "3", query: "Explain ChromaDB integration", time: "1 hour ago", latency: 185, status: "success", tokens: 89 },
-  { id: "4", query: "What is the capital of France?", time: "2 hours ago", latency: 45, status: "filtered", tokens: 0 },
-];
 
 function AnimatedStat({ value, decimals = 0, suffix = '' }: { value: number; decimals?: number; suffix?: string }) {
   const motionVal = useMotionValue(0);
@@ -28,17 +22,26 @@ function AnimatedStat({ value, decimals = 0, suffix = '' }: { value: number; dec
 
 export default function HistoryPage() {
   const t = useTranslations('history');
+  const tCommon = useTranslations('common');
   const [search, setSearch] = useState("");
-  const filtered = MOCK_HISTORY.filter((h) => h.query.toLowerCase().includes(search.toLowerCase()));
-  const successCount = MOCK_HISTORY.filter((h) => h.status === "success").length;
-  const avgLatency = Math.round(MOCK_HISTORY.reduce((a, h) => a + h.latency, 0) / MOCK_HISTORY.length);
-  const totalTokens = MOCK_HISTORY.reduce((a, h) => a + h.tokens, 0);
-  const successRate = (successCount / MOCK_HISTORY.length) * 100;
+  
+  const history = React.useMemo(() => [
+    { id: "1", query: t('mock.q1'), time: t('mock.t1'), latency: 245, status: "success", tokens: 124 },
+    { id: "2", query: t('mock.q2'), time: t('mock.t2'), latency: 312, status: "success", tokens: 342 },
+    { id: "3", query: t('mock.q3'), time: t('mock.t3'), latency: 185, status: "success", tokens: 89 },
+    { id: "4", query: t('mock.q4'), time: t('mock.t4'), latency: 45, status: "filtered", tokens: 0 },
+  ], [t]);
+
+  const filtered = history.filter((h) => h.query.toLowerCase().includes(search.toLowerCase()));
+  const successCount = history.filter((h) => h.status === "success").length;
+  const avgLatency = Math.round(history.reduce((a, h) => a + h.latency, 0) / history.length);
+  const totalTokens = history.reduce((a, h) => a + h.tokens, 0);
+  const successRate = (successCount / history.length) * 100;
 
   const stats: Array<{ label: string; value: number; icon: React.ElementType; color: string; decimals?: number; suffix?: string }> = [
-    { label: t('stats.totalQueries'), value: MOCK_HISTORY.length, icon: Database, color: "cyan" },
-    { label: t('stats.avgLatency'), value: avgLatency, icon: Zap, color: "purple", suffix: "ms" },
-    { label: t('stats.successRate'), value: successRate, icon: TrendingUp, color: "emerald", decimals: 1, suffix: "%" },
+    { label: t('stats.totalQueries'), value: history.length, icon: Database, color: "cyan" },
+    { label: t('stats.avgLatency'), value: avgLatency, icon: Zap, color: "purple", suffix: tCommon('ms') },
+    { label: t('stats.successRate'), value: successRate, icon: TrendingUp, color: "emerald", decimals: 1, suffix: tCommon('percent') },
     { label: t('stats.tokensUsed'), value: totalTokens, icon: Activity, color: "amber" },
   ];
 
@@ -142,7 +145,7 @@ export default function HistoryPage() {
                       </div>
                     </td>
                     <td className={`px-6 py-4 text-sm font-mono ${latencyColor}`}>
-                      {item.latency}ms
+                      {item.latency}{tCommon('ms')}
                     </td>
                     <td className="px-6 py-4 text-slate-300 text-sm font-mono">
                       {item.tokens}
