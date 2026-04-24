@@ -65,7 +65,6 @@ export default function ConfettiBurst({ trigger }: { trigger: number }) {
     partsRef.current = fresh;
 
     function step() {
-      if (!ctx) return;
       ctx.clearRect(0, 0, rect.width, rect.height);
       const parts = partsRef.current;
       let alive = 0;

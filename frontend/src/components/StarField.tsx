@@ -78,7 +78,6 @@ export default function StarField({
       }
       const dt = Math.min(33, now - last) / 16.67;
       last = now;
-      if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
       // Additive blending gives stars a glow halo for free without the
