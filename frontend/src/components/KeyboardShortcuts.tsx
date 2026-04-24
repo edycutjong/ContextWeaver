@@ -61,7 +61,6 @@ export default function KeyboardShortcuts() {
       if (key === "g") {
         e.preventDefault();
         pendingG = true;
-        if (gTimer !== null) window.clearTimeout(gTimer);
         gTimer = window.setTimeout(clearPendingG, 900);
         return;
       }
