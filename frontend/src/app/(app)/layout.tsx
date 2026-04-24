@@ -12,7 +12,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Header />
       <main className="flex-1 w-full relative z-10 flex flex-col">
         {/* Background decorations - fixed to viewport */}
-        <div className="fixed top-0 left-0 w-full h-[500px] bg-gradient-to-b from-cyan-900/20 to-transparent pointer-events-none z-[-1]" />
+        <div className="fixed top-0 left-0 w-full h-[500px] bg-linear-to-b from-cyan-900/20 to-transparent pointer-events-none z-[-1]" />
         <div
           className="aurora-blob fixed top-0 right-0 w-[500px] h-[500px] rounded-full bg-cyan-500/5 blur-3xl pointer-events-none z-[-1]"
           style={{ '--aurora-duration': '20s', '--aurora-delay': '0s' } as React.CSSProperties}

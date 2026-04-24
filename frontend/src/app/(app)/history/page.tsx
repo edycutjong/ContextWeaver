@@ -52,7 +52,7 @@ export default function HistoryPage() {
       <div className="max-w-7xl mx-auto w-full">
         <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
+            <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
               Query History
             </h1>
             <p className="text-slate-400 font-medium tracking-wide">View past RAG queries, generation latency, and token usage.</p>
@@ -145,7 +145,7 @@ export default function HistoryPage() {
                     <td className="px-6 py-4 text-slate-300 text-sm font-mono">
                       {item.tokens}
                     </td>
-                    <td className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden />
+                    <td className="absolute left-0 top-0 bottom-0 w-0.5 bg-linear-to-b from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden />
                   </motion.tr>
                 );
               })}

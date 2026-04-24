@@ -137,7 +137,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
               className="bg-slate-900 border border-slate-700 rounded-xl w-full max-h-[90vh] flex flex-col shadow-[0_0_60px_rgba(6,182,212,0.15)] overflow-hidden relative shrink-0"
             >
             {/* Subtle gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none" />
 
             {/* Header */}
             <div className="px-6 py-4 border-b border-slate-700/50 bg-slate-800/30 flex justify-between items-center relative z-10 backdrop-blur-md">
@@ -265,7 +265,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext 
                             initial={{ width: 0 }}
                             animate={{ width: `${simPct}%` }}
                             transition={{ delay: 0.5 + i * 0.1, duration: 0.8, ease: 'easeOut' }}
-                            className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 shadow-[0_0_6px_rgba(6,182,212,0.6)]"
+                            className="h-full bg-linear-to-r from-cyan-500 to-purple-500 shadow-[0_0_6px_rgba(6,182,212,0.6)]"
                           />
                         </div>
                         <div className="text-slate-300 mb-2 font-mono text-[11px] p-2 bg-slate-900/80 rounded leading-relaxed">{ex.text}</div>
