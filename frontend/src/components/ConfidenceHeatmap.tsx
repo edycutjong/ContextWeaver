@@ -59,10 +59,11 @@ function ChunkCell({ chunk, i, onSelectChunk }: { chunk: HeatmapChunk, i: number
       whileTap={{ scale: 0.9 }}
     >
       <motion.div
+        key={confidence > 0 ? 'filled' : 'empty'}
         className={`absolute inset-0 rounded ${bgColor}`}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 18 }}
       />
       <span
         className={`opacity-0 group-hover:opacity-100 absolute ${tooltipPosition} left-1/2 -translate-x-1/2 bg-slate-950/95 backdrop-blur-sm border ${borderTint} text-xs text-white px-2 py-1 rounded-md pointer-events-none z-100 whitespace-nowrap shadow-lg transition-opacity`}

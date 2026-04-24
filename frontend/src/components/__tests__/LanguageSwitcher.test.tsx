@@ -30,101 +30,51 @@ describe('LanguageSwitcher Component', () => {
     (useRouter as jest.Mock).mockReturnValue({ refresh: mockRefresh });
     (useTranslations as jest.Mock).mockReturnValue(mockT);
     (useLocale as jest.Mock).mockReturnValue('en');
-    
-    // Clear cookie and localStorage
+
     document.cookie = 'NEXT_LOCALE=; Max-Age=0; path=/';
     localStorage.clear();
   });
 
-  it('renders correctly in closed state', () => {
+  it('renders both language buttons always visible', () => {
     render(<LanguageSwitcher />);
-    expect(screen.getByText('English')).toBeInTheDocument();
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
-  });
-
-  it('opens and closes the menu on click', () => {
-    render(<LanguageSwitcher />);
-    const button = screen.getByRole('button');
-    
-    // Open
-    fireEvent.click(button);
-    expect(screen.getByRole('menu')).toBeInTheDocument();
+    expect(screen.getByText('EN')).toBeInTheDocument();
     expect(screen.getByText('中文')).toBeInTheDocument();
-    
-    // Close
-    fireEvent.click(button);
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 
-  it('closes menu on click outside', () => {
-    render(
-      <div>
-        <div data-testid="outside">Outside</div>
-        <LanguageSwitcher />
-      </div>
-    );
-    
-    fireEvent.click(screen.getByRole('button'));
-    expect(screen.getByRole('menu')).toBeInTheDocument();
-    
-    fireEvent.mouseDown(screen.getByTestId('outside'));
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
-  });
-
-  it('closes menu on Escape key', () => {
+  it('active locale button has aria-pressed true, inactive has false', () => {
     render(<LanguageSwitcher />);
-    
-    fireEvent.click(screen.getByRole('button'));
-    expect(screen.getByRole('menu')).toBeInTheDocument();
-    
-    // Non-escape key doesn't close
-    fireEvent.keyDown(window, { key: 'Tab' });
-    expect(screen.getByRole('menu')).toBeInTheDocument();
-
-    // Escape key closes
-    fireEvent.keyDown(window, { key: 'Escape' });
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    expect(screen.getByText('EN').closest('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText('中文').closest('button')).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('remains open when clicking inside the container', () => {
+  it('switches to Chinese and refreshes router when 中文 is clicked', () => {
     render(<LanguageSwitcher />);
-    
-    const button = screen.getByRole('button');
-    fireEvent.click(button);
-    expect(screen.getByRole('menu')).toBeInTheDocument();
-    
-    // Clicking the menu (inside the container) should not close it
-    fireEvent.mouseDown(screen.getByRole('menu'));
-    expect(screen.getByRole('menu')).toBeInTheDocument();
-  });
 
-  it('switches language and refreshes router', () => {
-    render(<LanguageSwitcher />);
-    
-    fireEvent.click(screen.getByRole('button'));
-    const zhButton = screen.getByText('中文');
-    
-    fireEvent.click(zhButton);
-    
-    // Check if current locale display updated
-    expect(screen.getByText('中文')).toBeInTheDocument();
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
-    
-    // Check if router.refresh was called
+    fireEvent.click(screen.getByText('中文'));
+
+    expect(screen.getByText('中文').closest('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText('EN').closest('button')).toHaveAttribute('aria-pressed', 'false');
     expect(mockRefresh).toHaveBeenCalled();
-    
-    // Check cookie
     expect(document.cookie).toContain('NEXT_LOCALE=zh');
-    
-    // Check localStorage
+
     const settings = JSON.parse(localStorage.getItem('contextweaver_settings') || '{}');
     expect(settings.language).toBe('zh');
   });
 
+  it('switches back to English and refreshes router when EN is clicked', () => {
+    (useLocale as jest.Mock).mockReturnValue('zh');
+    render(<LanguageSwitcher />);
+
+    fireEvent.click(screen.getByText('EN'));
+
+    expect(screen.getByText('EN').closest('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(mockRefresh).toHaveBeenCalled();
+    expect(document.cookie).toContain('NEXT_LOCALE=en');
+  });
+
   it('setLocaleCookie handles localStorage errors gracefully', () => {
     const spySetItem = jest.spyOn(Storage.prototype, 'setItem');
-    
-    // First call throws, second call succeeds (mocking the catch block)
+
     spySetItem.mockImplementationOnce(() => {
       throw new Error('quota exceeded');
     }).mockImplementation(() => {
@@ -132,15 +82,15 @@ describe('LanguageSwitcher Component', () => {
     });
 
     expect(() => setLocaleCookie('zh' as Locale)).not.toThrow();
-    
+
     spySetItem.mockRestore();
   });
 
   it('setLocaleCookie handles existing localStorage data', () => {
     localStorage.setItem('contextweaver_settings', JSON.stringify({ theme: 'dark' }));
-    
+
     setLocaleCookie('zh' as Locale);
-    
+
     const settings = JSON.parse(localStorage.getItem('contextweaver_settings') || '{}');
     expect(settings.theme).toBe('dark');
     expect(settings.language).toBe('zh');
