@@ -76,6 +76,8 @@ jest.mock('framer-motion', () => {
 beforeAll(() => {
   // Mock scrollIntoView since JSDOM doesn't implement it
   HTMLElement.prototype.scrollIntoView = jest.fn();
+  // Mock getContext for ConfettiBurst since JSDOM doesn't implement it
+  HTMLCanvasElement.prototype.getContext = jest.fn(() => null) as any;
 });
 
 describe('Dashboard', () => {
