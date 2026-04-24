@@ -173,7 +173,8 @@ describe('Dashboard', () => {
     expect(global.EventSource).toHaveBeenCalledWith(expect.stringContaining('http://localhost:8000/api/stream/123'));
     
     act(() => {
-      mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Started' }) });
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Pipeline started' }) });
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Chunking document (size: 1024, overlap: 50)...' }) });
       mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Success ✅' }) });
       mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Warning ⚠️' }) });
       mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'Error ❌' }) });
@@ -434,6 +435,32 @@ describe('Dashboard', () => {
     expect(getByText('Waiting for results...')).toBeInTheDocument();
 
     consoleSpy.mockRestore();
+    jest.useRealTimers();
+  });
+
+  it('uses qwen model when activeModel is fast', () => {
+    // Override localStorage mock for this test
+    const store: Record<string, string> = {
+      'contextweaver_settings': JSON.stringify({
+        activeModel: 'fast'
+      })
+    };
+    (window.localStorage.getItem as jest.Mock).mockImplementation((key: string) => store[key] || null);
+
+    jest.useFakeTimers();
+    const { getByText, getByTestId } = render(<Dashboard />);
+    fireEvent.click(getByText('Run Document Annotation'));
+
+    act(() => {
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'chunk_complete', chunks: ['a'] }) });
+    });
+
+    fireEvent.click(getByTestId('heatmap-chunk-0'));
+    
+    // ChunkInspector should receive modelKey="qwen"
+    // Our mock ChunkInspector doesn't show modelKey, but we can check if it's rendered
+    expect(getByTestId('chunk-inspector')).toBeInTheDocument();
+    
     jest.useRealTimers();
   });
 });

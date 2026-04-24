@@ -77,8 +77,25 @@ describe('LanguageSwitcher Component', () => {
     fireEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('menu')).toBeInTheDocument();
     
+    // Non-escape key doesn't close
+    fireEvent.keyDown(window, { key: 'Tab' });
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+
+    // Escape key closes
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
+
+  it('remains open when clicking inside the container', () => {
+    render(<LanguageSwitcher />);
+    
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    
+    // Clicking the menu (inside the container) should not close it
+    fireEvent.mouseDown(screen.getByRole('menu'));
+    expect(screen.getByRole('menu')).toBeInTheDocument();
   });
 
   it('switches language and refreshes router', () => {

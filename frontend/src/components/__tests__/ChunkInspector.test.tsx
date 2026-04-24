@@ -155,4 +155,9 @@ describe('ChunkInspector', () => {
     render(<ChunkInspector chunkData={dataWithoutText} onClose={mockOnClose} />);
     expect(screen.getByText('This is a very long legal document')).toBeInTheDocument();
   });
+
+  it('renders fallback model labels for unknown modelKey', () => {
+    render(<ChunkInspector chunkData={mockChunkData} onClose={mockOnClose} modelKey="custom-model" />);
+    expect(screen.getByText('custom-model')).toBeInTheDocument();
+  });
 });
