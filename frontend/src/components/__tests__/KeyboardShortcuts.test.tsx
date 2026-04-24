@@ -12,17 +12,21 @@ jest.mock('next/navigation', () => ({
 
 describe('KeyboardShortcuts', () => {
   let dispatchEventSpy: jest.SpyInstance;
+  let originalPathname: string;
+  
+  beforeAll(() => {
+    originalPathname = window.location.pathname;
+  });
+
+  afterAll(() => {
+    window.history.pushState({}, '', originalPathname);
+  });
   
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();
     dispatchEventSpy = jest.spyOn(window, 'dispatchEvent');
-    
-    // Mock pathname
-    Object.defineProperty(window, 'location', {
-      value: { pathname: '/dashboard' },
-      writable: true
-    });
+    window.history.pushState({}, '', '/dashboard');
   });
 
   afterEach(() => {
@@ -118,24 +122,21 @@ describe('KeyboardShortcuts', () => {
     
     fireEvent.keyDown(window, { key: 'r' });
     
-    expect(dispatchEventSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'contextweaver:run' })
-    );
+    const calls = dispatchEventSpy.mock.calls;
+    const hasRunEvent = calls.some(call => call[0].type === 'contextweaver:run');
+    expect(hasRunEvent).toBe(true);
   });
 
   it('ignores r if not on dashboard', () => {
-    Object.defineProperty(window, 'location', {
-      value: { pathname: '/history' },
-      writable: true
-    });
+    window.history.pushState({}, '', '/history');
     
     render(<KeyboardShortcuts />);
     
     fireEvent.keyDown(window, { key: 'r' });
     
-    expect(dispatchEventSpy).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'contextweaver:run' })
-    );
+    const calls = dispatchEventSpy.mock.calls;
+    const hasRunEvent = calls.some(call => call[0].type === 'contextweaver:run');
+    expect(hasRunEvent).toBe(false);
   });
 
   it('cleans up listeners on unmount', () => {
