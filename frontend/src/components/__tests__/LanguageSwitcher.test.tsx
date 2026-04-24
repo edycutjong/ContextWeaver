@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import LanguageSwitcher, { setLocaleCookie } from '../LanguageSwitcher';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { type Locale } from '@/i18n/config';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -113,7 +114,7 @@ describe('LanguageSwitcher Component', () => {
       // Success for subsequent calls
     });
 
-    expect(() => setLocaleCookie('zh' as any)).not.toThrow();
+    expect(() => setLocaleCookie('zh' as Locale)).not.toThrow();
     
     spySetItem.mockRestore();
   });
@@ -121,7 +122,7 @@ describe('LanguageSwitcher Component', () => {
   it('setLocaleCookie handles existing localStorage data', () => {
     localStorage.setItem('contextweaver_settings', JSON.stringify({ theme: 'dark' }));
     
-    setLocaleCookie('zh' as any);
+    setLocaleCookie('zh' as Locale);
     
     const settings = JSON.parse(localStorage.getItem('contextweaver_settings') || '{}');
     expect(settings.theme).toBe('dark');

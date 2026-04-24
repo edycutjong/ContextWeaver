@@ -1,7 +1,7 @@
 import { translateSseMessage } from '../sseMessages';
 
 describe('translateSseMessage', () => {
-  const mockT = jest.fn((key: string, vars?: any) => {
+  const mockT = jest.fn((key: string, vars?: Record<string, string | number>) => {
     if (vars) {
       return `${key}_${Object.values(vars).join('_')}`;
     }

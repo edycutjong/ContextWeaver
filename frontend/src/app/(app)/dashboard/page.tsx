@@ -205,7 +205,7 @@ export default function Dashboard() {
     return out;
   }, [tNodes]);
   const [pipelineStep, setPipelineStep] = useState<string>('idle');
-  const [activeModel, setActiveModel] = useState<string>('fast');
+  const [activeModel] = useState<string>('fast');
   const [selectedGraph, setSelectedGraph] = useState<GraphType>('contextweaver');
   const [logMessages, setLogMessages] = useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -237,6 +237,7 @@ export default function Dashboard() {
     }
     /* eslint-disable react-hooks/set-state-in-effect */
     setPipelineStep('idle');
+
     setLogMessages([]);
     setDisplayedLogs([]);
     setProcessedChunks([]);
