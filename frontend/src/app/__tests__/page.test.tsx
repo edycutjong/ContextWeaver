@@ -5,6 +5,20 @@ import LandingPage from '../page';
 const mockSetX = jest.fn();
 const mockSetY = jest.fn();
 
+// Mock next/navigation so useRouter().prefetch() works in tests.
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    prefetch: jest.fn(),
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+  }),
+  usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 // Mock framer-motion to avoid animation issues
 jest.mock('framer-motion', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports

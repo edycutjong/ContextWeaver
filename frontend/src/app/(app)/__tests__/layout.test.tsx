@@ -8,6 +8,36 @@ jest.mock('@/components/Header', () => {
   };
 });
 
+jest.mock('@/components/StarField', () => {
+  const Mock = () => <div data-testid="starfield" />;
+  Mock.displayName = 'MockStarField';
+  return Mock;
+});
+
+jest.mock('@/components/CommandPalette', () => {
+  const Mock = () => <div data-testid="command-palette" />;
+  Mock.displayName = 'MockCommandPalette';
+  return Mock;
+});
+
+jest.mock('@/components/ToastLayer', () => {
+  const Mock = () => <div data-testid="toast-layer" />;
+  Mock.displayName = 'MockToastLayer';
+  return Mock;
+});
+
+jest.mock('@/components/ShortcutsOverlay', () => {
+  const Mock = () => <div data-testid="shortcuts-overlay" />;
+  Mock.displayName = 'MockShortcutsOverlay';
+  return Mock;
+});
+
+jest.mock('@/components/KeyboardShortcuts', () => {
+  const Mock = () => null;
+  Mock.displayName = 'MockKeyboardShortcuts';
+  return Mock;
+});
+
 describe('AppLayout', () => {
   it('renders Header and children', () => {
     const { getByTestId, getByText } = render(

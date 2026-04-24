@@ -9,6 +9,12 @@ jest.mock('next/font/google', () => ({
   Orbitron: () => ({ variable: '--font-orbitron' }),
 }));
 
+jest.mock('@/components/LaunchTransition', () => {
+  const Mock = () => null;
+  Mock.displayName = 'MockLaunchTransition';
+  return Mock;
+});
+
 describe('RootLayout', () => {
   it('renders children within html and body tags', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});

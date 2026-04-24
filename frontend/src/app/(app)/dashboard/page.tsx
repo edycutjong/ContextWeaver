@@ -6,6 +6,9 @@ import PipelineGraph from '@/components/PipelineGraph';
 import ChunkInspector from '@/components/ChunkInspector';
 import ConfidenceHeatmap from '@/components/ConfidenceHeatmap';
 import { NodeData, EdgeData } from '@/components/PipelineGraph';
+import ThroughputSparkline from '@/components/ThroughputSparkline';
+import ConfettiBurst from '@/components/ConfettiBurst';
+import { pushToast } from '@/components/ToastLayer';
 import {
   FileText, Scissors, Database, FileEdit, BarChart, Search, Calculator, Bot, ClipboardList, TrafficCone, UserSearch, Code2, CheckSquare, Combine, Target, PenTool, Scale, Sparkles, Inbox, Compass, Activity, Dumbbell, Waves,
   CheckCircle2, XCircle, AlertTriangle, Loader2
@@ -187,6 +190,10 @@ export default function Dashboard() {
   const [isTyping, setIsTyping] = useState(false);
   const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const startedAtRef = useRef<number | null>(null);
+  const [burstTrigger, setBurstTrigger] = useState(0);
+
   const logsContainerRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -222,6 +229,20 @@ export default function Dashboard() {
     }
   }, [displayedLogs]);
 
+  // Elapsed timer while pipeline is running
+  useEffect(() => {
+    if (!isRunning) return;
+    startedAtRef.current = performance.now();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setElapsedMs(0);
+    const id = window.setInterval(() => {
+      if (startedAtRef.current != null) {
+        setElapsedMs(performance.now() - startedAtRef.current);
+      }
+    }, 100);
+    return () => window.clearInterval(id);
+  }, [isRunning]);
+
   // Typewriter effect: type the newest log line char-by-char
   useEffect(() => {
     const newCount = logMessages.length;
@@ -255,12 +276,14 @@ export default function Dashboard() {
   }, [logMessages]);
 
   const startPipeline = () => {
+    if (isRunning) return;
     setIsRunning(true);
     setPipelineStep('init');
     setLogMessages(['Starting ContextWeaver annotation pipeline...']);
     setDisplayedLogs([]);
     setProcessedChunks([]);
     setFinalResult(null);
+    pushToast({ kind: 'info', title: 'Pipeline started', description: 'Streaming annotation events from Qwen3-4B' });
 
     let queryParams = "";
     const savedSettings = localStorage.getItem('contextweaver_settings');
@@ -319,6 +342,14 @@ export default function Dashboard() {
         setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ✅ Pipeline complete! Accuracy optimized.`]);
         setIsRunning(false);
         eventSource.close();
+        setBurstTrigger((n) => n + 1);
+        const entityCount = data.final_result?.merged_entities?.length ?? 0;
+        pushToast({
+          kind: 'success',
+          title: 'Pipeline complete',
+          description: `Extracted ${entityCount} entities · avg confidence ${(((data.final_result?.mean_confidence ?? 0) * 100) || 0).toFixed(1)}%`,
+          duration: 5000,
+        });
         setTimeout(() => {
           resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }, 100);
@@ -330,8 +361,19 @@ export default function Dashboard() {
       setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ❌ Connection error.`]);
       setIsRunning(false);
       eventSource.close();
+      pushToast({ kind: 'error', title: 'Stream error', description: 'Lost connection to the pipeline backend.' });
     };
   };
+
+  // Listen for global run events (⌘K / R keybinding)
+  useEffect(() => {
+    function onRun() {
+      if (!isRunning) startPipeline();
+    }
+    window.addEventListener('contextweaver:run', onRun);
+    return () => window.removeEventListener('contextweaver:run', onRun);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning]);
 
   const handleExport = () => {
     const exportData = {
@@ -353,27 +395,22 @@ export default function Dashboard() {
 
   return (
     <>
+      <ConfettiBurst trigger={burstTrigger} />
       <div className="w-full flex-1 flex flex-col font-sans relative p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto space-y-6 relative z-10 w-full">
 
           {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/80 backdrop-blur-md p-6 rounded-xl border border-slate-700/50 shadow-[0_0_40px_rgba(6,182,212,0.15)] relative overflow-hidden group gap-6 sm:gap-8">
-            <div className="absolute inset-0 bg-linear-to-r from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-            <div className="flex items-center space-x-6 relative z-10">
-              <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.4)] border border-cyan-500/30 shrink-0 group-hover:scale-105 transition-transform duration-500 bg-slate-950 p-3 flex items-center justify-center">
-                <div className="absolute inset-0 bg-cyan-400/20 animate-pulse" />
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400 relative z-10">
-                  <rect width="8" height="8" x="3" y="3" rx="2" />
-                  <path d="M7 11v4a2 2 0 0 0 2 2h4" />
-                  <rect width="8" height="8" x="13" y="13" rx="2" />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-4xl font-orbitron font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
-                  Pipeline Overview
-                </h1>
-                <p className="text-slate-400 font-medium tracking-wide">Dynamic In-Context Learning Router</p>
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1], delay: 0.05 }}
+            className="flex justify-between items-start mb-6 flex-wrap gap-4"
+          >
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-1 flex items-center tracking-wide">
+                Pipeline Overview
+              </h1>
+              <p className="text-slate-400 font-medium tracking-wide">Dynamic In-Context Learning Router</p>
             </div>
             <button
               onClick={startPipeline}
@@ -394,10 +431,15 @@ export default function Dashboard() {
                 ) : 'Run Document Annotation'}
               </span>
             </button>
-          </div>
+          </motion.div>
 
           {/* Graph Selector (Moved to Top) */}
-          <div className="flex flex-wrap justify-center gap-2 bg-slate-900/50 p-2 rounded-xl border border-slate-700/50 w-full backdrop-blur-sm relative z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1], delay: 0.1 }}
+            className="flex flex-wrap justify-center gap-2 bg-slate-900/50 p-2 rounded-xl border border-slate-700/50 w-full backdrop-blur-sm relative z-20"
+          >
             <button
               onClick={() => setSelectedGraph('contextweaver')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${selectedGraph === 'contextweaver' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}
@@ -428,10 +470,15 @@ export default function Dashboard() {
             >
               Routing Agent
             </button>
-          </div>
+          </motion.div>
 
           {/* Top Section: Pipeline Graph & Metrics */}
-          <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1], delay: 0.18 }}
+            className="space-y-6"
+          >
 
               {/* Pipeline graph with animated shimmer ring when running */}
               <div className="relative rounded-xl">
@@ -453,18 +500,18 @@ export default function Dashboard() {
               </div>
 
 
-            </div>
+            </motion.div>
 
             {/* Bottom Section: Split Pane */}
             {pipelineStep !== 'idle' && (
-              <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+              <div ref={resultsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 
                 {selectedChunk && (
                   <ChunkInspector chunkData={selectedChunk} onClose={() => setSelectedChunk(null)} />
                 )}
 
-                {/* Terminal Logs (2 columns) */}
-                <div className="lg:col-span-2 bg-slate-950 border border-slate-700 rounded-xl flex flex-col h-96 relative overflow-hidden z-20">
+                {/* Terminal Logs (Column 1) */}
+                <div className="lg:col-span-1 bg-slate-950 border border-slate-700 rounded-xl flex flex-col h-[700px] relative overflow-hidden z-20">
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.06),transparent_60%)]"
@@ -519,19 +566,12 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Confidence Heatmap (1 column) */}
-                <div className="lg:col-span-1 relative z-20">
-                  <div className="h-96">
-                    <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
-                  </div>
-                </div>
-
-                {/* Final Results Panel (1 column) */}
-                <div className="lg:col-span-1 bg-linear-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-6 shadow-xl flex flex-col h-96 relative z-20">
+                {/* Annotation Complete / Final Results Panel (Column 2) */}
+                <div className="lg:col-span-1 bg-linear-to-br from-slate-900 to-slate-800 border border-cyan-900/50 rounded-xl p-6 shadow-xl flex flex-col h-[700px] z-20">
                   <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-2 flex flex-col">
                     <h3 className="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2 shrink-0">
                       {finalResult ? (
-                        <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Complete</>
+                        <><CheckCircle2 className="w-6 h-6 text-emerald-400" /> Annotation Complete</>
                       ) : isRunning ? (
                         <><Loader2 className="w-6 h-6 text-cyan-400 animate-spin" /> Processing...</>
                       ) : (
@@ -545,6 +585,10 @@ export default function Dashboard() {
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
                         <p className={`text-sm font-bold font-mono mt-0.5 truncate ${pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`}>{pipelineStep}</p>
                       </div>
+                      <ThroughputSparkline
+                        value={processedChunks.filter((c) => typeof c.confidence === 'number').length}
+                        active={isRunning}
+                      />
                       <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>
                         <p className={`text-sm font-bold font-mono mt-0.5 ${processedChunks.length > 0 ? 'text-purple-300' : 'text-slate-500'}`}>
@@ -565,6 +609,30 @@ export default function Dashboard() {
                           />
                         </p>
                       </div>
+                      <div className="col-span-2 bg-slate-900/70 border border-amber-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 flex items-center justify-between">
+                        <div>
+                          <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Elapsed</p>
+                          <p className={`text-sm font-bold font-mono mt-0.5 tabular-nums ${isRunning || finalResult ? 'text-amber-300' : 'text-slate-500'}`}>
+                            {(elapsedMs / 1000).toFixed(1)}s
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {[0, 1, 2, 3].map((i) => (
+                            <motion.span
+                              key={i}
+                              className="w-1 rounded-full bg-amber-400/70"
+                              initial={{ height: 4 }}
+                              animate={isRunning ? { height: [4, 12, 4] } : { height: 4 }}
+                              transition={{
+                                duration: 0.9,
+                                repeat: isRunning ? Infinity : 0,
+                                delay: i * 0.12,
+                                ease: 'easeInOut',
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
                     {finalResult ? (
@@ -572,7 +640,7 @@ export default function Dashboard() {
                         <p className="text-slate-400 text-sm mb-2 shrink-0">
                           Extracted Entities (<AnimatedNumber value={finalResult.merged_entities?.length || 0} />)
                         </p>
-                        <div className="flex flex-wrap gap-1.5 overflow-y-auto">
+                        <div className="flex flex-wrap gap-1.5 overflow-y-auto content-start pb-4">
                           <AnimatePresence>
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             {(finalResult.merged_entities || []).slice(0, 20).map((entity: any, i: number) => {
@@ -585,7 +653,7 @@ export default function Dashboard() {
                                   animate={{ scale: 1, opacity: 1 }}
                                   exit={{ scale: 0.5, opacity: 0 }}
                                   transition={{ delay: i * 0.05, type: 'spring', stiffness: 350, damping: 22 }}
-                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
+                                  className={`inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
                                 >
                                   <span className="text-[10px] font-bold opacity-60">{label}</span>
                                   {entity.value || entity}
@@ -632,6 +700,11 @@ export default function Dashboard() {
                       ) : 'Export JSON'}
                     </span>
                   </button>
+                </div>
+
+                {/* Confidence Heatmap (Column 3) */}
+                <div className="lg:col-span-1 h-[700px] relative z-20">
+                  <ConfidenceHeatmap chunks={processedChunks} onSelectChunk={setSelectedChunk} />
                 </div>
               </div>
             )}

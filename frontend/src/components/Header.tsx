@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LayoutDashboard, History, Settings, ExternalLink } from 'lucide-react';
+import { CommandPaletteHint } from '@/components/CommandPalette';
 
 export default function Header() {
   const pathname = usePathname();
@@ -62,16 +63,19 @@ export default function Header() {
           </div>
         )}
 
-        {/* GitHub CTA */}
-        <a
-          href="https://github.com/edycutjong/contextweaver"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="github-cta"
-        >
-          <ExternalLink className="h-4 w-4" />
-          <span className="hidden sm:inline">Source</span>
-        </a>
+        {/* Right cluster */}
+        <div className="flex items-center gap-2">
+          {pathname !== '/' && <CommandPaletteHint />}
+          <a
+            href="https://github.com/edycutjong/contextweaver"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="github-cta"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span className="hidden sm:inline">Source</span>
+          </a>
+        </div>
       </div>
     </header>
   );

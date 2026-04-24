@@ -2,10 +2,12 @@
 
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { QwenIcon } from "@/components/CustomIcons";
 import { ZapIcon, Cpu, FileText, Scissors, Database, BarChart, Workflow } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { launchToDashboard } from "@/components/LaunchTransition";
 
 const PREVIEW_STEPS = [
   { id: 'doc', label: 'Document', icon: FileText },
@@ -185,6 +187,11 @@ function TiltCard({ children, className }: { children: React.ReactNode; classNam
 
 export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch('/dashboard');
+  }, [router]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const el = containerRef.current;
@@ -246,6 +253,15 @@ export default function LandingPage() {
         >
           <Link
             href="/dashboard"
+            onClick={(e) => {
+              // Preserve cmd/ctrl/shift/middle-click → new tab
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+              e.preventDefault();
+              const rect = e.currentTarget.getBoundingClientRect();
+              const ox = e.clientX || rect.left + rect.width / 2;
+              const oy = e.clientY || rect.top + rect.height / 2;
+              launchToDashboard({ href: "/dashboard", originX: ox, originY: oy });
+            }}
             className="w-full sm:w-auto px-12 py-4 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-lg shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all hover:scale-105"
           >
             Launch Dashboard
