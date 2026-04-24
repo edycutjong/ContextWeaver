@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Orbitron } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_SC, Orbitron } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import LaunchTransition from "@/components/LaunchTransition";
 
@@ -18,6 +20,12 @@ const orbitron = Orbitron({
   subsets: ["latin"],
 });
 
+const notoSansSC = Noto_Sans_SC({
+  variable: "--font-noto-sans-sc",
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+});
+
 export const metadata: Metadata = {
   title: {
     template: "%s | ContextWeaver",
@@ -30,20 +38,24 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://contextweaver.app"), // Replace with actual production domain when available
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   return (
     <html
-      lang="en"
+      lang={locale}
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${notoSansSC.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <LaunchTransition />
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          {children}
+          <LaunchTransition />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

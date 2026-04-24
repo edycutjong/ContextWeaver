@@ -13,6 +13,10 @@
   --font-orbitron: var(--font-orbitron);
 }
 
+html[lang="zh"] {
+  --font-sans: var(--font-noto-sans-sc), var(--font-geist-sans);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
