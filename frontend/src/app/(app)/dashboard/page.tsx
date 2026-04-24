@@ -606,8 +606,8 @@ export default function Dashboard() {
                           className="flex items-start gap-1"
                         >
                           <span className={`${promptColor} select-none shrink-0`}>{'>'}</span>
-                          <span className="break-words whitespace-pre-wrap leading-tight flex items-start gap-1.5 flex-1 min-w-0">
-                            {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClass} mt-[1px]`} />}
+                          <span className="wrap-break-word whitespace-pre-wrap leading-tight flex items-start gap-1.5 flex-1 min-w-0">
+                            {Icon && <Icon className={`w-3.5 h-3.5 shrink-0 ${iconClass} mt-px`} />}
                             {cleanMsg}
                           </span>
                           {i === displayedLogs.length - 1 && isTyping && (

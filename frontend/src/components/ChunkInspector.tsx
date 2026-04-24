@@ -103,7 +103,7 @@ export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext,
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6"
+          className="fixed inset-0 z-99999 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6"
         >
           <div className="relative w-full max-w-6xl flex justify-center items-center">
             {onPrevious && (
