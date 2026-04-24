@@ -35,3 +35,4 @@ docs/assets/*
 .coverage
 htmlcov/
 
+frontend/lint-results.json
