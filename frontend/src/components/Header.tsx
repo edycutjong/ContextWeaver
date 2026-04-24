@@ -36,7 +36,7 @@ export default function Header() {
               <img src="/icon.svg" alt="ContextWeaver Icon" className="w-full h-full drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
             </div>
           </div>
-          <span className="font-orbitron font-black text-xl tracking-widest bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+          <span className="font-orbitron font-black text-xl tracking-widest bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
             ContextWeaver
           </span>
         </Link>
