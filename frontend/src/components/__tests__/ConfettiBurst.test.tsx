@@ -149,4 +149,50 @@ describe('ConfettiBurst', () => {
     
     expect(rafSpy).not.toHaveBeenCalled();
   });
+
+  it('handles undefined devicePixelRatio gracefully', () => {
+    const originalDpr = window.devicePixelRatio;
+    Object.defineProperty(window, 'devicePixelRatio', { value: undefined, writable: true });
+    
+    const { rerender } = render(<ConfettiBurst trigger={0} />);
+    rerender(<ConfettiBurst trigger={1} />);
+    
+    expect(mockContext.setTransform).toHaveBeenCalledWith(1, 0, 0, 1, 0, 0);
+    
+    Object.defineProperty(window, 'devicePixelRatio', { value: originalDpr, writable: true });
+  });
+
+  it('handles missing canvas ref gracefully', () => {
+    const originalRef = React.useRef;
+    jest.spyOn(React, 'useRef').mockImplementation((initialValue) => {
+      // If it's a canvas ref, return null
+      if (initialValue === null) {
+        return { current: null };
+      }
+      return originalRef(initialValue);
+    });
+
+    const { rerender } = render(<ConfettiBurst trigger={0} />);
+    rerender(<ConfettiBurst trigger={1} />);
+    
+    // getContext should not be called since canvas is null
+    expect(window.HTMLCanvasElement.prototype.getContext).not.toHaveBeenCalled();
+    jest.restoreAllMocks();
+  });
+
+  it('cancels pending animation frames on rapid re-triggers', () => {
+    const { rerender } = render(<ConfettiBurst trigger={0} />);
+    rerender(<ConfettiBurst trigger={1} />);
+    
+    // We expect 1 call to requestAnimationFrame
+    expect(rafSpy).toHaveBeenCalledTimes(1);
+    
+    // Trigger again rapidly
+    rerender(<ConfettiBurst trigger={2} />);
+    
+    // It should have cancelled the previous frame
+    expect(cafSpy).toHaveBeenCalled();
+    // And requested a new one
+    expect(rafSpy).toHaveBeenCalledTimes(2);
+  });
 });
