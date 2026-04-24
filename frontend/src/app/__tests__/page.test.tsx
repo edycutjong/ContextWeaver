@@ -26,7 +26,7 @@ jest.mock('@/components/LaunchTransition', () => ({
 
 // Mock framer-motion to avoid animation issues
 jest.mock('framer-motion', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+   
   const React = require('react');
   
   // Keep track of which useMotionValue call it is to return the right mock

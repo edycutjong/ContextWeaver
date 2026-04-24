@@ -72,7 +72,7 @@ describe('ChunkInspector', () => {
   });
 
   it('does not render ConfidenceRing when confidence is missing', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { confidence, ...dataWithoutConfidence } = mockChunkData;
     
     render(<ChunkInspector chunkData={dataWithoutConfidence} onClose={mockOnClose} />);
@@ -87,7 +87,7 @@ describe('ChunkInspector', () => {
   });
 
   it('handles missing examples array gracefully', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { examples, ...dataWithoutExamples } = mockChunkData;
     
     render(<ChunkInspector chunkData={dataWithoutExamples} onClose={mockOnClose} />);

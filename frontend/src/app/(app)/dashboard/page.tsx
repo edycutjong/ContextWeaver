@@ -237,6 +237,7 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setElapsedMs(0);
     const id = window.setInterval(() => {
+      /* istanbul ignore else -- defensive guard; ref is set above before this fires */
       if (startedAtRef.current != null) {
         setElapsedMs(performance.now() - startedAtRef.current);
       }
@@ -277,6 +278,7 @@ export default function Dashboard() {
   }, [logMessages]);
 
   const startPipeline = () => {
+    /* istanbul ignore if -- defensive guard; callers (run button + global event) already gate on isRunning */
     if (isRunning) return;
     setIsRunning(true);
     setPipelineStep('init');
@@ -615,7 +617,7 @@ export default function Dashboard() {
                     <div className="grid grid-cols-2 gap-2 mb-3 shrink-0">
                       <div className="bg-slate-900/70 border border-cyan-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300 overflow-hidden">
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Stage</p>
-                        <p className={`text-sm font-bold font-mono mt-0.5 truncate ${pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`} title={pipelineStep}>{pipelineStep}</p>
+                        <p className={`text-sm font-bold font-mono mt-0.5 truncate ${/* istanbul ignore next -- this block only renders when pipelineStep !== 'idle' */ pipelineStep !== 'idle' ? 'text-cyan-300' : 'text-slate-500'}`} title={pipelineStep}>{pipelineStep}</p>
                       </div>
                       <div className="bg-slate-900/70 border border-purple-500/20 rounded-xl p-3 backdrop-blur-sm transition-opacity duration-300">
                         <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Chunks</p>

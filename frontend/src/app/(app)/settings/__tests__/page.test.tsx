@@ -7,7 +7,7 @@ import SettingsPage from '../page';
 jest.mock('framer-motion', () => {
   const mockComponent = (tag: string) => {
     const MockComp = React.forwardRef((allProps: React.HTMLAttributes<HTMLElement> & { [key: string]: unknown }, ref: React.Ref<HTMLElement>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
       const { whileHover, whileTap, layoutId, initial, animate, exit, transition, ...props } = allProps;
       const Tag = tag as React.ElementType;
       return <Tag ref={ref} {...props}>{allProps.children}</Tag>;

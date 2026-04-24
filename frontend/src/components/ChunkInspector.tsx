@@ -55,12 +55,6 @@ function ConfidenceRing({ value }: { value: number }) {
   );
 }
 
-const ENTITY_STYLES: Record<string, { bg: string, text: string, border: string }> = {
-  DEFAULT: { bg: 'bg-slate-800', text: 'text-slate-300', border: 'border-slate-700' },
-};
-
-const DEFAULT_ENTITY_STYLE = ENTITY_STYLES.DEFAULT;
-
 export default function ChunkInspector({ chunkData, onClose, onPrevious, onNext }: InspectorProps) {
   const [mounted, setMounted] = useState(false);
 

@@ -5,12 +5,12 @@ import Dashboard from '../page';
 
 // Mock components
 jest.mock('@/components/PipelineGraph', () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+   
   const MockPipelineGraph = ({ isNodeActive, nodes, currentStep }: any) => {
     // Call isNodeActive for all steps and nodes to ensure 100% coverage of the graph configs
     const steps = ['init', 'chunking', 'chunk_complete', 'retrieving', 'retrieve_complete', 'building_prompt', 'annotating', 'annotate_complete', 'merging', 'done', 'other'];
     steps.forEach(step => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       nodes.forEach((n: any) => isNodeActive(n.id, step));
     });
     return <div data-testid="pipeline-graph" />;
@@ -19,15 +19,33 @@ jest.mock('@/components/PipelineGraph', () => {
   return MockPipelineGraph;
 });
 jest.mock('@/components/ChunkInspector', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Mock = ({ onClose }: any) => <div data-testid="chunk-inspector" onClick={onClose} />;
+   
+  const Mock = ({ chunkData, onClose, onPrevious, onNext }: any) => (
+    <div data-testid="chunk-inspector" data-chunk-idx={chunkData?.chunk_idx ?? ''}>
+      <button data-testid="ci-close" onClick={onClose}>close</button>
+      <button data-testid="ci-prev" onClick={onPrevious} disabled={!onPrevious}>prev</button>
+      <button data-testid="ci-next" onClick={onNext} disabled={!onNext}>next</button>
+    </div>
+  );
   Mock.displayName = 'MockChunkInspector';
   return Mock;
 });
 
 jest.mock('@/components/ConfidenceHeatmap', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Mock = ({ onSelectChunk }: any) => <div data-testid="confidence-heatmap" onClick={() => onSelectChunk({ id: 'test' })} />;
+   
+  const Mock = ({ chunks, onSelectChunk }: any) => (
+    <div data-testid="confidence-heatmap" onClick={() => onSelectChunk({ id: 'test' })}>
+      {(chunks ?? []).map((c: any, i: number) => (
+        <button
+          key={i}
+          data-testid={`heatmap-chunk-${i}`}
+          onClick={(e) => { e.stopPropagation(); onSelectChunk(c); }}
+        >
+          chunk {i}
+        </button>
+      ))}
+    </div>
+  );
   Mock.displayName = 'MockConfidenceHeatmap';
   return Mock;
 });
@@ -43,7 +61,7 @@ jest.mock('framer-motion', () => {
   const MockButton = React.forwardRef<HTMLButtonElement, React.HTMLAttributes<HTMLButtonElement>>(({ children, ...props }, ref) => <button ref={ref} {...props}>{children}</button>);
   MockButton.displayName = 'motion.button';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const MockAnimatePresence = ({ children }: any) => <>{children}</>;
   MockAnimatePresence.displayName = 'AnimatePresence';
 
@@ -56,17 +74,17 @@ jest.mock('framer-motion', () => {
     AnimatePresence: MockAnimatePresence,
     useMotionValue: (init: number) => {
       let val = init;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+       
       const cbs: Function[] = [];
       return {
         get: () => val,
         set: (v: number) => { val = v; cbs.forEach(cb => cb(v)); },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+         
         on: (_ev: string, cb: Function) => { cbs.push(cb); return () => {}; },
         simulateChange: (v: number) => cbs.forEach(cb => cb(v)),
       };
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     animate: (val: any, target: number) => {
       if (val.simulateChange) val.simulateChange(target);
       return { stop: jest.fn() };
@@ -82,7 +100,7 @@ beforeAll(() => {
 });
 
 describe('Dashboard', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   let mockEventSource: any;
 
   beforeEach(() => {
@@ -92,7 +110,7 @@ describe('Dashboard', () => {
       close: jest.fn(),
     };
     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     global.EventSource = jest.fn(() => mockEventSource) as any;
     
     global.URL.createObjectURL = jest.fn(() => 'mock-url');
@@ -106,7 +124,7 @@ describe('Dashboard', () => {
         el.click = jest.fn();
       }
       return el;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     }) as any;
 
     // Mock localStorage
@@ -256,8 +274,8 @@ describe('Dashboard', () => {
     });
     
     fireEvent.click(getByTestId('confidence-heatmap'));
-    fireEvent.click(getByTestId('chunk-inspector'));
-    
+    fireEvent.click(getByTestId('ci-close'));
+
     jest.useRealTimers();
   });
 
@@ -276,7 +294,7 @@ describe('Dashboard', () => {
   it('closes active EventSource when switching graphs', () => {
     jest.useFakeTimers();
     const { getByText } = render(<Dashboard />);
-    
+
     // Start pipeline
     const runBtn = getByText('Run Document Annotation');
     fireEvent.click(runBtn);
@@ -284,9 +302,138 @@ describe('Dashboard', () => {
 
     // Switch graph to trigger the reset state
     fireEvent.click(getByText('Standard RAG'));
-    
+
     // Check that close was called
     expect(mockEventSource.close).toHaveBeenCalled();
+    jest.useRealTimers();
+  });
+
+  it('skips a second startPipeline call while already running', () => {
+    jest.useFakeTimers();
+    const { getByText } = render(<Dashboard />);
+
+    const runBtn = getByText('Run Document Annotation');
+    fireEvent.click(runBtn);
+    expect(global.EventSource).toHaveBeenCalledTimes(1);
+
+    // Click again — early return on isRunning means no new EventSource
+    fireEvent.click(runBtn);
+    expect(global.EventSource).toHaveBeenCalledTimes(1);
+
+    // Global event while running is also a no-op
+    act(() => { window.dispatchEvent(new Event('contextweaver:run')); });
+    expect(global.EventSource).toHaveBeenCalledTimes(1);
+
+    jest.useRealTimers();
+  });
+
+  it('runs pipeline with no saved settings', () => {
+    Object.defineProperty(window, 'localStorage', {
+      value: { getItem: jest.fn(() => null) },
+      writable: true,
+    });
+    jest.useFakeTimers();
+    const { getByText } = render(<Dashboard />);
+    fireEvent.click(getByText('Run Document Annotation'));
+    expect(global.EventSource).toHaveBeenCalledWith('http://localhost:8000/api/stream/123');
+    jest.useRealTimers();
+  });
+
+  it('runs pipeline with empty settings object (skips each query param)', () => {
+    Object.defineProperty(window, 'localStorage', {
+      value: { getItem: jest.fn(() => JSON.stringify({})) },
+      writable: true,
+    });
+    jest.useFakeTimers();
+    const { getByText } = render(<Dashboard />);
+    fireEvent.click(getByText('Run Document Annotation'));
+    expect(global.EventSource).toHaveBeenCalledWith('http://localhost:8000/api/stream/123?');
+    jest.useRealTimers();
+  });
+
+  it('swallows JSON parse errors from corrupt settings', () => {
+    Object.defineProperty(window, 'localStorage', {
+      value: { getItem: jest.fn(() => 'not-json') },
+      writable: true,
+    });
+    jest.useFakeTimers();
+    const { getByText } = render(<Dashboard />);
+    fireEvent.click(getByText('Run Document Annotation'));
+    expect(global.EventSource).toHaveBeenCalledWith('http://localhost:8000/api/stream/123');
+    jest.useRealTimers();
+  });
+
+  it('handles done event with missing mean_confidence (uses default 0%)', () => {
+    jest.useFakeTimers();
+    const { getByText } = render(<Dashboard />);
+    fireEvent.click(getByText('Run Document Annotation'));
+
+    act(() => {
+      mockEventSource.onmessage({
+        data: JSON.stringify({
+          step: 'done',
+          final_result: { merged_entities: [{ type: 'ORG', value: 'Acme' }] },
+        }),
+      });
+    });
+
+    expect(getByText('Annotation Complete')).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it('navigates between chunks via inspector prev/next handlers', () => {
+    jest.useFakeTimers();
+    const { getByText, getByTestId } = render(<Dashboard />);
+    fireEvent.click(getByText('Run Document Annotation'));
+
+    act(() => {
+      mockEventSource.onmessage({
+        data: JSON.stringify({ step: 'chunk_complete', chunks: ['a', 'b', 'c'] }),
+      });
+    });
+
+    // Select middle chunk → both prev and next should be wired
+    fireEvent.click(getByTestId('heatmap-chunk-1'));
+    expect(getByTestId('chunk-inspector').getAttribute('data-chunk-idx')).toBe('1');
+
+    fireEvent.click(getByTestId('ci-prev'));
+    expect(getByTestId('chunk-inspector').getAttribute('data-chunk-idx')).toBe('0');
+
+    // First chunk: prev disabled, next enabled
+    expect((getByTestId('ci-prev') as HTMLButtonElement).disabled).toBe(true);
+    expect((getByTestId('ci-next') as HTMLButtonElement).disabled).toBe(false);
+
+    fireEvent.click(getByTestId('ci-next'));
+    expect(getByTestId('chunk-inspector').getAttribute('data-chunk-idx')).toBe('1');
+
+    fireEvent.click(getByTestId('ci-next'));
+    expect(getByTestId('chunk-inspector').getAttribute('data-chunk-idx')).toBe('2');
+
+    // Last chunk: next disabled
+    expect((getByTestId('ci-next') as HTMLButtonElement).disabled).toBe(true);
+    jest.useRealTimers();
+  });
+
+  it('shows idle skeleton + stale-elapsed styling after stream error before completion', () => {
+    jest.useFakeTimers();
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const { getByText } = render(<Dashboard />);
+
+    fireEvent.click(getByText('Run Document Annotation'));
+
+    // Move past idle so the bottom panel renders, then crash before `done`
+    act(() => {
+      mockEventSource.onmessage({ data: JSON.stringify({ step: 'init', message: 'starting' }) });
+    });
+
+    act(() => {
+      mockEventSource.onerror(new Error('boom'));
+    });
+
+    // Skeleton ('Waiting for results...') renders the !isRunning branch of all three pulse rows
+    expect(getByText('Waiting for results...')).toBeInTheDocument();
+
+    consoleSpy.mockRestore();
     jest.useRealTimers();
   });
 });

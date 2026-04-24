@@ -5,11 +5,11 @@ import PipelineGraph from '../PipelineGraph';
 
 // Mock framer-motion to immediately call onUpdate to get coverage, or just render it as a div
 jest.mock('framer-motion', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+   
   const React = require('react');
   
   const MockDiv = React.forwardRef((allProps: React.HTMLAttributes<HTMLDivElement> & { onUpdate?: (val: unknown) => void, [key: string]: unknown }, ref: React.Ref<HTMLDivElement>) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { onUpdate, drag, dragConstraints, dragElastic, dragMomentum, initial, animate, transition, whileHover, whileTap, layoutId, ...props } = allProps;
     return <div ref={ref} {...props} data-testid="motion-div" onClick={() => {
         if (onUpdate) {
@@ -23,7 +23,7 @@ jest.mock('framer-motion', () => {
   MockDiv.displayName = 'MockMotionDiv';
 
   const MockPath = React.forwardRef((allProps: React.SVGProps<SVGPathElement> & { [key: string]: unknown }, ref: React.Ref<SVGPathElement>) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { initial, animate, transition, ...props } = allProps;
     return <path ref={ref} {...props} />;
   });

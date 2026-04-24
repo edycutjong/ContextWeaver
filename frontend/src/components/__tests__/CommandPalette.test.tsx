@@ -374,9 +374,53 @@ describe('CommandPalette', () => {
     // Cleanup prototype
     if (originalOffsetTop) Object.defineProperty(HTMLElement.prototype, 'offsetTop', originalOffsetTop);
     else delete (HTMLElement.prototype as any).offsetTop;
-    
+
     if (originalOffsetHeight) Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
     else delete (HTMLElement.prototype as any).offsetHeight;
+  });
+
+  it('skips scroll adjustment when active row is not in DOM', () => {
+    render(<CommandPalette />);
+
+    act(() => {
+      window.dispatchEvent(new CustomEvent('contextweaver:palette'));
+    });
+
+    const input = screen.getByPlaceholderText('Type a command or search...');
+
+    // Move active index off the first row so the next reset triggers the effect
+    act(() => {
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+    });
+
+    // Filter to zero results so no [data-idx="0"] row exists when activeIdx resets
+    act(() => {
+      fireEvent.change(input, { target: { value: 'no-such-command' } });
+    });
+
+    // Render should not throw — the effect's `if (row)` guard executes the false branch
+    expect(screen.getByText(/No commands match/)).toBeInTheDocument();
+  });
+
+  it('focuses the input shortly after opening', () => {
+    jest.useFakeTimers();
+    render(<CommandPalette />);
+
+    act(() => {
+      window.dispatchEvent(new CustomEvent('contextweaver:palette'));
+    });
+
+    const input = screen.getByPlaceholderText('Type a command or search...') as HTMLInputElement;
+    const focusSpy = jest.spyOn(input, 'focus');
+
+    act(() => {
+      jest.advanceTimersByTime(50);
+    });
+
+    expect(focusSpy).toHaveBeenCalled();
+
+    focusSpy.mockRestore();
+    jest.useRealTimers();
   });
 });
 

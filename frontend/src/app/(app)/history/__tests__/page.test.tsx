@@ -6,14 +6,14 @@ import HistoryPage from '../page';
 // Mock framer-motion
 jest.mock('framer-motion', () => {
   const MockDiv = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ children, ...props }, ref) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { whileHover, whileTap, layoutId, initial, animate, transition, ...rest } = props as Record<string, unknown>;
     return <div ref={ref} {...(rest as React.HTMLAttributes<HTMLDivElement>)}>{children}</div>;
   });
   MockDiv.displayName = 'motion.div';
 
   const MockTr = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(({ children, ...props }, ref) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { whileHover, whileTap, layoutId, initial, animate, transition, ...rest } = props as Record<string, unknown>;
     return <tr ref={ref} {...(rest as React.HTMLAttributes<HTMLTableRowElement>)}>{children}</tr>;
   });
@@ -26,17 +26,17 @@ jest.mock('framer-motion', () => {
     },
     useMotionValue: (init: number) => {
       let val = init;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+       
       const cbs: Function[] = [];
       return {
         get: () => val,
         set: (v: number) => { val = v; cbs.forEach(cb => cb(v)); },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+         
         on: (_ev: string, cb: Function) => { cbs.push(cb); return () => {}; },
         simulateChange: (v: number) => cbs.forEach(cb => cb(v)),
       };
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     animate: (val: any, target: number) => {
       if (val.simulateChange) val.simulateChange(target);
       return { stop: jest.fn() };

@@ -1,3 +1,8 @@
 [tool.mypy]
 mypy_path = "backend"
 explicit_package_bases = true
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:The 'app' shortcut is now deprecated:DeprecationWarning:httpx._client",
+]
