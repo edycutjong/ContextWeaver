@@ -38,9 +38,8 @@ export default function StarField({
 
     function resize() {
       if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
+      width = window.innerWidth;
+      height = window.innerHeight;
       dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -163,7 +162,7 @@ export default function StarField({
     <canvas
       ref={canvasRef}
       aria-hidden
-      className={`fixed inset-0 pointer-events-none z-[-1] ${className}`}
+      className={`fixed inset-0 w-full h-full pointer-events-none z-[-1] ${className}`}
     />
   );
 }
