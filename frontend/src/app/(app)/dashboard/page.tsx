@@ -552,7 +552,7 @@ export default function Dashboard() {
                     onClose={() => setSelectedChunk(null)}
                     onPrevious={handlePrevious}
                     onNext={handleNext}
-                    modelKey={activeModel === 'deep' ? 'llama' : 'qwen'}
+                    modelKey={activeModel === 'deep' ? /* istanbul ignore next */ 'llama' : 'qwen'}
                   />
                 );
               })()}

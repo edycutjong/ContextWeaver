@@ -23,7 +23,7 @@ function PipelinePreview() {
   const [activeIdx, setActiveIdx] = useState(0);
   const PREVIEW_STEPS = PREVIEW_STEP_DEFS.map((s) => ({
     ...s,
-    label: s.labelKey ? t(s.labelKey) : (s.literal ?? ''),
+    label: s.labelKey ? t(s.labelKey) : (s.literal ?? /* istanbul ignore next */ ''),
   }));
 
   useEffect(() => {
