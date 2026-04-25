@@ -1,0 +1,191 @@
+[
+  {
+    "id": "math_001",
+    "task_type": "mathematical_reasoning",
+    "text": "Problem: Find the derivative of f(x) = 3x^2 + 2x - 5. Solution: f'(x) = 6x + 2. The derivative is found by applying the power rule to each term: d/dx(3x^2) = 6x, d/dx(2x) = 2, and d/dx(-5) = 0.",
+    "instruction": "Determine if the mathematical reasoning and solution are correct. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The power rule is correctly applied: d/dx(ax^n) = nax^(n-1). Each term is differentiated correctly.",
+    "metadata": { "source": "calculus_fundamentals", "domain": "math" }
+  },
+  {
+    "id": "math_002",
+    "task_type": "mathematical_reasoning",
+    "text": "Problem: Calculate the integral of sin(x)cos(x)dx. Solution: The integral equals sin^2(x)/2 + C. Using substitution u = sin(x), du = cos(x)dx, we get ∫u du = u^2/2 + C = sin^2(x)/2 + C.",
+    "instruction": "Determine if the mathematical reasoning and solution are correct. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The u-substitution is valid and correctly applied. The final answer sin^2(x)/2 + C is one of the accepted forms.",
+    "metadata": { "source": "integration_problems", "domain": "math" }
+  },
+  {
+    "id": "math_003",
+    "task_type": "mathematical_reasoning",
+    "text": "Problem: Solve the equation 2x + 5 = 3x - 7. Solution: Subtracting 2x from both sides: 5 = x - 7. Adding 7 to both sides: 12 = x. Therefore x = 12.",
+    "instruction": "Determine if the mathematical reasoning and solution are correct. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "Each algebraic step is correct. 2x+5=3x-7 → 5=x-7 → x=12. Verification: 2(12)+5=29, 3(12)-7=29. ✓",
+    "metadata": { "source": "algebra_basics", "domain": "math" }
+  },
+  {
+    "id": "math_004",
+    "task_type": "mathematical_reasoning",
+    "text": "Problem: What is the sum of the first 100 positive integers? Solution: Using Gauss's formula, S = n(n+1)/2 = 100(101)/2 = 5500.",
+    "instruction": "Determine if the mathematical reasoning and solution are correct. Return 1 if correct, 0 if incorrect.",
+    "label": 0,
+    "reasoning": "The formula is correct but the arithmetic is wrong. 100 × 101 = 10100, and 10100/2 = 5050, not 5500.",
+    "metadata": { "source": "number_theory", "domain": "math" }
+  },
+  {
+    "id": "code_001",
+    "task_type": "code_generation",
+    "text": "Task: Write a Python function to check if a string is a palindrome.\n\ndef is_palindrome(s):\n    s = s.lower().replace(' ', '')\n    return s == s[::-1]\n\n# Test: is_palindrome('racecar') returns True",
+    "instruction": "Determine if the code implementation is correct and handles edge cases properly. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The function correctly normalizes input by lowering case and removing spaces, then compares with reversed string. Handles basic edge cases.",
+    "metadata": { "source": "python_algorithms", "domain": "code" }
+  },
+  {
+    "id": "code_002",
+    "task_type": "code_generation",
+    "text": "Task: Implement binary search in Python.\n\ndef binary_search(arr, target):\n    left, right = 0, len(arr)\n    while left < right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid\n    return -1",
+    "instruction": "Determine if the code implementation is correct and handles edge cases properly. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The binary search implementation uses correct half-open interval [left, right). Midpoint calculation avoids overflow. Termination condition is correct.",
+    "metadata": { "source": "python_algorithms", "domain": "code" }
+  },
+  {
+    "id": "code_003",
+    "task_type": "code_generation",
+    "text": "Task: Implement a function to find the maximum element in a list.\n\ndef find_max(lst):\n    if not lst:\n        return None\n    max_val = lst[0]\n    for i in range(len(lst)):\n        if lst[i] > max_val:\n            max_val = lst[i]\n    return max_val",
+    "instruction": "Determine if the code implementation is correct and handles edge cases properly. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The function handles empty list edge case, initializes max correctly, and iterates through all elements. The implementation is correct.",
+    "metadata": { "source": "python_algorithms", "domain": "code" }
+  },
+  {
+    "id": "qa_001",
+    "task_type": "question_answering",
+    "text": "Context: The Great Wall of China was built over many centuries by various Chinese dynasties. The most well-known sections were built during the Ming Dynasty (1368-1644). The total length of all sections ever built is approximately 21,196 kilometers.\n\nQuestion: When was the Great Wall primarily built?\nAnswer: The most well-known sections were built during the Ming Dynasty from 1368 to 1644.",
+    "instruction": "Determine if the answer correctly addresses the question based on the provided context. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The answer directly references the context and correctly identifies the Ming Dynasty period as stated in the source text.",
+    "metadata": { "source": "world_history", "domain": "qa" }
+  },
+  {
+    "id": "qa_002",
+    "task_type": "question_answering",
+    "text": "Context: Photosynthesis is the process by which plants convert light energy, usually from the sun, into chemical energy stored as glucose. This process requires carbon dioxide and water, and produces oxygen as a byproduct. The reaction occurs primarily in the chloroplasts of plant cells.\n\nQuestion: What are the inputs of photosynthesis?\nAnswer: The inputs of photosynthesis are sunlight, nitrogen, and water.",
+    "instruction": "Determine if the answer correctly addresses the question based on the provided context. Return 1 if correct, 0 if incorrect.",
+    "label": 0,
+    "reasoning": "The answer incorrectly states nitrogen as an input. According to the context, the inputs are light energy, carbon dioxide, and water — not nitrogen.",
+    "metadata": { "source": "biology_basics", "domain": "qa" }
+  },
+  {
+    "id": "qa_003",
+    "task_type": "question_answering",
+    "text": "Context: The human brain contains approximately 86 billion neurons. Each neuron can form thousands of connections with other neurons, called synapses. The total number of synaptic connections in the brain is estimated at around 100 trillion.\n\nQuestion: How many neurons does the human brain contain?\nAnswer: The human brain contains approximately 86 billion neurons.",
+    "instruction": "Determine if the answer correctly addresses the question based on the provided context. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The answer directly and accurately quotes the figure stated in the context: approximately 86 billion neurons.",
+    "metadata": { "source": "neuroscience", "domain": "qa" }
+  },
+  {
+    "id": "cls_001",
+    "task_type": "text_classification",
+    "text": "Review: This product exceeded all my expectations. The build quality is excellent, shipping was fast, and customer service was incredibly helpful when I had a question. Highly recommend to anyone looking for a reliable solution.\n\nSentiment: Positive",
+    "instruction": "Determine if the text classification (sentiment label) is correct. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The review contains exclusively positive language: 'exceeded expectations', 'excellent', 'incredibly helpful', 'highly recommend'. Positive classification is correct.",
+    "metadata": { "source": "product_reviews", "domain": "classification" }
+  },
+  {
+    "id": "cls_002",
+    "task_type": "text_classification",
+    "text": "Email: Dear user, your account has been compromised. Click the link below immediately to verify your identity and restore access. Failure to act within 24 hours will result in permanent account deletion. http://suspicious-link.example.com\n\nClassification: Legitimate email",
+    "instruction": "Determine if the text classification is correct. Return 1 if correct, 0 if incorrect.",
+    "label": 0,
+    "reasoning": "This email exhibits classic phishing indicators: urgency ('immediately', '24 hours'), threats ('permanent deletion'), and a suspicious URL. Classifying it as 'Legitimate' is incorrect.",
+    "metadata": { "source": "email_security", "domain": "classification" }
+  },
+  {
+    "id": "cls_003",
+    "task_type": "text_classification",
+    "text": "Article excerpt: The new policy aims to reduce carbon emissions by 40% by 2030 through investment in renewable energy infrastructure and electric vehicle subsidies. Critics argue the targets are unrealistic given current technological constraints.\n\nTopic: Environmental Policy",
+    "instruction": "Determine if the text classification (topic label) is correct. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The article discusses carbon emission targets, renewable energy, and EV subsidies — all core environmental policy topics. The classification is correct.",
+    "metadata": { "source": "news_classification", "domain": "classification" }
+  },
+  {
+    "id": "sum_001",
+    "task_type": "summarization",
+    "text": "Original: The quarterly earnings report shows that revenue increased by 15% year-over-year, reaching $2.3 billion. Operating expenses grew by only 8%, resulting in improved profit margins. The company also announced a new stock buyback program worth $500 million and raised its full-year guidance by 3%.\n\nSummary: Revenue grew 15% to $2.3B with improved margins. New $500M buyback program and raised guidance announced.",
+    "instruction": "Determine if the summary accurately captures the key information from the original text without introducing errors. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The summary captures all key facts: revenue growth (15%, $2.3B), improved margins, $500M buyback, and raised guidance. No factual errors introduced.",
+    "metadata": { "source": "financial_reports", "domain": "summarization" }
+  },
+  {
+    "id": "sum_002",
+    "task_type": "summarization",
+    "text": "Original: The research team discovered a new species of deep-sea fish at a depth of 8,336 meters in the Izu-Ogasawara Trench near Japan. The snailfish specimen was captured on video using an autonomous lander and represents the deepest fish ever recorded.\n\nSummary: Scientists found a new deep-sea fish species at 8,336 meters depth in a trench near China, breaking the record for deepest fish ever found.",
+    "instruction": "Determine if the summary accurately captures the key information from the original text without introducing errors. Return 1 if correct, 0 if incorrect.",
+    "label": 0,
+    "reasoning": "The summary incorrectly states the trench is near China. The original text specifies the Izu-Ogasawara Trench near Japan. This is a factual error.",
+    "metadata": { "source": "science_news", "domain": "summarization" }
+  },
+  {
+    "id": "nli_001",
+    "task_type": "natural_language_inference",
+    "text": "Premise: All mammals are warm-blooded vertebrates that nurse their young with milk.\nHypothesis: Dolphins, being mammals, are warm-blooded.\nRelation: Entailment",
+    "instruction": "Determine if the NLI relation label (entailment, contradiction, or neutral) is correct. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "If all mammals are warm-blooded (premise) and dolphins are mammals (hypothesis premise), then dolphins being warm-blooded follows by deduction. Entailment is correct.",
+    "metadata": { "source": "nli_benchmark", "domain": "nli" }
+  },
+  {
+    "id": "nli_002",
+    "task_type": "natural_language_inference",
+    "text": "Premise: The restaurant is closed on Mondays.\nHypothesis: You can eat at the restaurant on Monday.\nRelation: Entailment",
+    "instruction": "Determine if the NLI relation label (entailment, contradiction, or neutral) is correct. Return 1 if correct, 0 if incorrect.",
+    "label": 0,
+    "reasoning": "The premise states the restaurant is closed on Mondays, which contradicts the hypothesis that you can eat there on Monday. The correct label should be 'Contradiction', not 'Entailment'.",
+    "metadata": { "source": "nli_benchmark", "domain": "nli" }
+  },
+  {
+    "id": "nli_003",
+    "task_type": "natural_language_inference",
+    "text": "Premise: The cat sat on the mat.\nHypothesis: The cat is brown.\nRelation: Neutral",
+    "instruction": "Determine if the NLI relation label (entailment, contradiction, or neutral) is correct. Return 1 if correct, 0 if incorrect.",
+    "label": 1,
+    "reasoning": "The premise says nothing about the cat's color. The hypothesis introduces new information not entailed or contradicted by the premise. Neutral is correct.",
+    "metadata": { "source": "nli_benchmark", "domain": "nli" }
+  },
+  {
+    "id": "logic_001",
+    "task_type": "logical_reasoning",
+    "text": "Premises:\n1. If it rains, the ground gets wet.\n2. If the ground is wet, the flowers bloom.\n3. It rained yesterday.\n\nConclusion: The flowers bloomed yesterday.\nValidity: Valid (by chain of modus ponens)",
+    "instruction": "Determine if the logical reasoning and conclusion are valid. Return 1 if valid, 0 if invalid.",
+    "label": 1,
+    "reasoning": "The argument follows valid modus ponens chain: Rain → Wet ground → Flowers bloom. Given rain occurred, both intermediate and final conclusions follow.",
+    "metadata": { "source": "formal_logic", "domain": "logic" }
+  },
+  {
+    "id": "logic_002",
+    "task_type": "logical_reasoning",
+    "text": "Premises:\n1. All birds can fly.\n2. Penguins are birds.\n\nConclusion: Penguins can fly.\nValidity: Valid (by universal instantiation)",
+    "instruction": "Determine if the logical reasoning and conclusion are valid. Return 1 if valid, 0 if invalid.",
+    "label": 1,
+    "reasoning": "Given the stated premises, the conclusion follows by universal instantiation. Note: Premise 1 is factually false (penguins can't fly), but the logical deduction from the given premises is valid.",
+    "metadata": { "source": "formal_logic", "domain": "logic" }
+  },
+  {
+    "id": "logic_003",
+    "task_type": "logical_reasoning",
+    "text": "Premises:\n1. Some students like math.\n2. All students who like math pass the exam.\n\nConclusion: All students pass the exam.\nValidity: Valid",
+    "instruction": "Determine if the logical reasoning and conclusion are valid. Return 1 if valid, 0 if invalid.",
+    "label": 0,
+    "reasoning": "The conclusion overextends. 'Some students like math' and 'those who like math pass' only entails 'some students pass', not 'all students pass'. Invalid reasoning.",
+    "metadata": { "source": "formal_logic", "domain": "logic" }
+  }
+]
