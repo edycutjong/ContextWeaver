@@ -43,14 +43,17 @@ def test_build_prompt_custom_instruction():
 def test_build_prompt_token_budget():
     """Large examples should be trimmed when budget is exceeded."""
     examples = [
-        {"text": "A" * 5000, "annotation": '{"label": 1}', "similarity_score": 0.95, "reasoning": "ok"},
-        {"text": "B" * 5000, "annotation": '{"label": 0}', "similarity_score": 0.90, "reasoning": "ok"},
-        {"text": "C" * 5000, "annotation": '{"label": 1}', "similarity_score": 0.85, "reasoning": "ok"},
+        {"text": "A" * 500, "annotation": '{"label": 1}', "similarity_score": 0.95, "reasoning": "ok"},
+        {"text": "B" * 500, "annotation": '{"label": 0}', "similarity_score": 0.90, "reasoning": "ok"},
+        {"text": "C" * 500, "annotation": '{"label": 1}', "similarity_score": 0.85, "reasoning": "ok"},
     ]
-    prompt = build_prompt("Target", examples, max_chars=8000)
+    # Set max_chars artificially low so that no examples fit.
+    # The base prompt alone is > 500 chars, so remaining_budget will be negative.
+    prompt = build_prompt("Target", examples, max_chars=100)
 
-    # Should include at least one example but not overflow budget
-    assert len(prompt) <= 10000  # some overhead allowed
+    # Should fall back to zero-shot since no examples fit
+    assert "Target" in prompt
+    assert "EXAMPLES" not in prompt
 
 
 def test_build_prompt_schema_format():

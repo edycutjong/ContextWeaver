@@ -87,3 +87,26 @@ async def test_annotator_compose_prompt_no_qualified_examples():
     # Should still produce a valid prompt (zero-shot)
     assert "Target text" in prompt
     assert "expert data annotator" in prompt
+
+
+@pytest.mark.asyncio
+async def test_annotator_annotate_real_api():
+    annotator = Annotator()
+    annotator.use_real_api = True
+
+    # Mock _annotate_real to avoid network calls and verify branching
+    async def mock_annotate_real(prompt, chunk_text):
+        return {
+            "annotation": '{"label": 1}',
+            "confidence": 0.99,
+            "prompt": prompt,
+            "label": 1,
+            "reasoning": "mock reasoning"
+        }
+
+    annotator._annotate_real = mock_annotate_real
+
+    result = await annotator.annotate("Prompt text", "Chunk text")
+
+    assert result["reasoning"] == "mock reasoning"
+    assert result["label"] == 1
