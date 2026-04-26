@@ -35,7 +35,25 @@ export const metadata: Metadata = {
   keywords: ["ContextWeaver", "LLM", "In-Context Learning", "Annotation", "AI"],
   authors: [{ name: "ContextWeaver Team" }],
   creator: "ContextWeaver",
-  metadataBase: new URL("https://contextweaver.app"), // Replace with actual production domain when available
+  metadataBase: new URL("https://contextweaver.edycu.dev"),
+  appleWebApp: {
+    capable: true,
+    title: "ContextWeaver",
+    statusBarStyle: "black-translucent",
+  },
+  openGraph: {
+    title: "ContextWeaver | Dynamic In-Context Learning Router",
+    description: "RAG-powered prompt construction that turns Qwen3-4B into a precision annotator for long-context documents.",
+    url: "https://contextweaver.edycu.dev",
+    siteName: "ContextWeaver",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ContextWeaver | Dynamic ICL Router",
+    description: "RAG-powered prompt construction that turns Qwen3-4B into a precision annotator for long-context documents.",
+  },
 };
 
 export default async function RootLayout({
