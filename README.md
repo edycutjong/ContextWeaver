@@ -6,9 +6,9 @@
 
   <br />
 
-  [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/edycutjong/ContextWeaver)
-  [![Live Demo](https://img.shields.io/badge/▶_Live-Demo-22c55e.svg)](https://context-weaver.vercel.app)
+  [![Live Demo](https://img.shields.io/badge/▶_Live-Demo-22c55e.svg)](https://contextweaver.edycu.dev)
   [![Pitch Video](https://img.shields.io/badge/🎬_Pitch-Video-ef4444.svg)](https://youtu.be/n8CO_JNmunQ)
+  [![DoraHacks](https://img.shields.io/badge/🏗️_DoraHacks-BUIDL_%2343566-f97316.svg)](https://dorahacks.io/buidl/43566)
 
   <br />
 
