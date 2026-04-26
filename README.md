@@ -21,7 +21,7 @@
   [![ChromaDB](https://img.shields.io/badge/ChromaDB-0.4-FF6F61)](https://www.trychroma.com/)
   [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
   [![Tests](https://img.shields.io/badge/Tests-37_backend_|_21_frontend-22c55e)](.)
-  [![i18n](https://img.shields.io/badge/i18n-EN_|_中文-f59e0b)](.)
+  [![i18n](https://img.shields.io/badge/i18n-EN_|_中文-f59e0b)](README.zh.md)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 </div>
 
