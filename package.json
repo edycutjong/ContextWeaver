@@ -4,6 +4,13 @@
   "scripts": {
     "ci": "npm run ci --prefix frontend",
     "dev": "make docker-up",
-    "test": "make test"
+    "test": "make test",
+    "screenshot": "node scripts/capture.mjs http://localhost:3000 screenshot",
+    "record": "node scripts/capture.mjs http://localhost:3000 record",
+    "capture": "node scripts/capture.mjs"
+  },
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "puppeteer": "^24.42.0"
   }
 }

@@ -32,6 +32,8 @@ yarn-error.log*
 
 # Assets
 docs/assets/*
+recordings/*
+
 # Coverage
 .coverage
 htmlcov/

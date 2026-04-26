@@ -24,13 +24,34 @@ export default function HistoryPage() {
   const t = useTranslations('history');
   const tCommon = useTranslations('common');
   const [search, setSearch] = useState("");
-  
-  const history = React.useMemo(() => [
+  const [lsHistory, setLsHistory] = useState<Array<{ id: string; query: string; time: string; latency: number; status: string; tokens: number }>>([]);
+
+  // Load real run history from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('contextweaver_history');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setLsHistory(parsed);
+        }
+      }
+    } catch { /* ignore parse errors */ }
+  }, []);
+
+  const mockHistory = React.useMemo(() => [
     { id: "1", query: t('mock.q1'), time: t('mock.t1'), latency: 245, status: "success", tokens: 124 },
     { id: "2", query: t('mock.q2'), time: t('mock.t2'), latency: 312, status: "success", tokens: 342 },
     { id: "3", query: t('mock.q3'), time: t('mock.t3'), latency: 185, status: "success", tokens: 89 },
     { id: "4", query: t('mock.q4'), time: t('mock.t4'), latency: 45, status: "filtered", tokens: 0 },
   ], [t]);
+
+  // Real runs at top, mock demo entries below
+  const history = React.useMemo(
+    () => [...lsHistory, ...mockHistory],
+    [lsHistory, mockHistory]
+  );
 
   const filtered = history.filter((h) => h.query.toLowerCase().includes(search.toLowerCase()));
   const successCount = history.filter((h) => h.status === "success").length;

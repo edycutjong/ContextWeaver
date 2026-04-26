@@ -213,8 +213,11 @@ export default function Dashboard() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [finalResult, setFinalResult] = useState<any | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [competitionData, setCompetitionData] = useState<any | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedChunk, setSelectedChunk] = useState<any | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [documentText, setDocumentText] = useState<string>('');
   const eventSourceRef = useRef<EventSource | null>(null);
 
   // Typewriter state
@@ -318,20 +321,26 @@ export default function Dashboard() {
     setDisplayedLogs([]);
     setProcessedChunks([]);
     setFinalResult(null);
+    setCompetitionData(null);
     pushToast({ kind: 'info', title: t('toast.startedTitle'), description: t('toast.startedDescription') });
 
-    let queryParams = "";
+    const params = new URLSearchParams();
+    let hasParams = false;
     const savedSettings = localStorage.getItem('contextweaver_settings');
     if (savedSettings) {
       try {
         const parsed = JSON.parse(savedSettings);
-        const params = new URLSearchParams();
+        hasParams = true;
         if (parsed.chunkSize) params.append('chunk_size', parsed.chunkSize.toString());
         if (parsed.chunkOverlap) params.append('chunk_overlap', parsed.chunkOverlap.toString());
         if (parsed.topK) params.append('top_k', parsed.topK.toString());
-        queryParams = `?${params.toString()}`;
       } catch { }
     }
+    if (documentText.trim()) {
+      params.append('text', documentText.trim());
+      hasParams = true;
+    }
+    const queryParams = hasParams ? `?${params.toString()}` : '';
 
     const eventSource = new EventSource(`/api/stream/123${queryParams}`);
     eventSourceRef.current = eventSource;
@@ -375,6 +384,7 @@ export default function Dashboard() {
 
       if (data.step === 'done') {
         setFinalResult(data.final_result);
+        if (data.competition) setCompetitionData(data.competition);
         setLogMessages(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${t('log.complete')}`]);
         setIsRunning(false);
         eventSource.close();
@@ -390,6 +400,24 @@ export default function Dashboard() {
         setTimeout(() => {
           resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }, 100);
+
+        // Save run summary to history
+        const elapsed = startedAtRef.current ? Math.round(performance.now() - startedAtRef.current) : 0;
+        const query = documentText.trim()
+          ? `Doc: ${documentText.trim().substring(0, 80)}${documentText.trim().length > 80 ? '...' : ''}`
+          : 'Sample document';
+        const runEntry = {
+          id: Date.now().toString(),
+          query,
+          time: new Date().toLocaleString(),
+          latency: elapsed,
+          status: 'success',
+          tokens: data.final_result?.total_chunks_processed ?? 0,
+        };
+        try {
+          const existing = JSON.parse(localStorage.getItem('contextweaver_history') || '[]');
+          localStorage.setItem('contextweaver_history', JSON.stringify([runEntry, ...existing].slice(0, 50)));
+        } catch { /* ignore storage errors */ }
       }
     };
 
@@ -418,6 +446,7 @@ export default function Dashboard() {
       timestamp: new Date().toISOString(),
       summary: finalResult,
       chunks: processedChunks,
+      competition: competitionData ?? null,
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -495,6 +524,30 @@ export default function Dashboard() {
               </button>
             </motion.div>
           </motion.div>
+
+          {/* Document Input — visible when idle */}
+          {pipelineStep === 'idle' && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1], delay: 0.08 }}
+              className="w-full bg-slate-900/50 border border-slate-700/60 rounded-xl p-4 backdrop-blur-sm"
+            >
+              <label className="block text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2">
+                Document Input
+              </label>
+              <textarea
+                value={documentText}
+                onChange={(e) => setDocumentText(e.target.value)}
+                placeholder="Paste your document text here, or leave empty to annotate a sample document…"
+                rows={4}
+                className="w-full bg-slate-950/60 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 placeholder-slate-600 resize-y focus:outline-none focus:border-cyan-500 focus:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all font-mono leading-relaxed"
+              />
+              <p className="text-xs text-slate-600 mt-1.5">
+                {documentText.trim() ? `${documentText.trim().length} chars · will be passed to the annotator` : 'Empty → sample legal document will be used'}
+              </p>
+            </motion.div>
+          )}
 
           {/* Graph Selector (Moved to Top) */}
           <motion.div

@@ -8,7 +8,7 @@
 
   [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/edycutjong/ContextWeaver)
   [![Live Demo](https://img.shields.io/badge/▶_Live-Demo-22c55e.svg)](https://context-weaver.vercel.app)
-  [![Pitch Video](https://img.shields.io/badge/🎬_Pitch-Video-ef4444.svg)](https://youtube.com/)
+  [![Pitch Video](https://img.shields.io/badge/🎬_Pitch-Video-ef4444.svg)](https://youtu.be/n8CO_JNmunQ)
 
   <br />
 
@@ -320,6 +320,27 @@ Both suites target **100% coverage** on core modules.
 | **HTTP** | httpx | Async API client (3x retry) |
 | **Containerization** | Docker Compose | One-command deployment |
 | **i18n** | next-intl | English + Chinese |
+
+---
+
+## 🤝 Sponsors & Partners
+
+<div align="center">
+
+Built for the **[FlagOS Open Computing Global Challenge](https://dorahacks.io/hackathon/flagos)** — Track 3
+
+| | Partner | Role |
+|---|---|---|
+| 🏆 | **[DoraHacks](https://dorahacks.io)** | Hackathon platform & bounty infrastructure |
+| 🚩 | **[FlagOS Community](https://flagos.org)** | Open computing ecosystem & challenge host |
+| 🧠 | **[BAAI](https://www.baai.ac.cn/)** | Beijing Academy of Artificial Intelligence |
+| 📋 | **[CCF ODTC](https://www.ccf.org.cn/)** | Open Source Development Technology Committee |
+| 📦 | **[OpenSeek](https://github.com/openai/openai-cookbook)** | Dataset & evaluation format specification |
+| 🤖 | **[Qwen (Alibaba)](https://github.com/QwenLM/Qwen)** | Qwen3-4B language model |
+| 🔍 | **[ChromaDB](https://www.trychroma.com/)** | Vector database for ICL example retrieval |
+| 🧩 | **[sentence-transformers](https://www.sbert.net/)** | all-MiniLM-L6-v2 embedding model |
+
+</div>
 
 ---
 

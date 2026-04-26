@@ -51,7 +51,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${notoSansSC.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages} locale={locale}>
           {children}
           <LaunchTransition />
