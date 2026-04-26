@@ -483,6 +483,7 @@ describe('Dashboard', () => {
     const longText = "A".repeat(100);
     fireEvent.change(textarea, { target: { value: longText } });
     
+    jest.advanceTimersByTime(1000);
     fireEvent.click(getByText('Run Document Annotation'));
 
     act(() => {
@@ -500,5 +501,28 @@ describe('Dashboard', () => {
     
     expect(getByText('Annotation Complete')).toBeInTheDocument();
     jest.useRealTimers();
+  });
+
+  it('handles falsy startedAtRef and short document text', () => {
+    const perfSpy = jest.spyOn(performance, 'now').mockReturnValue(null as any);
+    
+    const { getByText, getByPlaceholderText } = render(<Dashboard />);
+    const textarea = getByPlaceholderText('Paste your document text here, or leave empty to annotate a sample document…');
+    
+    fireEvent.change(textarea, { target: { value: 'Short doc' } });
+    
+    fireEvent.click(getByText('Run Document Annotation'));
+
+    act(() => {
+      mockEventSource.onmessage({ 
+        data: JSON.stringify({ 
+          step: 'done', 
+          final_result: { mean_confidence: 0.9, merged_entities: [] } 
+        }) 
+      });
+    });
+    
+    expect(getByText('Annotation Complete')).toBeInTheDocument();
+    perfSpy.mockRestore();
   });
 });
