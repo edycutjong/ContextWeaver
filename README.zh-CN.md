@@ -20,7 +20,7 @@
   [![Qwen](https://img.shields.io/badge/Qwen-3--4B-blueviolet)](https://github.com/QwenLM/Qwen)
   [![ChromaDB](https://img.shields.io/badge/ChromaDB-0.4-FF6F61)](https://www.trychroma.com/)
   [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-  [![测试](https://img.shields.io/badge/测试-37_后端_|_21_前端-22c55e)](.)
+  [![测试](https://img.shields.io/badge/测试-42_后端_|_178_前端-22c55e)](https://github.com/edycutjong/ContextWeaver/actions)
   [![多语言](https://img.shields.io/badge/多语言-EN_|_中文-f59e0b)](README.md)
   [![开源协议: MIT](https://img.shields.io/badge/开源协议-MIT-yellow.svg)](LICENSE)
 </div>
