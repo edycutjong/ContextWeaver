@@ -53,18 +53,14 @@ jest.mock('@/components/ConfidenceHeatmap', () => {
 // Mock framer-motion
 jest.mock('framer-motion', () => {
   const MOTION_PROPS = new Set(['whileHover','whileTap','whileInView','initial','animate','exit','transition','variants','layoutId','layout','onAnimationStart','onAnimationComplete','drag','dragConstraints','dragElastic','dragMomentum','onDrag','onDragEnd','onDragStart']);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function strip(props: any) { const p: any = {}; for (const k of Object.keys(props)) { if (!MOTION_PROPS.has(k)) p[k] = props[k]; } return p; }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const MockDiv = React.forwardRef<HTMLDivElement, any>(({ children, ...props }, ref) => <div ref={ref} {...strip(props)}>{children}</div>);
   MockDiv.displayName = 'motion.div';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const MockSpan = React.forwardRef<HTMLSpanElement, any>(({ children, ...props }, ref) => <span ref={ref} {...strip(props)}>{children}</span>);
   MockSpan.displayName = 'motion.span';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const MockButton = React.forwardRef<HTMLButtonElement, any>(({ children, ...props }, ref) => <button ref={ref} {...strip(props)}>{children}</button>);
   MockButton.displayName = 'motion.button';
 
@@ -168,6 +164,17 @@ describe('Dashboard', () => {
     fireEvent.click(getByText('Evaluator-Optimizer'));
     fireEvent.click(getByText('Routing Agent'));
     fireEvent.click(getByText('ContextWeaver Flow'));
+  });
+
+  it('handles typing document text and passes it to EventSource', () => {
+    const { getByRole, getByPlaceholderText } = render(<Dashboard />);
+    const textarea = getByPlaceholderText('Paste your document text here, or leave empty to annotate a sample document…');
+    fireEvent.change(textarea, { target: { value: 'This is my custom text' } });
+    
+    const runBtn = getByRole('button', { name: /Run Document Annotation/i });
+    fireEvent.click(runBtn);
+    
+    expect(global.EventSource).toHaveBeenCalledWith(expect.stringContaining('text=This+is+my+custom+text'));
   });
 
   it('starts pipeline and handles events', () => {
@@ -465,6 +472,33 @@ describe('Dashboard', () => {
     // Our mock ChunkInspector doesn't show modelKey, but we can check if it's rendered
     expect(getByTestId('chunk-inspector')).toBeInTheDocument();
     
+    jest.useRealTimers();
+  });
+
+  it('handles long document text, competition data, and missing startedAtRef', () => {
+    jest.useFakeTimers();
+    const { getByText, getByPlaceholderText } = render(<Dashboard />);
+    const textarea = getByPlaceholderText('Paste your document text here, or leave empty to annotate a sample document…');
+    
+    const longText = "A".repeat(100);
+    fireEvent.change(textarea, { target: { value: longText } });
+    
+    fireEvent.click(getByText('Run Document Annotation'));
+
+    act(() => {
+      mockEventSource.onmessage({ 
+        data: JSON.stringify({ 
+          step: 'done', 
+          competition: { name: 'Test Comp' },
+          final_result: { 
+            mean_confidence: 0.9,
+            merged_entities: []
+          } 
+        }) 
+      });
+    });
+    
+    expect(getByText('Annotation Complete')).toBeInTheDocument();
     jest.useRealTimers();
   });
 });

@@ -84,4 +84,27 @@ describe('HistoryPage', () => {
     // Check if the success rate percentage is displayed correctly
     expect(getAllByText(/%/).length).toBeGreaterThan(0);
   });
+
+  it('loads real history from localStorage', () => {
+    localStorage.setItem('contextweaver_history', JSON.stringify([
+      { id: "local1", query: "Local test query", time: "2024-01-01", latency: 100, status: "success", tokens: 50 }
+    ]));
+    const { getByText } = render(<HistoryPage />);
+    expect(getByText('Local test query')).toBeInTheDocument();
+    localStorage.removeItem('contextweaver_history');
+  });
+
+  it('ignores invalid history from localStorage', () => {
+    localStorage.setItem('contextweaver_history', JSON.stringify({ invalid: "not an array" }));
+    const { queryByText } = render(<HistoryPage />);
+    expect(queryByText('Local test query')).not.toBeInTheDocument();
+    localStorage.removeItem('contextweaver_history');
+  });
+
+  it('ignores empty array history from localStorage', () => {
+    localStorage.setItem('contextweaver_history', JSON.stringify([]));
+    const { queryByText } = render(<HistoryPage />);
+    expect(queryByText('Local test query')).not.toBeInTheDocument();
+    localStorage.removeItem('contextweaver_history');
+  });
 });

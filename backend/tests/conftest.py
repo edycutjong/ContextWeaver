@@ -12,7 +12,7 @@ import hashlib
 from unittest.mock import MagicMock, patch
 
 
-def _word_hash_embed(input, **kwargs):  # noqa: A002
+def _word_hash_embed_patched(self, input):  # noqa: A002
     embeddings = []
     for text in input:
         words = re.findall(r'[a-z]+', text.lower())
@@ -26,13 +26,5 @@ def _word_hash_embed(input, **kwargs):  # noqa: A002
     return embeddings
 
 
-class _FakeEmbeddingFunction:
-    """Satisfies ChromaDB's strict (self, input) signature validation."""
-    def __call__(self, input):  # noqa: A002
-        return _word_hash_embed(input)
-
-
-_ef_class = MagicMock(return_value=_FakeEmbeddingFunction())
-
 # Must be at module level so the patch is active before test files are collected
-patch('chromadb.utils.embedding_functions.DefaultEmbeddingFunction', _ef_class).start()
+patch('chromadb.utils.embedding_functions.DefaultEmbeddingFunction.__call__', _word_hash_embed_patched).start()

@@ -80,3 +80,10 @@ def test_annotate_then_stream():
         done_lines = [l for l in data_lines if '"done"' in l]
         done_data = json.loads(done_lines[-1].replace("data: ", ""))
         assert "competition" in done_data
+
+
+def test_load_icl_examples_missing_file():
+    from unittest.mock import patch
+    from api.endpoints import _load_icl_examples
+    with patch("api.endpoints.Path.exists", return_value=False):
+        _load_icl_examples()
